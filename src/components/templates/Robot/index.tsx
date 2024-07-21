@@ -3,6 +3,7 @@ import { ROUTER_PATH } from '@/router';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { RoutingButtons } from '@components/molecules/RoutingButtons';
 import { Header } from '@components/molecules/Header';
+import { ScheduleTimeTable } from '@components/molecules/ScheduleTimeTable';
 
 export const Robot = () => {
   const navigate = useNavigate();
@@ -14,7 +15,10 @@ export const Robot = () => {
     <Fragment>
       <Header />
       {location.pathname === defaultRobotPath ? (
-        <RoutingButtons onClickTemplate={navigateTo} />
+        <Fragment>
+          <ScheduleTimeTable time="AM" />
+          <RoutingButtons onClickTemplate={navigateTo} />
+        </Fragment>
       ) : (
         <Outlet />
       )}

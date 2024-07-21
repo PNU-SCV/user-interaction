@@ -1,0 +1,55 @@
+.table {
+    width: 100%;
+    font-family: Arial, sans-serif;
+    border-spacing: 0 5px;
+    border-collapse: separate;
+    background-color: white;
+}
+
+.hour {
+    font-weight: bold;
+    color: #213547;
+}
+
+.selective {
+    padding: 1rem;
+    color: lightslategray;
+    cursor: pointer;
+    border-radius: 0;
+}
+
+.selective:hover {
+    color: black;
+}
+
+.highlight {
+    background-color: lightskyblue;
+}
+
+.reserved {
+    background-color: palevioletred;
+    border-radius: 0;
+    color: lightgray;
+}
+
+.reserved:hover {
+    color: red
+}
+
+.schedule--edge {
+    color: navy;
+    font-weight: 400;
+}
+
+.start {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-left: 2px solid white;
+}
+
+.end {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-right: 2px solid white;
+}
+
