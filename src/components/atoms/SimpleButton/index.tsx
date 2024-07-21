@@ -1,24 +1,28 @@
 import styles from './index.module.css';
 import { ItemProps } from '@components/atoms/IteratingMapper/type';
 
-export interface ISimpleButton extends ItemProps {
+export interface IRoutingButton extends ItemProps {
   label: string;
-  path: string;
+  path?: string;
   onClickTemplate?: (path: string) => () => void;
-  directOnClickTemplate?: (path: string) => () => void;
+  onClick?: () => void;
+  disabled?: boolean;
 }
 
-export const SimpleButton = ({
+export const RoutingButton = ({
   label,
-  path,
   onClickTemplate,
-  directOnClickTemplate,
-}: ISimpleButton) => {
-  if (directOnClickTemplate) {
+  onClick,
+  path = '',
+  disabled = false,
+}: IRoutingButton) => {
+  if (onClick) {
     return (
       <div className={styles.card}>
         <div className="card">
-          <button onClick={directOnClickTemplate(path)}>{label}</button>
+          <button disabled={disabled} onClick={onClick}>
+            {label}
+          </button>
         </div>
       </div>
     );
@@ -28,7 +32,9 @@ export const SimpleButton = ({
     return (
       <div className={styles.card}>
         <div className="card">
-          <button onClick={onClickTemplate(path)}>{label}</button>
+          <button disabled={disabled} onClick={onClickTemplate(path as string)}>
+            {label}
+          </button>
         </div>
       </div>
     );
