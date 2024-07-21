@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
-import { Robot } from './Robot';
+import { Robot } from '@components/templates/Robot';
 import React from 'react';
 import { Index } from '@components/templates/Index';
 

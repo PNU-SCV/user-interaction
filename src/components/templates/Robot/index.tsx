@@ -1,7 +1,8 @@
-import { useCallback } from 'react';
-import { ROUTER_PATH } from './router';
+import { Fragment, useCallback } from 'react';
+import { ROUTER_PATH } from '@/router';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { SimpleButtons } from '@components/molecules/SimpleButtons';
+import { Header } from '@components/molecules/Header';
 
 export const Robot = () => {
   const navigate = useNavigate();
@@ -9,9 +10,14 @@ export const Robot = () => {
   const location = useLocation();
   const defaultRobotPath = '/' + ROUTER_PATH.ROBOT;
 
-  return location.pathname === defaultRobotPath ? (
-    <SimpleButtons onClickTemplate={navigateTo} />
-  ) : (
-    <Outlet />
+  return (
+    <Fragment>
+      <Header />
+      {location.pathname === defaultRobotPath ? (
+        <SimpleButtons onClickTemplate={navigateTo} />
+      ) : (
+        <Outlet />
+      )}
+    </Fragment>
   );
 };
