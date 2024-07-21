@@ -1,4 +1,4 @@
-import { IRoutingButton, RoutingButton } from '@components/atoms/SimpleButton';
+import { IRoutingButton, RoutingButton } from '@components/atoms/RoutingButton';
 import { useNavigate } from 'react-router-dom';
 import { Fragment, useCallback } from 'react';
 import { ROUTER_PATH } from '@/router';

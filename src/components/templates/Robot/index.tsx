@@ -1,7 +1,7 @@
 import { Fragment, useCallback } from 'react';
 import { ROUTER_PATH } from '@/router';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { SimpleButtons } from '@components/molecules/SimpleButtons';
+import { RoutingButtons } from '@components/molecules/RoutingButtons';
 import { Header } from '@components/molecules/Header';
 
 export const Robot = () => {
@@ -14,7 +14,7 @@ export const Robot = () => {
     <Fragment>
       <Header />
       {location.pathname === defaultRobotPath ? (
-        <SimpleButtons onClickTemplate={navigateTo} />
+        <RoutingButtons onClickTemplate={navigateTo} />
       ) : (
         <Outlet />
       )}

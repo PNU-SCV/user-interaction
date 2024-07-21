@@ -1,4 +1,4 @@
-import { RoutingButton } from '@components/atoms/SimpleButton';
+import { RoutingButton } from '@components/atoms/RoutingButton';
 import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
 

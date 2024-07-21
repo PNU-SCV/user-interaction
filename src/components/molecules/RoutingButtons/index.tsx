@@ -1,13 +1,13 @@
 import { IteratingMapper } from '../../atoms/IteratingMapper';
 import { Fragment } from 'react';
 import { ROBOT_ROUTER_PATH_ARRAY } from '@/router';
-import { IRoutingButton, RoutingButton } from '@components/atoms/SimpleButton';
+import { IRoutingButton, RoutingButton } from '@components/atoms/RoutingButton';
 
-export interface ISimpleButtons {
+export interface IRoutingButtons {
   onClickTemplate: (path: string) => () => void;
 }
 
-export const SimpleButtons = ({ onClickTemplate }: ISimpleButtons) => {
+export const RoutingButtons = ({ onClickTemplate }: IRoutingButtons) => {
   return (
     <IteratingMapper<IRoutingButton>
       container={Fragment}
