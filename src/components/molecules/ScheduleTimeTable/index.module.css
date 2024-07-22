@@ -16,29 +16,62 @@
     color: lightslategray;
     cursor: pointer;
     border-radius: 0;
+    position: relative;
 }
 
 .selective:hover {
     color: black;
+    font-weight: 600;
 }
 
 .highlight {
     background-color: lightskyblue;
 }
 
+.schedule--edge {
+    color: navy;
+    font-weight: 700;
+    font-size: 1.1rem;
+    position: relative;
+}
+
+.schedule--edge::before {
+    content: '';
+    position: absolute;
+    width: 75%;
+    height: 75%;
+    border: 3px solid white;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .reserved {
     background-color: palevioletred;
     border-radius: 0;
-    color: lightgray;
+    color: whitesmoke;
 }
 
 .reserved:hover {
-    color: red
+    color: red;
 }
 
-.schedule--edge {
-    color: navy;
-    font-weight: 400;
+.highlight:hover::after,
+.reserved:hover::after {
+    content: attr(data-who);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    white-space: nowrap;
+    z-index: 1;
+    font-size: 0.75rem;
 }
 
 .start {
@@ -52,4 +85,3 @@
     border-bottom-right-radius: 6px;
     border-right: 2px solid white;
 }
-

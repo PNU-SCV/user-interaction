@@ -19,7 +19,7 @@ export const ScheduleTimeTable = ({ time }: IScheduleTimeTable) => {
   const {
     onClickDelegated,
     getCellClassNamesAvailable,
-    getCellClassNamesUnAvailable,
+    getCellClassNamesUnavailable,
     getAvailabilityByIndex,
   } = useSelectScheduleTimeTable();
 
@@ -37,9 +37,9 @@ export const ScheduleTimeTable = ({ time }: IScheduleTimeTable) => {
             {hourSlot.map((time, minuteIndex) => {
               const index = hourIndex * 6 + minuteIndex;
               const availability = getAvailabilityByIndex(index);
-              const className = availability
-                ? `${getCellClassNamesAvailable(index)}`
-                : `${getCellClassNamesUnAvailable(index)}`;
+              const { className, who } = availability
+                ? getCellClassNamesAvailable(index)
+                : getCellClassNamesUnavailable(index);
 
               return (
                 <td
@@ -47,6 +47,7 @@ export const ScheduleTimeTable = ({ time }: IScheduleTimeTable) => {
                   key={index}
                   data-index={index}
                   data-availability={availability}
+                  data-who={who}
                 >
                   {time}
                 </td>

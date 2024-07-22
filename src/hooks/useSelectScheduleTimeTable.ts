@@ -13,12 +13,12 @@ export const useSelectScheduleTimeTable = () => {
   const [availabilities, setAvailabilities] = useState<boolean[]>(availabilitiesInit);
   const mockUseQueryReserved = [
     {
-      who: 'jaean',
+      who: 'tae!',
       start: 0,
       end: 10,
     },
     {
-      who: 'jaean2',
+      who: 'won!',
       start: 50,
       end: 53,
     },
@@ -56,28 +56,43 @@ export const useSelectScheduleTimeTable = () => {
     [reservedEdges],
   );
 
-  const getCellClassNamesUnAvailable = useCallback(
+  const getCellClassNamesUnavailable = useCallback(
     (index: number) => {
       const { starts, ends } = reservedEdges;
-      const isStartEdge = starts.includes(index) || index % 6 === 0;
-      const isEndEdge = ends.includes(index) || index % 6 === 5;
+      const isStartRow = starts.includes(index) || index % 6 === 0;
+      const isEndRow = ends.includes(index) || index % 6 === 5;
+      const isEdge = starts.includes(index) || ends.includes(index);
 
-      return `${styles.selective} ${styles.reserved} ${isStartEdge ? styles.start : ''} ${isEndEdge ? styles.end : ''}`;
+      const className = `${styles.selective} ${styles.reserved} ${isStartRow ? styles.start : ''} ${isEndRow ? styles.end : ''} ${isEdge ? styles['schedule--edge'] : ''}`;
+      const reservation = mockUseQueryReserved.find(
+        (res) => res.start <= index && res.end >= index,
+      );
+      const who = reservation ? reservation.who : '';
+
+      return {
+        className,
+        who,
+      };
     },
     [reservedEdges],
   );
 
   const getCellClassNamesAvailable = useCallback(
     (currentIndex: number) => {
-      const isStartEdge = currentIndex === schedule.start || currentIndex % 6 === 0;
-      const isEndEdge = currentIndex === schedule.end || currentIndex % 6 === 5;
+      const isStartRow = currentIndex === schedule.start || currentIndex % 6 === 0;
+      const isEndRow = currentIndex === schedule.end || currentIndex % 6 === 5;
       const isBetween =
         schedule.start !== null &&
         schedule.end !== null &&
         currentIndex >= schedule.start &&
         currentIndex <= schedule.end;
       const isScheduleEdge = currentIndex === schedule.start || currentIndex === schedule.end;
-      return `${styles.selective} ${isBetween ? styles.highlight : ''} ${isStartEdge ? styles.start : ''} ${isEndEdge ? styles.end : ''} ${isScheduleEdge ? styles['schedule--edge'] : ''}`;
+      const className = `${styles.selective} ${isBetween ? styles.highlight : ''} ${isStartRow ? styles.start : ''} ${isEndRow ? styles.end : ''} ${isScheduleEdge ? styles['schedule--edge'] : ''}`;
+
+      return {
+        className,
+        who: isBetween ? 'me!' : undefined,
+      };
     },
     [schedule],
   );
@@ -95,7 +110,7 @@ export const useSelectScheduleTimeTable = () => {
   return {
     onClickDelegated,
     getCellClassNamesAvailable,
-    getCellClassNamesUnAvailable,
+    getCellClassNamesUnavailable,
     getAvailabilityByIndex,
   };
 };
