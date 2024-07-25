@@ -1,5 +1,6 @@
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import styles from '@components/molecules/ScheduleTimeTable/index.module.css';
+import { ScheduleTime } from '@components/molecules/ScheduleTimeTable';
 
 type Schedule = {
   start: number | null;
@@ -8,7 +9,7 @@ type Schedule = {
 
 const availabilitiesInit = Array.from({ length: 12 * 6 }, (_) => true);
 
-export const useSelectScheduleTimeTable = () => {
+export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
   const [schedule, setSchedule] = useState<Schedule>({ start: null, end: null });
   const [availabilities, setAvailabilities] = useState<boolean[]>(availabilitiesInit);
   const mockUseQueryReserved = [
@@ -16,11 +17,25 @@ export const useSelectScheduleTimeTable = () => {
       who: 'tae!',
       start: 0,
       end: 10,
+      time: 'PM',
+    },
+    {
+      who: 'heon!',
+      start: 50,
+      end: 53,
+      time: 'PM',
+    },
+    {
+      who: 'seok!',
+      start: 13,
+      end: 23,
+      time: 'AM',
     },
     {
       who: 'won!',
-      start: 50,
-      end: 53,
+      start: 42,
+      end: 50,
+      time: 'AM',
     },
   ];
 
@@ -32,14 +47,16 @@ export const useSelectScheduleTimeTable = () => {
   );
 
   const reservedEdges = useMemo(() => {
-    return mockUseQueryReserved.reduce(
-      (acc, reservation) => {
-        acc.starts.push(reservation.start);
-        acc.ends.push(reservation.end);
-        return acc;
-      },
-      { starts: [], ends: [] },
-    );
+    return mockUseQueryReserved
+      .filter((reserved) => reserved.time === time)
+      .reduce(
+        (acc, reservation) => {
+          acc.starts.push(reservation.start);
+          acc.ends.push(reservation.end);
+          return acc;
+        },
+        { starts: [], ends: [] },
+      );
   }, [mockUseQueryReserved]);
 
   const onClickDelegated = useCallback(
@@ -63,9 +80,9 @@ export const useSelectScheduleTimeTable = () => {
       const isEndRow = ends.includes(index) || index % 6 === 5;
       const isEdge = starts.includes(index) || ends.includes(index);
 
-      const reservation = mockUseQueryReserved.find(
-        (res) => res.start <= index && res.end >= index,
-      );
+      const reservation = mockUseQueryReserved
+        .filter((reserved) => reserved.time === time)
+        .find((res) => res.start <= index && res.end >= index);
       const who = reservation ? reservation.who : '';
       const firstLetter = who ? who[0].toLowerCase() : undefined;
       const color = colorMapping[firstLetter];
@@ -102,11 +119,13 @@ export const useSelectScheduleTimeTable = () => {
 
   useEffect(() => {
     const newAvailabilities = [...availabilities];
-    mockUseQueryReserved.forEach((reservation) => {
-      for (let i = reservation.start; i <= reservation.end; i++) {
-        newAvailabilities[i] = false;
-      }
-    });
+    mockUseQueryReserved
+      .filter((reserved) => reserved.time === time)
+      .forEach((reservation) => {
+        for (let i = reservation.start; i <= reservation.end; i++) {
+          newAvailabilities[i] = false;
+        }
+      });
     setAvailabilities(newAvailabilities);
   }, []);
 
@@ -166,6 +185,7 @@ const createNewScheduleIfValid = (
 interface ColorMapping {
   [key: string]: string;
 }
+
 const colorMapping: ColorMapping = {
   a: 'lightcoral',
   b: 'lightyellow',

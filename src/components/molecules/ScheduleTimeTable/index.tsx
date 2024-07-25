@@ -22,7 +22,7 @@ export const ScheduleTimeTable = ({ time, className = '' }: IScheduleTimeTable) 
     getCellClassNamesAvailable,
     getCellClassNamesUnavailable,
     getAvailabilityByIndex,
-  } = useSelectScheduleTimeTable();
+  } = useSelectScheduleTimeTable(time);
 
   return (
     <table className={`${styles.table} ${className}`}>
