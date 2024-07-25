@@ -63,11 +63,14 @@ export const useSelectScheduleTimeTable = () => {
       const isEndRow = ends.includes(index) || index % 6 === 5;
       const isEdge = starts.includes(index) || ends.includes(index);
 
-      const className = `${styles.selective} ${styles.reserved} ${isStartRow ? styles.start : ''} ${isEndRow ? styles.end : ''} ${isEdge ? styles['schedule--edge'] : ''}`;
       const reservation = mockUseQueryReserved.find(
         (res) => res.start <= index && res.end >= index,
       );
       const who = reservation ? reservation.who : '';
+      const firstLetter = who ? who[0].toLowerCase() : undefined;
+      const color = colorMapping[firstLetter];
+
+      const className = `${styles.selective} ${styles.reserved} ${isStartRow ? styles.start : ''} ${isEndRow ? styles.end : ''} ${isEdge ? styles['schedule--edge'] : ''} ${firstLetter ? styles[color] : ''}`;
 
       return {
         className,
@@ -158,4 +161,36 @@ const createNewScheduleIfValid = (
 
   // 취소
   return schedule;
+};
+
+interface ColorMapping {
+  [key: string]: string;
+}
+const colorMapping: ColorMapping = {
+  a: 'lightcoral',
+  b: 'lightyellow',
+  c: 'lightblue',
+  d: 'lightgreen',
+  e: 'lightgrey',
+  f: 'lightsalmon',
+  g: 'plum',
+  h: 'wheat',
+  i: 'lightcyan',
+  j: 'lightpink',
+  k: 'thistle',
+  l: 'lightgoldenrodyellow',
+  m: 'lightsteelblue',
+  n: 'lightseagreen',
+  o: 'palegoldenrod',
+  p: 'peachpuff',
+  q: 'lavender',
+  r: 'mistyrose',
+  s: 'lightsteelblue',
+  t: 'lightseagreen',
+  u: 'paleturquoise',
+  v: 'lavenderblush',
+  w: 'lightgray',
+  x: 'khaki',
+  y: 'palegreen',
+  z: 'whitesmoke',
 };

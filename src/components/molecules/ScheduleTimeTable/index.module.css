@@ -29,7 +29,7 @@
 }
 
 .schedule--edge {
-    color: navy;
+    color: black;
     font-weight: 700;
     font-size: 1.1rem;
     position: relative;
@@ -84,4 +84,108 @@
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
     border-right: 2px solid white;
+}
+
+.lightcoral {
+    background-color: lightcoral;
+}
+
+.lightyellow {
+    background-color: lightyellow;
+}
+
+.lightblue {
+    background-color: lightblue;
+}
+
+.lightgreen {
+    background-color: lightgreen;
+}
+
+.lightgrey {
+    background-color: lightgrey;
+}
+
+.lightsalmon {
+    background-color: lightsalmon;
+}
+
+.plum {
+    background-color: plum;
+}
+
+.wheat {
+    background-color: wheat;
+}
+
+.lightcyan {
+    background-color: lightcyan;
+}
+
+.lightpink {
+    background-color: lightpink;
+}
+
+.thistle {
+    background-color: thistle;
+}
+
+.lightgoldenrodyellow {
+    background-color: lightgoldenrodyellow;
+}
+
+.lightsteelblue {
+    background-color: lightsteelblue;
+}
+
+.lightseagreen {
+    background-color: lightseagreen;
+}
+
+.palegoldenrod {
+    background-color: palegoldenrod;
+}
+
+.peachpuff {
+    background-color: peachpuff;
+}
+
+.lavender {
+    background-color: lavender;
+}
+
+.mistyrose {
+    background-color: mistyrose;
+}
+
+.lightsteelblue {
+    background-color: lightsteelblue;
+}
+
+.lightseagreen {
+    background-color: lightseagreen;
+}
+
+.paleturquoise {
+    background-color: paleturquoise;
+}
+
+.lavenderblush {
+    background-color: lavenderblush;
+}
+
+.lightgray {
+    background-color: lightgray;
+}
+
+.khaki {
+    background-color: khaki;
+}
+
+.palegreen {
+    background-color: palegreen;
+}
+
+.whitesmoke {
+    background-color: whitesmoke;
 }
