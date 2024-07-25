@@ -137,28 +137,43 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
   };
 };
 
+const calcStartEnd = (p1: number, p2: number) => {
+  return {
+    realStart: Math.min(p1, p2),
+    realEnd: Math.max(p1, p2),
+  };
+};
+
 //TODO : 스케줄 시간 start end 잡자 마자 요청을 보내서 서버에 시간을 예약 해야할 지 아니면 나중에 submit 버튼을 통해 요청을 보낼 지
 const createNewScheduleIfValid = (
   schedule: Schedule,
   newIndex: number,
   checkpoints: number[],
 ): Schedule => {
+  const isSelectedRangeAllAvailable = (realStart, realEnd) => {
+    const dropBeforeStart = checkpoints.filter((checkpoint) => realStart < checkpoint);
+    return Math.min(...dropBeforeStart, realEnd) === realEnd;
+  };
+
   // 스케줄 시작 시점이 아직 안정해 졌다면
   if (schedule.start === null) {
-    return { ...schedule, start: newIndex };
+    if (schedule.end === null) {
+      return { ...schedule, start: newIndex };
+    }
+    const { realStart, realEnd } = calcStartEnd(schedule.end, newIndex);
+
+    if (isSelectedRangeAllAvailable(realStart, realEnd)) {
+      return { start: realStart, end: realEnd };
+    }
+    return schedule;
   }
   // 스케줄 종료 시점이 아직 안정해 졌다면
   if (schedule.end === null) {
-    // 나중에 선택한 시점이 start라고 선언된 시점보다 이를 수 있으니까
-    const realStart = Math.min(schedule.start, newIndex);
-    const realEnd = Math.max(schedule.start, newIndex);
+    const { realStart, realEnd } = calcStartEnd(schedule.start, newIndex);
 
-    const dropBeforeStart = checkpoints.filter((checkpoint) => realStart < checkpoint);
-    // 시작 시점과 선택된 종료 시점이 다른 체크 포인트들과 겹치지 않는다면
-    if (Math.min(...dropBeforeStart, realEnd) === realEnd) {
+    if (isSelectedRangeAllAvailable(realStart, realEnd)) {
       return { start: realStart, end: realEnd };
     }
-    // 취소
     return schedule;
   }
   // 시작 시점 선택 취소
