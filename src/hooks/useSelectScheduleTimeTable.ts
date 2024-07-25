@@ -169,6 +169,9 @@ const createNewScheduleIfValid = (
   }
   // 스케줄 종료 시점이 아직 안정해 졌다면
   if (schedule.end === null) {
+    if (schedule.start === newIndex) {
+      return schedule;
+    }
     const { realStart, realEnd } = calcStartEnd(schedule.start, newIndex);
 
     if (isSelectedRangeAllAvailable(realStart, realEnd)) {
