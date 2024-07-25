@@ -7,15 +7,16 @@ const timeSlots = hours.map((hour) =>
   minutes.map((minute) => `${hour}:${minute.toString().padStart(2, '0')}`),
 );
 
-type ScheduleTime = 'AM' | 'PM';
+export type ScheduleTime = 'AM' | 'PM';
 type DateString = `${number}-${number}-${number}`;
 
 export interface IScheduleTimeTable {
   time: ScheduleTime;
   date?: DateString; // 'YYYY-MM-DD'
+  className?: string;
 }
 
-export const ScheduleTimeTable = ({ time }: IScheduleTimeTable) => {
+export const ScheduleTimeTable = ({ time, className = '' }: IScheduleTimeTable) => {
   const {
     onClickDelegated,
     getCellClassNamesAvailable,
@@ -24,7 +25,7 @@ export const ScheduleTimeTable = ({ time }: IScheduleTimeTable) => {
   } = useSelectScheduleTimeTable();
 
   return (
-    <table className={styles.table}>
+    <table className={`${styles.table} ${className}`}>
       <thead>
         <tr>
           <th>{time}</th>
