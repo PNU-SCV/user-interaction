@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import { useCallback } from 'react';
 import { ROUTER_PATH } from '@/router';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { RoutingButtons } from '@components/molecules/RoutingButtons';
@@ -6,6 +6,7 @@ import { Header } from '@components/molecules/Header';
 import { ScheduleTime, ScheduleTimeTable } from '@components/molecules/ScheduleTimeTable';
 
 import styles from './index.module.css';
+import { MainContainer } from '@components/atoms/MainContainer';
 
 const getScheduleOrder = () => {
   const currentHour = new Date().getHours();
@@ -20,7 +21,7 @@ export const Robot = () => {
   const [firstSchedule, secondSchedule]: ScheduleTime[] = getScheduleOrder();
 
   return (
-    <Fragment>
+    <MainContainer>
       <Header />
       {location.pathname === defaultRobotPath ? (
         <div className={styles['scroll-container']}>
@@ -35,6 +36,6 @@ export const Robot = () => {
       ) : (
         <Outlet />
       )}
-    </Fragment>
+    </MainContainer>
   );
 };

@@ -13,11 +13,8 @@
 }
 
 #root {
-  max-width: 1024px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
   text-align: center;
-  background-color: white;
 }
 
 * {

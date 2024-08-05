@@ -4,6 +4,7 @@ import { Fragment, useCallback } from 'react';
 import { ROUTER_PATH } from '@/router';
 import { Header } from '@components/molecules/Header';
 import { IteratingMapper } from '@components/atoms/IteratingMapper';
+import { MainContainer } from '@components/atoms/MainContainer';
 
 export const Index = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ export const Index = () => {
   ];
 
   return (
-    <div>
+    <MainContainer>
       <Header />
       <p>가용 로봇들</p>
       <IteratingMapper<IRoutingButton>
@@ -37,6 +38,6 @@ export const Index = () => {
         container={Fragment}
         otherItemProps={{ onClickTemplate }}
       />
-    </div>
+    </MainContainer>
   );
 };
