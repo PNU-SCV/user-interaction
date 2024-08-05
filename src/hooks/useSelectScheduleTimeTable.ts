@@ -62,7 +62,11 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
   const onClickDelegated = useCallback(
     (event: MouseEvent<HTMLTableSectionElement>) => {
       const target = event.target as HTMLElement;
-      if (target.tagName === 'TD' && target.dataset.availability && target.dataset.index) {
+      if (
+        target.tagName === 'TD' &&
+        target.dataset.availability === 'true' &&
+        target.dataset.index
+      ) {
         const newIndex = parseInt(target.dataset.index, 10);
         const { starts, ends } = reservedEdges;
         const checkpoints = [...starts, ...ends];
@@ -189,11 +193,21 @@ const createNewScheduleIfValid = (
   }
   // 새로운 시점이 현재 종료 시점보다 늦는다면
   if (newIndex > schedule.end) {
-    return { ...schedule, end: newIndex };
+    const { realStart, realEnd } = calcStartEnd(schedule.start, newIndex);
+
+    if (isSelectedRangeAllAvailable(realStart, realEnd)) {
+      return { start: realStart, end: realEnd };
+    }
+    return schedule;
   }
   // 새로운 시점이 현재 시작 시점보다 이르다면
   if (newIndex < schedule.start) {
-    return { ...schedule, start: newIndex };
+    const { realStart, realEnd } = calcStartEnd(newIndex, schedule.end);
+
+    if (isSelectedRangeAllAvailable(realStart, realEnd)) {
+      return { start: realStart, end: realEnd };
+    }
+    return schedule;
   }
 
   // 취소
