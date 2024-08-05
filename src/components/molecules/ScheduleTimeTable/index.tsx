@@ -8,15 +8,15 @@ const timeSlots = hours.map((hour) =>
 );
 
 export type ScheduleTime = 'AM' | 'PM';
-type DateString = `${number}-${number}-${number}`;
+export type DateString = `${number}-${number}-${number}`;
 
 export interface IScheduleTimeTable {
   time: ScheduleTime;
-  date?: DateString; // 'YYYY-MM-DD'
+  date: DateString; // 'YYYY-MM-DD'
   className?: string;
 }
 
-export const ScheduleTimeTable = ({ time, className = '' }: IScheduleTimeTable) => {
+export const ScheduleTimeTable = ({ time, date, className = '' }: IScheduleTimeTable) => {
   const {
     onClickDelegated,
     getCellClassNamesAvailable,
@@ -28,13 +28,15 @@ export const ScheduleTimeTable = ({ time, className = '' }: IScheduleTimeTable) 
     <table className={`${styles.table} ${className}`}>
       <thead>
         <tr>
+          <th>{date}</th>
           <th>{time}</th>
         </tr>
       </thead>
       <tbody onClick={onClickDelegated}>
         {timeSlots.map((hourSlot, hourIndex) => (
           <tr key={hourIndex}>
-            <td className={styles.hour}>{hourIndex}</td>
+            {/*TODO: 지운게 더 괜찮은지*/}
+            {/*<td className={styles.hour}>{hourIndex}</td>*/}
             {hourSlot.map((time, minuteIndex) => {
               const index = hourIndex * 6 + minuteIndex;
               const availability = getAvailabilityByIndex(index);
