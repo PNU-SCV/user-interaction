@@ -7,6 +7,11 @@ type Schedule = {
   end: number | null;
 };
 
+export type CellAvailabilityResult = {
+  className: string;
+  who: string | undefined;
+};
+
 const availabilitiesInit = Array.from({ length: 12 * 6 }, (_) => true);
 
 export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
@@ -39,13 +44,6 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
     },
   ];
 
-  const getAvailabilityByIndex = useCallback(
-    (index: number) => {
-      return availabilities[index];
-    },
-    [availabilities],
-  );
-
   const reservedEdges = useMemo(() => {
     return mockUseQueryReserved
       .filter((reserved) => reserved.time === time)
@@ -59,25 +57,27 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
       );
   }, [mockUseQueryReserved]);
 
-  const onClickDelegated = useCallback(
+  const onClickDelegated: (event: MouseEvent<HTMLTableSectionElement>) => void = useCallback(
     (event: MouseEvent<HTMLTableSectionElement>) => {
       const target = event.target as HTMLElement;
       if (
         target.tagName === 'TD' &&
-        target.dataset.availability === 'true' &&
-        target.dataset.index
+        target.dataset.index &&
+        // TODO : data-availability 속성 없는게 더 나은지.
+        // target.dataset.availability === 'true' &&
+        availabilities[parseInt(target.dataset.index)]
       ) {
-        const newIndex = parseInt(target.dataset.index, 10);
+        const newIndex = parseInt(target.dataset.index);
         const { starts, ends } = reservedEdges;
         const checkpoints = [...starts, ...ends];
 
         setSchedule((prev) => createNewScheduleIfValid(prev, newIndex, checkpoints));
       }
     },
-    [reservedEdges],
+    [reservedEdges, availabilities],
   );
 
-  const getCellClassNamesUnavailable = useCallback(
+  const getCellClassNamesUnavailable: (index: number) => CellAvailabilityResult = useCallback(
     (index: number) => {
       const { starts, ends } = reservedEdges;
       const isStartRow = starts.includes(index) || index % 6 === 0;
@@ -101,25 +101,28 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
     [reservedEdges],
   );
 
-  const getCellClassNamesAvailable = useCallback(
-    (currentIndex: number) => {
-      const isStartRow = currentIndex === schedule.start || currentIndex % 6 === 0;
-      const isEndRow = currentIndex === schedule.end || currentIndex % 6 === 5;
-      const isBetween =
-        schedule.start !== null &&
-        schedule.end !== null &&
-        currentIndex >= schedule.start &&
-        currentIndex <= schedule.end;
-      const isScheduleEdge = currentIndex === schedule.start || currentIndex === schedule.end;
-      const className = `${styles.selective} ${isBetween ? styles.highlight : ''} ${isStartRow ? styles.start : ''} ${isEndRow ? styles.end : ''} ${isScheduleEdge ? styles['schedule--edge'] : ''}`;
+  const getCellClassNamesAvailable = (currentIndex: number): CellAvailabilityResult => {
+    const isStartRow = currentIndex === schedule.start || currentIndex % 6 === 0;
+    const isEndRow = currentIndex === schedule.end || currentIndex % 6 === 5;
+    const isBetween =
+      schedule.start !== null &&
+      schedule.end !== null &&
+      currentIndex >= schedule.start &&
+      currentIndex <= schedule.end;
+    const isScheduleEdge = currentIndex === schedule.start || currentIndex === schedule.end;
+    const className = `${styles.selective} ${isBetween ? styles.highlight : ''} ${isStartRow ? styles.start : ''} ${isEndRow ? styles.end : ''} ${isScheduleEdge ? styles['schedule--edge'] : ''}`;
 
-      return {
-        className,
-        who: isBetween ? 'me!' : undefined,
-      };
-    },
-    [schedule],
-  );
+    return {
+      className,
+      who: isBetween ? 'me!' : undefined,
+    };
+  };
+
+  const getCellPropertiesByIndex = (index: number) => {
+    return availabilities[index]
+      ? getCellClassNamesAvailable(index)
+      : getCellClassNamesUnavailable(index);
+  };
 
   useEffect(() => {
     const newAvailabilities = [...availabilities];
@@ -135,9 +138,8 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
 
   return {
     onClickDelegated,
-    getCellClassNamesAvailable,
-    getCellClassNamesUnavailable,
-    getAvailabilityByIndex,
+    getCellPropertiesByIndex,
+    showConfirm,
   };
 };
 

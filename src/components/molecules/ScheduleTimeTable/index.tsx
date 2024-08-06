@@ -12,24 +12,18 @@ const timeSlots = (time: ScheduleTime) => {
 };
 
 export type ScheduleTime = 'Morning' | 'Afternoon' | 'Night';
-export type DateString = `${number}-${number}-${number}`;
+export type DateString = `${number}/${number}/${number}`;
 
 export interface IScheduleTimeTable {
   time: ScheduleTime;
-  date: DateString; // 'MM-DD'
-  className?: string;
+  date: DateString; // 'MM/DD/YY'
 }
 
-export const ScheduleTimeTable = ({ time, date, className = '' }: IScheduleTimeTable) => {
-  const {
-    onClickDelegated,
-    getCellClassNamesAvailable,
-    getCellClassNamesUnavailable,
-    getAvailabilityByIndex,
-  } = useSelectScheduleTimeTable(time);
+export const ScheduleTimeTable = ({ time, date }: IScheduleTimeTable) => {
+  const { onClickDelegated, getCellPropertiesByIndex } = useSelectScheduleTimeTable(time);
 
   return (
-    <table className={`${styles.table} ${className}`}>
+    <table className={styles.table}>
       <thead>
         <tr>
           <th>{date}</th>
@@ -41,19 +35,10 @@ export const ScheduleTimeTable = ({ time, date, className = '' }: IScheduleTimeT
           <tr key={hourIndex}>
             {hourSlot.map((time, minuteIndex) => {
               const index = hourIndex * 6 + minuteIndex;
-              const availability = getAvailabilityByIndex(index);
-              const { className, who } = availability
-                ? getCellClassNamesAvailable(index)
-                : getCellClassNamesUnavailable(index);
+              const { className, who } = getCellPropertiesByIndex(index);
 
               return (
-                <td
-                  className={className}
-                  key={index}
-                  data-index={index}
-                  data-availability={availability}
-                  data-who={who}
-                >
+                <td className={className} key={index} data-index={index} data-who={who}>
                   {time}
                 </td>
               );
