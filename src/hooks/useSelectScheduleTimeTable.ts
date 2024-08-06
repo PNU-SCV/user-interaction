@@ -38,6 +38,7 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
       time: 'AM',
     },
   ];
+  const showConfirm = schedule.start !== null && schedule.end !== null;
 
   const getAvailabilityByIndex = useCallback(
     (index: number) => {
@@ -138,6 +139,7 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
     getCellClassNamesAvailable,
     getCellClassNamesUnavailable,
     getAvailabilityByIndex,
+    showConfirm,
   };
 };
 
@@ -159,6 +161,14 @@ const createNewScheduleIfValid = (
     return Math.min(...dropBeforeStart, realEnd) === realEnd;
   };
 
+  // 시작 시점 선택 취소
+  if (schedule.start === newIndex) {
+    return { ...schedule, start: null };
+  }
+  // 종료 시점 선택 취소
+  if (schedule.end === newIndex) {
+    return { ...schedule, end: null };
+  }
   // 스케줄 시작 시점이 아직 안정해 졌다면
   if (schedule.start === null) {
     if (schedule.end === null) {
@@ -182,14 +192,6 @@ const createNewScheduleIfValid = (
       return { start: realStart, end: realEnd };
     }
     return schedule;
-  }
-  // 시작 시점 선택 취소
-  if (schedule.start === newIndex) {
-    return { ...schedule, start: null };
-  }
-  // 종료 시점 선택 취소
-  if (schedule.end === newIndex) {
-    return { ...schedule, end: null };
   }
   // 새로운 시점이 현재 종료 시점보다 늦는다면
   if (newIndex > schedule.end) {
