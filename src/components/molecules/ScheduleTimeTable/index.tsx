@@ -1,5 +1,7 @@
 import styles from './index.module.css';
-import { useSelectScheduleTimeTable } from '@/hooks/useSelectScheduleTimeTable';
+import { CellAvailabilityResult } from '@/hooks/useSelectScheduleTimeTable';
+import { IScheduleReservation } from '@components/organisms/ScheduleReservation';
+import { MouseEvent } from 'react';
 
 const hours = Array.from({ length: 8 }, (_, i) => i);
 const minutes = Array.from({ length: 6 }, (_, i) => i * 10);
@@ -14,14 +16,17 @@ const timeSlots = (time: ScheduleTime) => {
 export type ScheduleTime = 'Morning' | 'Afternoon' | 'Night';
 export type DateString = `${number}/${number}/${number}`;
 
-export interface IScheduleTimeTable {
-  time: ScheduleTime;
-  date: DateString; // 'MM/DD/YY'
+export interface IScheduleTimeTable extends IScheduleReservation {
+  onClickDelegated: (event: MouseEvent<HTMLTableSectionElement>) => void;
+  getCellPropertiesByIndex: (index: number) => CellAvailabilityResult;
 }
 
-export const ScheduleTimeTable = ({ time, date }: IScheduleTimeTable) => {
-  const { onClickDelegated, getCellPropertiesByIndex } = useSelectScheduleTimeTable(time);
-
+export const ScheduleTimeTable = ({
+  time,
+  date,
+  onClickDelegated,
+  getCellPropertiesByIndex,
+}: IScheduleTimeTable) => {
   return (
     <table className={styles.table}>
       <thead>

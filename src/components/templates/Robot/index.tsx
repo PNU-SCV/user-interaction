@@ -1,17 +1,11 @@
-import { Fragment, ReactElement, useCallback } from 'react';
 import { ROUTER_PATH } from '@/router';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { RoutingButtons } from '@components/molecules/RoutingButtons';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from '@components/molecules/Header';
-import {
-  DateString,
-  ScheduleTime,
-  ScheduleTimeTable,
-} from '@components/molecules/ScheduleTimeTable';
+import { DateString, ScheduleTime } from '@components/molecules/ScheduleTimeTable';
 
 import styles from './index.module.css';
 import { MainContainer } from '@components/atoms/MainContainer';
-import { Flex } from '@components/atoms/Flex';
+import { ScheduleReservation } from '@components/organisms/ScheduleReservation';
 
 const formatDateToYYYYMMDD = (date: Date): DateString => {
   const year = date.getFullYear().toString().slice(2);
@@ -31,8 +25,6 @@ const getScheduleOrderWithDate = (): { times: ScheduleTime[]; date: DateString }
 };
 
 export const Robot = () => {
-  const navigate = useNavigate();
-  const navigateTo = useCallback((path) => () => navigate(path), [navigate]);
   const location = useLocation();
   const defaultRobotPath = '/' + ROUTER_PATH.ROBOT;
   const { times, date } = getScheduleOrderWithDate();
@@ -44,8 +36,7 @@ export const Robot = () => {
         <div className={styles['scroll-container']}>
           {times.map((time) => (
             <div key={`${date} ${time}`} className={styles['scroll-item']}>
-              <ScheduleTimeTable time={time} date={date} />
-              <RoutingButtons onClickTemplate={navigateTo} container={Flex} />
+              <ScheduleReservation time={time} date={date} />
             </div>
           ))}
         </div>

@@ -17,6 +17,7 @@ const availabilitiesInit = Array.from({ length: 12 * 6 }, (_) => true);
 export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
   const [schedule, setSchedule] = useState<Schedule>({ start: null, end: null });
   const [availabilities, setAvailabilities] = useState<boolean[]>(availabilitiesInit);
+  const isSchedulingAllowed = schedule.start !== null && schedule.end !== null;
   const mockUseQueryReserved = [
     {
       who: 'tae!',
@@ -118,7 +119,7 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
     };
   };
 
-  const getCellPropertiesByIndex = (index: number) => {
+  const getCellPropertiesByIndex = (index: number): CellAvailabilityResult => {
     return availabilities[index]
       ? getCellClassNamesAvailable(index)
       : getCellClassNamesUnavailable(index);
@@ -139,7 +140,7 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
   return {
     onClickDelegated,
     getCellPropertiesByIndex,
-    showConfirm,
+    isSchedulingAllowed,
   };
 };
 
