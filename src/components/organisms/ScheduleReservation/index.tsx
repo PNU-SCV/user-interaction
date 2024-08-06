@@ -8,6 +8,7 @@ import { useSelectScheduleTimeTable } from '@/hooks/useSelectScheduleTimeTable';
 import { useNavigate } from 'react-router-dom';
 import { RoutingButtons } from '@components/molecules/RoutingButtons';
 import { Flex } from '@components/atoms/Flex';
+import { ROUTER_PATH } from '@/router';
 
 export interface IScheduleReservation {
   time: ScheduleTime;
@@ -15,11 +16,11 @@ export interface IScheduleReservation {
 }
 
 export const ScheduleReservation = ({ time, date }: IScheduleReservation) => {
-  const { onClickDelegated, getCellPropertiesByIndex, isSchedulingAllowed } =
+  const { onClickDelegated, getCellPropertiesByIndex, isSchedulingAllowed, schedule } =
     useSelectScheduleTimeTable(time);
-
   const navigate = useNavigate();
-  const navigateTo = useCallback((path) => () => navigate(path), [navigate]);
+  const navigateTo = (path: ROUTER_PATH) => () =>
+    navigate(path, { state: { ...schedule, date, time } });
 
   return (
     <Fragment>

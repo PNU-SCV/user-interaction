@@ -64,8 +64,6 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
       if (
         target.tagName === 'TD' &&
         target.dataset.index &&
-        // TODO : data-availability 속성 없는게 더 나은지.
-        // target.dataset.availability === 'true' &&
         availabilities[parseInt(target.dataset.index)]
       ) {
         const newIndex = parseInt(target.dataset.index);
@@ -141,6 +139,7 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
     onClickDelegated,
     getCellPropertiesByIndex,
     isSchedulingAllowed,
+    schedule,
   };
 };
 

@@ -2,6 +2,10 @@ import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { Robot } from '@components/templates/Robot';
 import React from 'react';
 import { Index } from '@components/templates/Index';
+import { Delivery } from '@components/templates/Delivery';
+import { Checkup } from '@components/templates/Checkup';
+import { Advisor } from '@components/templates/Advisor';
+import { Sanitize } from '@components/templates/Sanitize';
 
 export const ROUTER_PATH = Object.freeze({
   ROOT: '/',
@@ -37,10 +41,10 @@ export const router = createBrowserRouter([
         element: <Robot />,
         children: [
           { path: ROUTER_PATH.PROMOTION, element: <div>promotion</div> },
-          { path: ROUTER_PATH.DELIVERY, element: <div>delivery</div> },
-          { path: ROUTER_PATH.CHECKUP, element: <div>checkup</div> },
-          { path: ROUTER_PATH.ADVISOR, element: <div>advisor</div> },
-          { path: ROUTER_PATH.SANITIZE, element: <div>sanitize</div> },
+          { path: ROUTER_PATH.DELIVERY, element: <Delivery /> },
+          { path: ROUTER_PATH.CHECKUP, element: <Checkup /> },
+          { path: ROUTER_PATH.ADVISOR, element: <Advisor /> },
+          { path: ROUTER_PATH.SANITIZE, element: <Sanitize /> },
           { path: '*', element: <div>404 ??</div> },
         ],
       },
