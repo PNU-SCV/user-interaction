@@ -1,18 +1,22 @@
 import styles from './index.module.css';
 import { useSelectScheduleTimeTable } from '@/hooks/useSelectScheduleTimeTable';
 
-const hours = Array.from({ length: 12 }, (_, i) => i);
+const hours = Array.from({ length: 8 }, (_, i) => i);
 const minutes = Array.from({ length: 6 }, (_, i) => i * 10);
-const timeSlots = hours.map((hour) =>
-  minutes.map((minute) => `${hour}:${minute.toString().padStart(2, '0')}`),
-);
+const timeSlots = (time: ScheduleTime) => {
+  const baseHour = time === 'Morning' ? 0 : time === 'Afternoon' ? 8 : 16;
 
-export type ScheduleTime = 'AM' | 'PM';
+  return hours.map((hour) =>
+    minutes.map((minute) => `${baseHour + hour}:${minute.toString().padStart(2, '0')}`),
+  );
+};
+
+export type ScheduleTime = 'Morning' | 'Afternoon' | 'Night';
 export type DateString = `${number}-${number}-${number}`;
 
 export interface IScheduleTimeTable {
   time: ScheduleTime;
-  date: DateString; // 'YYYY-MM-DD'
+  date: DateString; // 'MM-DD'
   className?: string;
 }
 
@@ -22,6 +26,7 @@ export const ScheduleTimeTable = ({ time, date, className = '' }: IScheduleTimeT
     getCellClassNamesAvailable,
     getCellClassNamesUnavailable,
     getAvailabilityByIndex,
+    showConfirm,
   } = useSelectScheduleTimeTable(time);
 
   return (
@@ -33,7 +38,7 @@ export const ScheduleTimeTable = ({ time, date, className = '' }: IScheduleTimeT
         </tr>
       </thead>
       <tbody onClick={onClickDelegated}>
-        {timeSlots.map((hourSlot, hourIndex) => (
+        {timeSlots(time).map((hourSlot, hourIndex) => (
           <tr key={hourIndex}>
             {/*TODO: 지운게 더 괜찮은지*/}
             {/*<td className={styles.hour}>{hourIndex}</td>*/}

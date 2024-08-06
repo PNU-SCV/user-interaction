@@ -4,7 +4,8 @@
     border-spacing: 0 5px;
     border-collapse: separate;
     background-color: white;
-    padding: 0 1rem;
+    padding: 2rem;
+    table-layout: fixed;
 }
 
 .hour {
@@ -54,6 +55,7 @@
     background-color: palevioletred;
     border-radius: 0;
     color: whitesmoke;
+    cursor: not-allowed;
 }
 
 .reserved:hover {

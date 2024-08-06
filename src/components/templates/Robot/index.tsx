@@ -13,25 +13,19 @@ import styles from './index.module.css';
 import { MainContainer } from '@components/atoms/MainContainer';
 
 const formatDateToYYYYMMDD = (date: Date): DateString => {
-  const year = date.getFullYear();
+  const year = date.getFullYear().toString().slice(2);
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-
-  return `${year}-${month}-${day}` as DateString;
+  return `${month}/${day}/${year}` as DateString;
 };
 
-const getScheduleOrderWithDate = (): { times: ScheduleTime[]; dates: DateString[] } => {
+const getScheduleOrderWithDate = (): { times: ScheduleTime[]; date: DateString } => {
   const currentDate = new Date();
-  const nextDate = new Date(currentDate);
-  nextDate.setDate(currentDate.getDate() + 1);
 
-  const isAM = currentDate.getHours() < 12;
-  const times: ScheduleTime[] = isAM ? ['AM', 'PM'] : ['PM', 'AM'];
-  const dates: DateString[] = isAM
-    ? [formatDateToYYYYMMDD(currentDate), formatDateToYYYYMMDD(currentDate)]
-    : [formatDateToYYYYMMDD(currentDate), formatDateToYYYYMMDD(nextDate)];
+  const times: ScheduleTime[] = ['Morning', 'Afternoon', 'Night'];
+  const date: DateString = formatDateToYYYYMMDD(currentDate);
 
-  return { times, dates };
+  return { times, date };
 };
 
 export const Robot = () => {
@@ -39,16 +33,16 @@ export const Robot = () => {
   const navigateTo = useCallback((path) => () => navigate(path), [navigate]);
   const location = useLocation();
   const defaultRobotPath = '/' + ROUTER_PATH.ROBOT;
-  const { times, dates } = getScheduleOrderWithDate();
+  const { times, date } = getScheduleOrderWithDate();
 
   return (
     <MainContainer>
       <Header />
       {location.pathname === defaultRobotPath ? (
         <div className={styles['scroll-container']}>
-          {times.map((time, idx) => (
-            <Fragment key={`${dates[idx]} ${time}`}>
-              <ScheduleTimeTable time={time} date={dates[idx]} className={styles['scroll-item']} />
+          {times.map((time) => (
+            <Fragment key={`${date} ${time}`}>
+              <ScheduleTimeTable time={time} date={date} className={styles['scroll-item']} />
             </Fragment>
           ))}
           <RoutingButtons

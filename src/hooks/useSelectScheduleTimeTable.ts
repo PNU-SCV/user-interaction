@@ -17,25 +17,25 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
       who: 'tae!',
       start: 0,
       end: 10,
-      time: 'PM',
+      time: 'Morning',
     },
     {
       who: 'heon!',
       start: 50,
       end: 53,
-      time: 'PM',
+      time: 'Morning',
     },
     {
       who: 'seok!',
       start: 13,
       end: 23,
-      time: 'AM',
+      time: 'Afternoon',
     },
     {
       who: 'won!',
       start: 42,
       end: 50,
-      time: 'AM',
+      time: 'Afternoon',
     },
   ];
   const showConfirm = schedule.start !== null && schedule.end !== null;
