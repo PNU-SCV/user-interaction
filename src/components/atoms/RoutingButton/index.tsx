@@ -19,11 +19,9 @@ export const RoutingButton = ({
   if (onClick) {
     return (
       <div className={styles.card}>
-        <div className="card">
-          <button disabled={disabled} onClick={onClick}>
-            {label}
-          </button>
-        </div>
+        <button disabled={disabled} onClick={onClick}>
+          {label}
+        </button>
       </div>
     );
   }
@@ -31,20 +29,16 @@ export const RoutingButton = ({
   if (onClickTemplate) {
     return (
       <div className={styles.card}>
-        <div className="card">
-          <button disabled={disabled} onClick={onClickTemplate(path as string)}>
-            {label}
-          </button>
-        </div>
+        <button disabled={disabled} onClick={onClickTemplate(path as string)}>
+          {label}
+        </button>
       </div>
     );
   }
 
   return (
     <div className={styles.card}>
-      <div className="card">
-        <button disabled={true}>{label}</button>
-      </div>
+      <button disabled={true}>{label}</button>
     </div>
   );
 };

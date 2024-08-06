@@ -6,19 +6,19 @@ import { IRoutingButton, RoutingButton } from '@components/atoms/RoutingButton';
 export interface IRoutingButtons {
   onClickTemplate: (path: string) => () => void;
   containerClassName?: string;
-  container?: ElementType | ReactElement;
+  container: ElementType;
 }
 
 export const RoutingButtons = ({
   onClickTemplate,
-  container = Fragment,
+  container,
   containerClassName,
 }: IRoutingButtons) => {
   return (
     <IteratingMapper<IRoutingButton>
-      container={container as ElementType}
+      container={container}
       component={RoutingButton}
-      items={ROBOT_ROUTER_PATH_ARRAY}
+      items={ROBOT_ROUTER_PATH_ARRAY.slice(1)}
       otherItemProps={{ onClickTemplate }}
       otherContainerProps={{ className: containerClassName }}
     />

@@ -13,6 +13,8 @@
 .scroll-item {
     scroll-snap-align: start;
     flex: 0 0 100%;
+    padding: 1rem 2rem;
+    overflow: hidden;
 }
 
 .scroll-container::-webkit-scrollbar {

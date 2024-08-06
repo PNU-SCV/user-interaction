@@ -26,7 +26,6 @@ export const ScheduleTimeTable = ({ time, date, className = '' }: IScheduleTimeT
     getCellClassNamesAvailable,
     getCellClassNamesUnavailable,
     getAvailabilityByIndex,
-    showConfirm,
   } = useSelectScheduleTimeTable(time);
 
   return (
@@ -40,8 +39,6 @@ export const ScheduleTimeTable = ({ time, date, className = '' }: IScheduleTimeT
       <tbody onClick={onClickDelegated}>
         {timeSlots(time).map((hourSlot, hourIndex) => (
           <tr key={hourIndex}>
-            {/*TODO: 지운게 더 괜찮은지*/}
-            {/*<td className={styles.hour}>{hourIndex}</td>*/}
             {hourSlot.map((time, minuteIndex) => {
               const index = hourIndex * 6 + minuteIndex;
               const availability = getAvailabilityByIndex(index);

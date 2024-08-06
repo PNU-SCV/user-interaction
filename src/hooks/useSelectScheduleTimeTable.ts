@@ -21,8 +21,8 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
     },
     {
       who: 'heon!',
-      start: 50,
-      end: 53,
+      start: 45,
+      end: 47,
       time: 'Morning',
     },
     {
@@ -34,11 +34,10 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
     {
       who: 'won!',
       start: 42,
-      end: 50,
+      end: 47,
       time: 'Afternoon',
     },
   ];
-  const showConfirm = schedule.start !== null && schedule.end !== null;
 
   const getAvailabilityByIndex = useCallback(
     (index: number) => {
@@ -139,7 +138,6 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
     getCellClassNamesAvailable,
     getCellClassNamesUnavailable,
     getAvailabilityByIndex,
-    showConfirm,
   };
 };
 
@@ -150,7 +148,6 @@ const calcStartEnd = (p1: number, p2: number) => {
   };
 };
 
-//TODO : 스케줄 시간 start end 잡자 마자 요청을 보내서 서버에 시간을 예약 해야할 지 아니면 나중에 submit 버튼을 통해 요청을 보낼 지
 const createNewScheduleIfValid = (
   schedule: Schedule,
   newIndex: number,
