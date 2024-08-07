@@ -6,10 +6,18 @@ export interface IFlex {
   justifyContent?: string;
   alignItems?: string;
   flexDirection?: string;
+  flexWrap?: string;
   children: ReactElement;
 }
 
-export const Flex = ({ padding, justifyContent, alignItems, flexDirection, children }: IFlex) => {
+export const Flex = ({
+  padding,
+  justifyContent,
+  alignItems,
+  flexDirection,
+  children,
+  flexWrap,
+}: IFlex) => {
   const style = useMemo(
     () =>
       ({
@@ -17,8 +25,9 @@ export const Flex = ({ padding, justifyContent, alignItems, flexDirection, child
         justifyContent: justifyContent ?? '',
         alignItems: alignItems ?? '',
         flexDirection: flexDirection ?? '',
+        flexWrap: flexWrap ?? '',
       }) as CSSProperties,
-    [padding, justifyContent, alignItems, flexDirection],
+    [padding, justifyContent, alignItems, flexDirection, flexWrap],
   );
 
   return (

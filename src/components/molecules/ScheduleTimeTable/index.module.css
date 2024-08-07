@@ -94,6 +94,21 @@ table th {
     border-right: 2px solid white;
 }
 
+@media (max-width: 768px) {
+    .table {
+        font-size: 14px;
+    }
+    .schedule--edge {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 390px) {
+    .selective {
+        padding: 1rem .6rem;
+    }
+}
+
 .lightcoral {
     background-color: lightcoral;
 }

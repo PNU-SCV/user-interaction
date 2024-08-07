@@ -17,6 +17,12 @@
     overflow: hidden;
 }
 
+@media (max-width: 768px) {
+    .scroll-item {
+        padding: 0;
+    }
+}
+
 .scroll-container::-webkit-scrollbar {
     width: 12px;
 }

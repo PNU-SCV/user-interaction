@@ -2,3 +2,9 @@
     padding: 2em;
     white-space: nowrap;
 }
+
+@media (max-width: 390px) {
+    .card {
+        padding: 1.5em;
+    }
+}
