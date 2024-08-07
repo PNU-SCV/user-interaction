@@ -22,6 +22,16 @@ const formatDateToMMDDYY = (date: Date): DateString => {
   return `${month}/${day}/${year}` as DateString;
 };
 
+const getElementsByScheduleTime = (time: ScheduleTime) => {
+  const container: HTMLElement = document.querySelector(`.${styles['scroll-container']}`);
+  const scheduleTables: NodeListOf<HTMLElement> = document.querySelectorAll(
+    `.${styles['scroll-item']}`,
+  );
+  const selectedTable: HTMLElement = scheduleTables[scheduleTimes.indexOf(time)];
+
+  return { container, selectedTable };
+};
+
 const getScrollPosition = (container: HTMLElement, element: HTMLElement): number => {
   const containerRect = container.getBoundingClientRect();
   const elementRect = element.getBoundingClientRect();
@@ -29,9 +39,9 @@ const getScrollPosition = (container: HTMLElement, element: HTMLElement): number
   return elementRect.top - containerRect.top + container.scrollTop;
 };
 
-const scrollDown = (container: HTMLElement, position: number) => {
+const scrollDown = (container: HTMLElement, selectedTable: HTMLElement) => {
   container.scrollTo({
-    top: position,
+    top: getScrollPosition(container, selectedTable),
     behavior: 'smooth',
   });
 };
@@ -46,17 +56,13 @@ export const Robot = () => {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    const time = searchParams.get('time');
+    const scheduleTime = searchParams.get('time');
 
-    if (shouldScrollDown(time)) {
-      const container: HTMLElement = document.querySelector(`.${styles['scroll-container']}`);
-      const scheduleTables: NodeListOf<HTMLElement> = document.querySelectorAll(
-        `.${styles['scroll-item']}`,
-      );
-      const selectedTable: HTMLElement = scheduleTables[scheduleTimes.indexOf(time)];
+    if (shouldScrollDown(scheduleTime)) {
+      const { container, selectedTable } = getElementsByScheduleTime(scheduleTime);
 
       if (container && selectedTable) {
-        scrollDown(container, getScrollPosition(container, selectedTable));
+        scrollDown(container, selectedTable);
       }
     }
   });
