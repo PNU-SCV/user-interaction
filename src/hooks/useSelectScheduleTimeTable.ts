@@ -13,16 +13,27 @@ export type CellAvailabilityResult = {
 };
 
 const availabilitiesInit = Array.from({ length: 8 * 6 }, (_) => true);
+
 const parseParam = (param: string | null): number | null => {
   return param === null ? null : parseInt(param);
 };
 
-export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
+const getInitialSchedule = (time: ScheduleTime) => {
   const searchParams = new URLSearchParams(window.location.search);
-  const [schedule, setSchedule] = useState<Schedule>({
-    start: parseParam(searchParams.get('start')),
-    end: parseParam(searchParams.get('end')),
-  });
+  if (searchParams.get('time') === time) {
+    return {
+      start: parseParam(searchParams.get('start')),
+      end: parseParam(searchParams.get('end')),
+    };
+  }
+  return {
+    start: null,
+    end: null,
+  };
+};
+
+export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
+  const [schedule, setSchedule] = useState<Schedule>(() => getInitialSchedule(time));
   const [availabilities, setAvailabilities] = useState<boolean[]>(availabilitiesInit);
   const isScheduleNotFulfilled = schedule.start === null || schedule.end === null;
   const mockUseQueryReserved = [

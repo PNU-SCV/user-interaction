@@ -20,8 +20,10 @@ export const ScheduleReservation = ({ time, date }: IScheduleReservation) => {
     useSelectScheduleTimeTable(time);
   const navigate = useNavigate();
   const navigateTo = (path: ROUTER_PATH) => () => {
-    // NOTE: 이동한 페이지에서 뒤로가기 했을 때, 선택했던 스케줄 기억하고 있으면 좋겠어서 url로 넘겼는데 navigate 두 번 하는게 맞는지.
-    navigate(`${location.pathname}?start=${schedule.start}&end=${schedule.end}`, { replace: true });
+    // TODO : popstate 이벤트 감지해서 state 넣어주는 거 보단 이게 낫지 않을까.
+    navigate(`${location.pathname}?start=${schedule.start}&end=${schedule.end}&time=${time}`, {
+      replace: true,
+    });
     navigate(path, { state: { ...schedule, date, time } });
   };
 

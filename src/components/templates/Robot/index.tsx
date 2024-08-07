@@ -4,15 +4,17 @@ import { Header } from '@components/molecules/Header';
 import {
   calcTimeSlotByTimeAndIndex,
   DateString,
+  isScheduleTime,
   ScheduleTime,
+  scheduleTimes,
 } from '@components/molecules/ScheduleTimeTable';
 
 import styles from './index.module.css';
 import { MainContainer } from '@components/atoms/MainContainer';
 import { ScheduleReservation } from '@components/organisms/ScheduleReservation';
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 
-const formatDateToYYYYMMDD = (date: Date): DateString => {
+const formatDateToMMDDYY = (date: Date): DateString => {
   const year = date.getFullYear().toString().slice(2);
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
@@ -20,26 +22,51 @@ const formatDateToYYYYMMDD = (date: Date): DateString => {
   return `${month}/${day}/${year}` as DateString;
 };
 
-const getScheduleOrderWithDate = (): { times: ScheduleTime[]; date: DateString } => {
-  const currentDate = new Date();
-  // TODO: 나중에 명칭 제대로 수정
-  const times: ScheduleTime[] = ['Morning', 'Afternoon', 'Night'];
-  const date: DateString = formatDateToYYYYMMDD(currentDate);
+const getScrollPosition = (container: HTMLElement, element: HTMLElement): number => {
+  const containerRect = container.getBoundingClientRect();
+  const elementRect = element.getBoundingClientRect();
 
-  return { times, date };
+  return elementRect.top - containerRect.top + container.scrollTop;
+};
+
+const scrollDown = (container: HTMLElement, position: number) => {
+  container.scrollTo({
+    top: position,
+    behavior: 'smooth',
+  });
 };
 
 export const Robot = () => {
   const location = useLocation();
   const defaultRobotPath = '/' + ROUTER_PATH.ROBOT;
-  const { times, date } = getScheduleOrderWithDate();
+  const date: DateString = formatDateToMMDDYY(new Date());
+  const shouldScrollDown = (time: string | null): time is ScheduleTime => {
+    return time !== null && isScheduleTime(time) && location.pathname === defaultRobotPath;
+  };
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const time = searchParams.get('time');
+
+    if (shouldScrollDown(time)) {
+      const container: HTMLElement = document.querySelector(`.${styles['scroll-container']}`);
+      const scheduleTables: NodeListOf<HTMLElement> = document.querySelectorAll(
+        `.${styles['scroll-item']}`,
+      );
+      const selectedTable: HTMLElement = scheduleTables[scheduleTimes.indexOf(time)];
+
+      if (container && selectedTable) {
+        scrollDown(container, getScrollPosition(container, selectedTable));
+      }
+    }
+  });
 
   return (
     <MainContainer>
       <Header />
       {location.pathname === defaultRobotPath ? (
         <div className={styles['scroll-container']}>
-          {times.map((time) => (
+          {scheduleTimes.map((time) => (
             <div key={`${date} ${time}`} className={styles['scroll-item']}>
               <ScheduleReservation time={time} date={date} />
             </div>

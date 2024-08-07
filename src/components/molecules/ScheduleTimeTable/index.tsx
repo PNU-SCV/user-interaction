@@ -20,7 +20,13 @@ export const calcTimeSlotByTimeAndIndex = (time: ScheduleTime, index: number): s
   return `${baseHour + hour}:${minute.toString().padStart(2, '0')}`;
 };
 
+// TODO: 나중에 명칭 제대로 수정
 export type ScheduleTime = 'Morning' | 'Afternoon' | 'Night';
+export const scheduleTimes: ScheduleTime[] = ['Morning', 'Afternoon', 'Night'];
+export const isScheduleTime = (value: string): value is ScheduleTime => {
+  return scheduleTimes.includes(value as ScheduleTime);
+};
+
 export type DateString = `${number}/${number}/${number}`;
 
 export interface IScheduleTimeTable extends IScheduleReservation {
