@@ -1,11 +1,16 @@
 import { ROUTER_PATH } from '@/router';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Header } from '@components/molecules/Header';
-import { DateString, ScheduleTime } from '@components/molecules/ScheduleTimeTable';
+import {
+  calcTimeSlotByTimeAndIndex,
+  DateString,
+  ScheduleTime,
+} from '@components/molecules/ScheduleTimeTable';
 
 import styles from './index.module.css';
 import { MainContainer } from '@components/atoms/MainContainer';
 import { ScheduleReservation } from '@components/organisms/ScheduleReservation';
+import { Fragment } from 'react';
 
 const formatDateToYYYYMMDD = (date: Date): DateString => {
   const year = date.getFullYear().toString().slice(2);
@@ -40,8 +45,24 @@ export const Robot = () => {
             </div>
           ))}
         </div>
+      ) : location?.state ? (
+        (() => {
+          const { date: stateDate, time: stateTime, start = null, end = null } = location.state;
+          const [timeSlotStart, timeSlotEnd] = [start, end].map((index) =>
+            calcTimeSlotByTimeAndIndex(stateTime, index),
+          );
+
+          return (
+            <Fragment>
+              <div>
+                {stateDate} {stateTime} {timeSlotStart} ~ {timeSlotEnd}
+              </div>
+              <Outlet />
+            </Fragment>
+          );
+        })()
       ) : (
-        <Outlet />
+        <Navigate to={defaultRobotPath} />
       )}
     </MainContainer>
   );

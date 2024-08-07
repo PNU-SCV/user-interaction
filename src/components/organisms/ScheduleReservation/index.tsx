@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import { Fragment } from 'react';
 import {
   DateString,
   ScheduleTime,
@@ -16,11 +16,14 @@ export interface IScheduleReservation {
 }
 
 export const ScheduleReservation = ({ time, date }: IScheduleReservation) => {
-  const { onClickDelegated, getCellPropertiesByIndex, isSchedulingAllowed, schedule } =
+  const { onClickDelegated, getCellPropertiesByIndex, isScheduleNotFulfilled, schedule } =
     useSelectScheduleTimeTable(time);
   const navigate = useNavigate();
-  const navigateTo = (path: ROUTER_PATH) => () =>
+  const navigateTo = (path: ROUTER_PATH) => () => {
+    // NOTE: 이동한 페이지에서 뒤로가기 했을 때, 선택했던 스케줄 기억하고 있으면 좋겠어서 url로 넘겼는데 navigate 두 번 하는게 맞는지.
+    navigate(`${location.pathname}?start=${schedule.start}&end=${schedule.end}`, { replace: true });
     navigate(path, { state: { ...schedule, date, time } });
+  };
 
   return (
     <Fragment>
@@ -33,7 +36,7 @@ export const ScheduleReservation = ({ time, date }: IScheduleReservation) => {
       <RoutingButtons
         onClickTemplate={navigateTo}
         container={Flex}
-        disabled={!isSchedulingAllowed}
+        disabled={isScheduleNotFulfilled}
       />
     </Fragment>
   );

@@ -12,6 +12,13 @@ const timeSlots = (time: ScheduleTime) => {
     minutes.map((minute) => `${baseHour + hour}:${minute.toString().padStart(2, '0')}`),
   );
 };
+export const calcTimeSlotByTimeAndIndex = (time: ScheduleTime, index: number): string => {
+  const baseHour = time === 'Morning' ? 0 : time === 'Afternoon' ? 8 : 16;
+  const hour = Math.floor(index / 6);
+  const minute = (index % 6) * 10;
+
+  return `${baseHour + hour}:${minute.toString().padStart(2, '0')}`;
+};
 
 export type ScheduleTime = 'Morning' | 'Afternoon' | 'Night';
 export type DateString = `${number}/${number}/${number}`;

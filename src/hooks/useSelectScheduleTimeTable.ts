@@ -12,12 +12,19 @@ export type CellAvailabilityResult = {
   who: string | undefined;
 };
 
-const availabilitiesInit = Array.from({ length: 12 * 6 }, (_) => true);
+const availabilitiesInit = Array.from({ length: 8 * 6 }, (_) => true);
+const parseParam = (param: string | null): number | null => {
+  return param === null ? null : parseInt(param);
+};
 
 export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
-  const [schedule, setSchedule] = useState<Schedule>({ start: null, end: null });
+  const searchParams = new URLSearchParams(window.location.search);
+  const [schedule, setSchedule] = useState<Schedule>({
+    start: parseParam(searchParams.get('start')),
+    end: parseParam(searchParams.get('end')),
+  });
   const [availabilities, setAvailabilities] = useState<boolean[]>(availabilitiesInit);
-  const isSchedulingAllowed = schedule.start !== null && schedule.end !== null;
+  const isScheduleNotFulfilled = schedule.start === null || schedule.end === null;
   const mockUseQueryReserved = [
     {
       who: 'tae!',
@@ -138,7 +145,7 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
   return {
     onClickDelegated,
     getCellPropertiesByIndex,
-    isSchedulingAllowed,
+    isScheduleNotFulfilled,
     schedule,
   };
 };
