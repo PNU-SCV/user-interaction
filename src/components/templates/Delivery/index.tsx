@@ -6,7 +6,7 @@ import {
 
 import styles from './index.module.css';
 
-const tempPlaceList: ThreeDimensionalCard[] = [
+export const tempPlaceList: ThreeDimensionalCard[] = [
   {
     heading: '과도',
     address: '201-6518',
@@ -24,7 +24,7 @@ const tempPlaceList: ThreeDimensionalCard[] = [
   },
   {
     heading: '회의실',
-    address: '201-6518',
+    address: '201-6514',
     desc: '',
   },
   {
@@ -53,6 +53,11 @@ const tempItemList: ThreeDimensionalCard[] = [
   {
     heading: '소모품',
     address: '거즈',
+    desc: '',
+  },
+  {
+    heading: '소모품',
+    address: '진통제',
     desc: '',
   },
 ];
