@@ -39,7 +39,7 @@ const getScrollPosition = (container: HTMLElement, element: HTMLElement): number
   return elementRect.top - containerRect.top + container.scrollTop;
 };
 
-const scrollDown = (container: HTMLElement, selectedTable: HTMLElement) => {
+const scrollToElement = (container: HTMLElement, selectedTable: HTMLElement) => {
   container.scrollTo({
     top: getScrollPosition(container, selectedTable),
     behavior: 'smooth',
@@ -50,20 +50,18 @@ export const Robot = () => {
   const location = useLocation();
   const defaultRobotPath = '/' + ROUTER_PATH.ROBOT;
   const date: DateString = formatDateToMMDDYY(new Date());
-  const shouldScrollDown = (time: string | null): time is ScheduleTime => {
+  const hasUserAlreadySelectedTime = (time: string | null): time is ScheduleTime => {
     return time !== null && isScheduleTime(time) && location.pathname === defaultRobotPath;
   };
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    const scheduleTime = searchParams.get('time');
+    const time = searchParams.get('time');
 
-    if (shouldScrollDown(scheduleTime)) {
-      const { container, selectedTable } = getElementsByScheduleTime(scheduleTime);
+    if (hasUserAlreadySelectedTime(time)) {
+      const { container, selectedTable } = getElementsByScheduleTime(time);
 
-      if (container && selectedTable) {
-        scrollDown(container, selectedTable);
-      }
+      scrollToElement(container, selectedTable);
     }
   });
 
