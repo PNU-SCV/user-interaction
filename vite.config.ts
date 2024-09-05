@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: '@components', replacement: path.resolve(__dirname, 'src/components') },
+      { find: '@images', replacement: path.resolve(__dirname, 'src/assets/images') },
       { find: '@', replacement: path.resolve(__dirname, 'src') },
     ],
   },
