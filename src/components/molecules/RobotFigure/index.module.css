@@ -1,0 +1,24 @@
+.figure--container {
+    position: relative;
+    border: 1px solid transparent;
+}
+
+.figure--container:hover {
+    border-color: blue;
+}
+
+.figure--image {
+    cursor: pointer;
+}
+
+.figure--label {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    white-space: nowrap;
+    background-color: whitesmoke;
+    padding: 2px;
+    opacity: 0.9;
+    cursor: pointer;
+    border-radius: 2px;
+    border: 2px solid black;
+}

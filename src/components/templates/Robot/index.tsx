@@ -46,6 +46,12 @@ const scrollToElement = (container: HTMLElement, selectedTable: HTMLElement) => 
   });
 };
 
+export interface IRobot {
+  id: string;
+  label: string;
+  path: string;
+}
+
 export const Robot = () => {
   const location = useLocation();
   const defaultRobotPath = '/' + ROUTER_PATH.ROBOT;
