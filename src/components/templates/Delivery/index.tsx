@@ -5,6 +5,7 @@ import {
 } from '@components/molecules/ThreeDimensionalCards';
 
 import styles from './index.module.css';
+import axios from 'axios';
 
 export const tempPlaceList: ThreeDimensionalCard[] = [
   {
@@ -76,9 +77,25 @@ export const Delivery = () => {
       }
     };
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log(e);
+    const originInput = originRef.current as HTMLInputElement;
+    const destInput = destRef.current as HTMLInputElement;
+    const itemInput = itemRef.current as HTMLInputElement;
+
+    const response = await fetch('http://localhost:8000/shipment/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        origin: originInput.value,
+        dest: destInput.value,
+        item: itemInput.value,
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
   };
 
   return (

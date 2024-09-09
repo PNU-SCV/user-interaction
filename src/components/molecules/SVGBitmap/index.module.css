@@ -1,0 +1,12 @@
+.pointing {
+    cursor: pointer;
+}
+
+.pointing:hover:after {
+    display: block;
+    border: 1px solid black;
+    width: 100%;
+}
+.pointing:hover {
+    fill: lightskyblue;
+}

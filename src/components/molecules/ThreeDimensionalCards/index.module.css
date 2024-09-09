@@ -14,6 +14,7 @@
 .list .item {
     transition: .5s;
     filter: brightness(0.9);
+    cursor: pointer;
 }
 
 .list .item:hover {
