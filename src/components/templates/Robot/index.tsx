@@ -13,6 +13,7 @@ import styles from './index.module.css';
 import { MainContainer } from '@components/atoms/MainContainer';
 import { ScheduleReservation } from '@components/organisms/ScheduleReservation';
 import { Fragment, useEffect } from 'react';
+import { Point } from '@/commons/types';
 
 const formatDateToMMDDYY = (date: Date): DateString => {
   const year = date.getFullYear().toString().slice(2);
@@ -49,6 +50,7 @@ const scrollToElement = (container: HTMLElement, selectedTable: HTMLElement) => 
 export interface IRobot {
   id: string;
   label: string;
+  pos: Point;
   path: string;
 }
 
