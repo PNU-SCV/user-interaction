@@ -1,4 +1,4 @@
-import { Point, Rect } from '@/commons/types';
+import { Point } from '@/commons/types';
 import { useReducer, useState } from 'react';
 import { IRobot } from '@components/templates/Robot';
 
@@ -37,6 +37,12 @@ export const useBitmapRobotManager = (robots: IRobot[]) => {
       dest: `${destX},${destY}`,
     });
 
+  const createStopMsg = () =>
+    JSON.stringify({
+      command: MOVE_COMMAND.STOP,
+      target: selectedRobotId,
+    });
+
   const updateRobotPosition = (robotPosMsg: RobotPositionMsg) =>
     dispatch({
       type: 'UPDATE_POSITION',
@@ -53,13 +59,16 @@ export const useBitmapRobotManager = (robots: IRobot[]) => {
       id={robot.id}
       cx={robotPositions[robot.id].x + 0.5}
       cy={robotPositions[robot.id].y + 0.5}
-      style={{ transition: 'cx 0.5s, cy 0.5s', cursor: 'pointer' }}
+      style={{
+        transition: 'cx 0.5s, cy 0.5s',
+        cursor: 'pointer',
+      }}
       r="0.5"
       fill={selectedRobotId === robot.id ? 'red' : 'black'}
     />
   ));
 
-  return { robotSVGs, createGoMsg, selectRobotOnToggle, updateRobotPosition };
+  return { robotSVGs, createGoMsg, createStopMsg, selectRobotOnToggle, updateRobotPosition };
 };
 
 const robotPositionReducer = (

@@ -29,7 +29,7 @@ export const SVGBitmap = ({ rects, robots }: ISVGBitmap) => {
    * 다만, 로봇 이동은 여기서 웹소켓으로 요청 (위치 선택, 이벤트 위임 때문에)
    * 특이사항으로 미니맵에서 로봇의 위치는 웹소켓의 onmessage를 통해서만 업데이트됨
    */
-  const { robotSVGs, createGoMsg, selectRobotOnToggle, updateRobotPosition } =
+  const { robotSVGs, createGoMsg, createStopMsg, selectRobotOnToggle, updateRobotPosition } =
     useBitmapRobotManager(robots);
   const onmessage = (event) => updateRobotPosition(parseWebSocketMsg(event));
   const { isConnected, sendMsg } = useWebSocket(onmessage);
