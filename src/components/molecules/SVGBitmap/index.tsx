@@ -4,13 +4,17 @@ import { IRobot } from '@components/pages/Robot';
 import { Rect } from '@/commons/types';
 import { RobotPositionMsg, useBitmapRobotManager } from '@/hooks/useBitmapRobotManager';
 import { useWebSocket } from '@/hooks/useWebSocket';
+import { useNavigate } from 'react-router-dom';
+import { ROUTER_PATH } from '@/router';
 
 const colorValid = 'white';
 const colorInvalid = 'whitesmoke';
+type BITMAP_MODE = 'VIEWER' | 'COMMANDER';
 
 export interface ISVGBitmap {
   rects: Rect[];
   robots: IRobot[];
+  bitmapMode?: BITMAP_MODE;
 }
 
 const parseWebSocketMsg = (event): RobotPositionMsg => {
@@ -22,7 +26,7 @@ const parseWebSocketMsg = (event): RobotPositionMsg => {
   return { id, newX, newY };
 };
 
-export const SVGBitmap = ({ rects, robots }: ISVGBitmap) => {
+export const SVGBitmap = ({ rects, robots, bitmapMode = 'VIEWER' }: ISVGBitmap) => {
   /**
    * 미니맵을 통해 로봇을 선택 및 이동시킬 수 있다.
    * 로봇 관련된 건 모두 useBitmapRobotManager 훅에서 관리
@@ -33,6 +37,7 @@ export const SVGBitmap = ({ rects, robots }: ISVGBitmap) => {
     useBitmapRobotManager(robots);
   const onmessage = (event) => updateRobotPosition(parseWebSocketMsg(event));
   const { isConnected, sendMsg } = useWebSocket(onmessage);
+  const navigate = useNavigate();
 
   const sendSelectedRobotToGo = (destX: number, destY: number) => {
     sendMsg(createGoMsg(destX, destY));
@@ -40,6 +45,14 @@ export const SVGBitmap = ({ rects, robots }: ISVGBitmap) => {
 
   const onClickMap: MouseEventHandler<SVGSVGElement> = (e) => {
     const element = e.target as SVGElement;
+    if (bitmapMode === 'VIEWER') {
+      const id = element.getAttribute('id');
+      if (id) {
+        navigate(ROUTER_PATH.ROBOT + `?id=${id}`);
+      }
+      return;
+    }
+
     if (element.getAttribute('fill') !== colorValid) {
       const id = element.getAttribute('id');
       if (id) {

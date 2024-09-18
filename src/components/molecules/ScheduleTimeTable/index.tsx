@@ -5,19 +5,20 @@ import { MouseEvent } from 'react';
 
 const hours = Array.from({ length: 8 }, (_, i) => i);
 const minutes = Array.from({ length: 6 }, (_, i) => i * 10);
-const timeSlots = (time: ScheduleTime) => {
-  const baseHour = time === 'Morning' ? 0 : time === 'Afternoon' ? 8 : 16;
 
-  return hours.map((hour) =>
-    minutes.map((minute) => `${baseHour + hour}:${minute.toString().padStart(2, '0')}`),
+const getBaseHour = (time: ScheduleTime) =>
+  time === 'Morning' ? 0 : time === 'Afternoon' ? 8 : 16;
+
+const timeSlots = (time: ScheduleTime) =>
+  hours.map((hour) =>
+    minutes.map((minute) => `${getBaseHour(time) + hour}:${minute.toString().padStart(2, '0')}`),
   );
-};
+
 export const calcTimeSlotByTimeAndIndex = (time: ScheduleTime, index: number): string => {
-  const baseHour = time === 'Morning' ? 0 : time === 'Afternoon' ? 8 : 16;
   const hour = Math.floor(index / 6);
   const minute = (index % 6) * 10;
 
-  return `${baseHour + hour}:${minute.toString().padStart(2, '0')}`;
+  return `${getBaseHour(time) + hour}:${minute.toString().padStart(2, '0')}`;
 };
 
 // TODO: 나중에 명칭 제대로 수정

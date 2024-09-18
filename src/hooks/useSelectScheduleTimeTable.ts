@@ -1,8 +1,9 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { MouseEvent, useCallback, useMemo, useRef, useState } from 'react';
 import styles from '@components/molecules/ScheduleTimeTable/index.module.css';
 import { ScheduleTime } from '@components/molecules/ScheduleTimeTable';
+import { ScheduleDetail } from '@components/organisms/RobotTaskTimePicker';
 
-type Schedule = {
+export type Schedule = {
   start: number | null;
   end: number | null;
 };
@@ -12,7 +13,7 @@ export type CellAvailabilityResult = {
   who: string | undefined;
 };
 
-const availabilitiesInit = Array.from({ length: 8 * 6 }, (_) => true);
+const availabilitiesInit = () => Array.from({ length: 8 * 6 }, (_) => true);
 
 const parseParam = (param: string | null): number | null => {
   return param === null ? null : parseInt(param);
@@ -32,49 +33,33 @@ const getInitialSchedule = (time: ScheduleTime) => {
   };
 };
 
-export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
-  const [schedule, setSchedule] = useState<Schedule>(() => getInitialSchedule(time));
-  const [availabilities, setAvailabilities] = useState<boolean[]>(availabilitiesInit);
-  const isScheduleNotFulfilled = schedule.start === null || schedule.end === null;
-  const mockUseQueryReserved = [
-    {
-      who: 'tae!',
-      start: 0,
-      end: 10,
-      time: 'Morning',
-    },
-    {
-      who: 'heon!',
-      start: 45,
-      end: 47,
-      time: 'Morning',
-    },
-    {
-      who: 'seok!',
-      start: 13,
-      end: 23,
-      time: 'Afternoon',
-    },
-    {
-      who: 'won!',
-      start: 42,
-      end: 47,
-      time: 'Afternoon',
-    },
-  ];
+export const useSelectScheduleTimeTable = (
+  time: ScheduleTime,
+  reservedSchedules: ScheduleDetail[],
+) => {
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule>(() =>
+    getInitialSchedule(time),
+  );
+  // TODO: useState로 관리하면 아래 useMemo에서 setState하면 infinite recursion 뜨는데 와이??
+  const availabilitiesRef = useRef<boolean[]>(availabilitiesInit());
+  const isScheduleNotValid = selectedSchedule.start === null || selectedSchedule.end === null;
 
   const reservedEdges = useMemo(() => {
-    return mockUseQueryReserved
+    return reservedSchedules
       .filter((reserved) => reserved.time === time)
       .reduce(
         (acc, reservation) => {
           acc.starts.push(reservation.start);
           acc.ends.push(reservation.end);
+          for (let i = reservation.start; i <= reservation.end; i++) {
+            availabilitiesRef.current[i] = false;
+          }
+
           return acc;
         },
         { starts: [], ends: [] },
       );
-  }, [mockUseQueryReserved]);
+  }, [reservedSchedules]);
 
   const onClickDelegated: (event: MouseEvent<HTMLTableSectionElement>) => void = useCallback(
     (event: MouseEvent<HTMLTableSectionElement>) => {
@@ -82,16 +67,16 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
       if (
         target.tagName === 'TD' &&
         target.dataset.index &&
-        availabilities[parseInt(target.dataset.index)]
+        availabilitiesRef.current[parseInt(target.dataset.index)]
       ) {
         const newIndex = parseInt(target.dataset.index);
         const { starts, ends } = reservedEdges;
         const checkpoints = [...starts, ...ends];
 
-        setSchedule((prev) => createNewScheduleIfValid(prev, newIndex, checkpoints));
+        setSelectedSchedule((prev) => createNewScheduleIfValid(prev, newIndex, checkpoints));
       }
     },
-    [reservedEdges, availabilities],
+    [reservedEdges],
   );
 
   const getCellClassNamesUnavailable: (index: number) => CellAvailabilityResult = useCallback(
@@ -101,7 +86,7 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
       const isEndRow = ends.includes(index) || index % 6 === 5;
       const isEdge = starts.includes(index) || ends.includes(index);
 
-      const reservation = mockUseQueryReserved
+      const reservation = reservedSchedules
         .filter((reserved) => reserved.time === time)
         .find((res) => res.start <= index && res.end >= index);
       const who = reservation ? reservation.who : '';
@@ -119,14 +104,15 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
   );
 
   const getCellClassNamesAvailable = (currentIndex: number): CellAvailabilityResult => {
-    const isStartRow = currentIndex === schedule.start || currentIndex % 6 === 0;
-    const isEndRow = currentIndex === schedule.end || currentIndex % 6 === 5;
+    const isStartRow = currentIndex === selectedSchedule.start || currentIndex % 6 === 0;
+    const isEndRow = currentIndex === selectedSchedule.end || currentIndex % 6 === 5;
     const isBetween =
-      schedule.start !== null &&
-      schedule.end !== null &&
-      currentIndex >= schedule.start &&
-      currentIndex <= schedule.end;
-    const isScheduleEdge = currentIndex === schedule.start || currentIndex === schedule.end;
+      selectedSchedule.start !== null &&
+      selectedSchedule.end !== null &&
+      currentIndex >= selectedSchedule.start &&
+      currentIndex <= selectedSchedule.end;
+    const isScheduleEdge =
+      currentIndex === selectedSchedule.start || currentIndex === selectedSchedule.end;
     const className = `${styles.selective} ${isBetween ? styles.highlight : ''} ${isStartRow ? styles.start : ''} ${isEndRow ? styles.end : ''} ${isScheduleEdge ? styles['schedule--edge'] : ''}`;
 
     return {
@@ -136,28 +122,16 @@ export const useSelectScheduleTimeTable = (time: ScheduleTime) => {
   };
 
   const getCellPropertiesByIndex = (index: number): CellAvailabilityResult => {
-    return availabilities[index]
+    return availabilitiesRef.current[index]
       ? getCellClassNamesAvailable(index)
       : getCellClassNamesUnavailable(index);
   };
 
-  useEffect(() => {
-    const newAvailabilities = [...availabilities];
-    mockUseQueryReserved
-      .filter((reserved) => reserved.time === time)
-      .forEach((reservation) => {
-        for (let i = reservation.start; i <= reservation.end; i++) {
-          newAvailabilities[i] = false;
-        }
-      });
-    setAvailabilities(newAvailabilities);
-  }, []);
-
   return {
     onClickDelegated,
     getCellPropertiesByIndex,
-    isScheduleNotFulfilled,
-    schedule,
+    isScheduleNotFulfilled: isScheduleNotValid,
+    schedule: selectedSchedule,
   };
 };
 
