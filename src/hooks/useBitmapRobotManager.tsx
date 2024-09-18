@@ -52,20 +52,37 @@ export const useBitmapRobotManager = (robots: IRobot[]) => {
   const selectRobotOnToggle = (robotId: string) =>
     setSelectedRobotId((prev) => (prev === robotId ? '' : robotId));
 
-  // TODO: 한 번만 layout하고 transform 속성을 이용해서 이동만 시키고 싶은데, 얼마를 이동 시켜야 할 지를 모르겠음
+  // TODO: reflow를 줄이기 위해 화면에서 transform 속성을 이용해서 움직이게 하기 위해 이거 robotSVGs를 useRef로 들고 있다가 updateRobotPosition에서는 style의 transform을 바꿔주는 구조로 추후 변경
   const robotSVGs = robots.map((robot) => (
-    <circle
+    <g
       key={robot.id}
-      id={robot.id}
-      cx={robotPositions[robot.id].x + 0.5}
-      cy={robotPositions[robot.id].y + 0.5}
       style={{
-        transition: 'cx 0.5s, cy 0.5s',
-        cursor: 'pointer',
+        transition: 'transform 0.5s', // Ensure the entire group transitions smoothly
+        transform: `translate(${robotPositions[robot.id].x}px, ${robotPositions[robot.id].y}px)`,
       }}
-      r="0.5"
-      fill={selectedRobotId === robot.id ? 'red' : 'black'}
-    />
+    >
+      <circle
+        id={robot.id}
+        cx="0.5"
+        cy="0.5"
+        r="0.5"
+        fill={selectedRobotId === robot.id ? 'red' : 'black'}
+        style={{
+          transition: 'fill 0.5s', // Smooth transition for fill color
+          cursor: 'pointer',
+        }}
+      />
+      <text
+        x="1"
+        y="0.75"
+        fontSize="1px"
+        style={{
+          transition: 'fill 0.5s', // Optional: smooth transition for text color if needed
+        }}
+      >
+        {robot.label}
+      </text>
+    </g>
   ));
 
   return { robotSVGs, createGoMsg, createStopMsg, selectRobotOnToggle, updateRobotPosition };
