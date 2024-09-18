@@ -1,6 +1,6 @@
 import styles from './index.module.css';
 import { CellAvailabilityResult } from '@/hooks/useSelectScheduleTimeTable';
-import { IScheduleReservation } from '@components/organisms/ScheduleReservation';
+import { IScheduleReservation } from '@components/organisms/RobotTaskTimePicker';
 import { MouseEvent } from 'react';
 
 const hours = Array.from({ length: 8 }, (_, i) => i);

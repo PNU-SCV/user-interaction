@@ -1,6 +1,6 @@
 import styles from './index.module.css';
 import { MouseEventHandler, useMemo } from 'react';
-import { IRobot } from '@components/templates/Robot';
+import { IRobot } from '@components/pages/Robot';
 import { Rect } from '@/commons/types';
 import { RobotPositionMsg, useBitmapRobotManager } from '@/hooks/useBitmapRobotManager';
 import { useWebSocket } from '@/hooks/useWebSocket';

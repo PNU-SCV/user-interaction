@@ -1,32 +1,25 @@
 import { ROUTER_PATH } from '@/router';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Header } from '@components/molecules/Header';
 import {
-  calcTimeSlotByTimeAndIndex,
-  DateString,
   isScheduleTime,
   ScheduleTime,
   scheduleTimes,
 } from '@components/molecules/ScheduleTimeTable';
-
-import styles from './index.module.css';
+import scrollContainerStyle from '@components/atoms/ScrollSnapContainer/index.module.css';
+import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
 import { MainContainer } from '@components/atoms/MainContainer';
-import { ScheduleReservation } from '@components/organisms/ScheduleReservation';
-import { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Point } from '@/commons/types';
-
-const formatDateToMMDDYY = (date: Date): DateString => {
-  const year = date.getFullYear().toString().slice(2);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-
-  return `${month}/${day}/${year}` as DateString;
-};
+import { RobotTaskActionForm } from '@components/organisms/RobotTaskActionForm';
+import { RobotTaskTimeViewer } from '@components/templates/RobotTaskTimeViewer';
 
 const getElementsByScheduleTime = (time: ScheduleTime) => {
-  const container: HTMLElement = document.querySelector(`.${styles['scroll-container']}`);
+  const container: HTMLElement = document.querySelector(
+    `.${scrollContainerStyle['scroll-container']}`,
+  );
   const scheduleTables: NodeListOf<HTMLElement> = document.querySelectorAll(
-    `.${styles['scroll-item']}`,
+    `.${scrollItemStyle['scroll-item']}`,
   );
   const selectedTable: HTMLElement = scheduleTables[scheduleTimes.indexOf(time)];
 
@@ -57,7 +50,6 @@ export interface IRobot {
 export const Robot = () => {
   const location = useLocation();
   const defaultRobotPath = '/' + ROUTER_PATH.ROBOT;
-  const date: DateString = formatDateToMMDDYY(new Date());
   const hasUserAlreadySelectedTime = (time: string | null): time is ScheduleTime => {
     return time !== null && isScheduleTime(time) && location.pathname === defaultRobotPath;
   };
@@ -65,7 +57,6 @@ export const Robot = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const time = searchParams.get('time');
-
     if (hasUserAlreadySelectedTime(time)) {
       const { container, selectedTable } = getElementsByScheduleTime(time);
 
@@ -77,29 +68,9 @@ export const Robot = () => {
     <MainContainer>
       <Header />
       {location.pathname === defaultRobotPath ? (
-        <div className={styles['scroll-container']}>
-          {scheduleTimes.map((time) => (
-            <div key={`${date} ${time}`} className={styles['scroll-item']}>
-              <ScheduleReservation time={time} date={date} />
-            </div>
-          ))}
-        </div>
+        <RobotTaskTimeViewer />
       ) : location?.state ? (
-        (() => {
-          const { date: stateDate, time: stateTime, start = null, end = null } = location.state;
-          const [timeSlotStart, timeSlotEnd] = [start, end].map((index) =>
-            calcTimeSlotByTimeAndIndex(stateTime, index),
-          );
-
-          return (
-            <Fragment>
-              <div>
-                {stateDate} {stateTime} {timeSlotStart} ~ {timeSlotEnd}
-              </div>
-              <Outlet />
-            </Fragment>
-          );
-        })()
+        <RobotTaskActionForm {...location.state} />
       ) : (
         <Navigate to={defaultRobotPath} />
       )}

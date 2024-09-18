@@ -1,6 +1,6 @@
 import { Point } from '@/commons/types';
 import { useReducer, useState } from 'react';
-import { IRobot } from '@components/templates/Robot';
+import { IRobot } from '@components/pages/Robot';
 
 interface RobotPositionState {
   [key: string]: Point;
