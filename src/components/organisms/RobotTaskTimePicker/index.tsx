@@ -15,7 +15,7 @@ export interface IScheduleReservation {
   date: DateString; // 'MM/DD/YY'
 }
 
-export const ScheduleReservation = ({ time, date }: IScheduleReservation) => {
+export const RobotTaskTimePicker = ({ time, date }: IScheduleReservation) => {
   const { onClickDelegated, getCellPropertiesByIndex, isScheduleNotFulfilled, schedule } =
     useSelectScheduleTimeTable(time);
   const navigate = useNavigate();
