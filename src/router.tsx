@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
-import { Robot } from '@components/templates/Robot';
+import { Robot } from '@components/pages/Robot';
 import React from 'react';
-import { Index } from '@components/templates/Index';
+import { Index } from '@components/pages/Index';
 import { Delivery } from '@components/templates/Delivery';
 import { Checkup } from '@components/templates/Checkup';
 
