@@ -4,8 +4,6 @@ import React from 'react';
 import { Index } from '@components/templates/Index';
 import { Delivery } from '@components/templates/Delivery';
 import { Checkup } from '@components/templates/Checkup';
-import { Advisor } from '@components/templates/Advisor';
-import { Sanitize } from '@components/templates/Sanitize';
 
 export const ROUTER_PATH = Object.freeze({
   ROOT: '/',
@@ -21,9 +19,7 @@ export const ROUTER_PATH = Object.freeze({
 export const ROBOT_ROUTER_PATH_ARRAY = [
   { id: 0, label: '전광판', path: ROUTER_PATH.PROMOTION },
   { id: 1, label: '물품 배달', path: ROUTER_PATH.DELIVERY },
-  { id: 2, label: '업무 보조', path: ROUTER_PATH.ADVISOR },
-  { id: 3, label: '간단 문진', path: ROUTER_PATH.CHECKUP },
-  { id: 4, label: '소독', path: ROUTER_PATH.SANITIZE },
+  { id: 2, label: '간단 문진', path: ROUTER_PATH.CHECKUP },
 ];
 
 const PrivateRoute = (): React.ReactElement => {
@@ -43,8 +39,6 @@ export const router = createBrowserRouter([
           { path: ROUTER_PATH.PROMOTION, element: <div>promotion</div> },
           { path: ROUTER_PATH.DELIVERY, element: <Delivery /> },
           { path: ROUTER_PATH.CHECKUP, element: <Checkup /> },
-          { path: ROUTER_PATH.ADVISOR, element: <Advisor /> },
-          { path: ROUTER_PATH.SANITIZE, element: <Sanitize /> },
           { path: '*', element: <div>404 ??</div> },
         ],
       },
