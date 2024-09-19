@@ -1,7 +1,7 @@
-import { MouseEvent, useCallback, useMemo, useRef, useState } from 'react';
+import { MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from '@components/molecules/ScheduleTimeTable/index.module.css';
 import { ScheduleTime } from '@components/molecules/ScheduleTimeTable';
-import { ScheduleDetail } from '@components/organisms/RobotTaskTimePicker';
+import { useQuery } from '@tanstack/react-query';
 
 export type Schedule = {
   start: number | null;
@@ -13,36 +13,52 @@ export type CellAvailabilityResult = {
   who: string | undefined;
 };
 
-const availabilitiesInit = () => Array.from({ length: 8 * 6 }, (_) => true);
+export type ScheduleDetail = {
+  who: string;
+  time: ScheduleTime;
+  task: string;
+} & Schedule;
 
-const parseParam = (param: string | null): number | null => {
-  return param === null ? null : parseInt(param);
+type ScheduleResp = {
+  schedules: ScheduleDetail[];
 };
 
-const getInitialSchedule = (time: ScheduleTime) => {
-  const searchParams = new URLSearchParams(window.location.search);
-  if (searchParams.get('time') === time) {
-    return {
-      start: parseParam(searchParams.get('start')),
-      end: parseParam(searchParams.get('end')),
-    };
+const fetchRobotScheduleById = async (robotId: string): Promise<ScheduleResp> => {
+  const response = await fetch(`http://localhost:8000/schedule/${robotId}`);
+
+  if (!response.ok) {
+    throw new Error('네트워크 응답에 문제가 있습니다');
   }
-  return {
-    start: null,
-    end: null,
-  };
+
+  return await response.json();
 };
 
-export const useSelectScheduleTimeTable = (
-  time: ScheduleTime,
-  reservedSchedules: ScheduleDetail[],
-) => {
-  const [selectedSchedule, setSelectedSchedule] = useState<Schedule>(() =>
-    getInitialSchedule(time),
+export const useSelectScheduleTimeTable = (time: ScheduleTime, robotId: string) => {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: [`schedule-${robotId}`],
+    queryFn: () => fetchRobotScheduleById(robotId),
+  });
+  const [reservedSchedules, setReservedSchedules] = useState<ScheduleDetail[]>(
+    data?.schedules ?? [],
   );
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule>(getInitialSchedule(time));
   // TODO: useState로 관리하면 아래 useMemo에서 setState하면 infinite recursion 뜨는데 와이??
   const availabilitiesRef = useRef<boolean[]>(availabilitiesInit());
   const isScheduleNotValid = selectedSchedule.start === null || selectedSchedule.end === null;
+
+  useEffect(() => {
+    if (!isLoading && !isError && data?.schedules) {
+      const queryData = data.schedules;
+      queryData
+        .filter((schedule) => schedule.time === time)
+        .forEach((reservation) =>
+          Array.from({ length: reservation.end - reservation.start + 1 }, (_, index) => {
+            availabilitiesRef.current[reservation.start + index] = false;
+          }),
+        );
+      setReservedSchedules(queryData);
+    }
+  }, [selectedSchedule, data, isLoading, isError]);
 
   const reservedEdges = useMemo(() => {
     return reservedSchedules
@@ -51,9 +67,10 @@ export const useSelectScheduleTimeTable = (
         (acc, reservation) => {
           acc.starts.push(reservation.start);
           acc.ends.push(reservation.end);
-          for (let i = reservation.start; i <= reservation.end; i++) {
-            availabilitiesRef.current[i] = false;
-          }
+
+          Array.from({ length: reservation.end - reservation.start + 1 }, (_, index) => {
+            availabilitiesRef.current[reservation.start + index] = false;
+          });
 
           return acc;
         },
@@ -130,8 +147,30 @@ export const useSelectScheduleTimeTable = (
   return {
     onClickDelegated,
     getCellPropertiesByIndex,
-    isScheduleNotFulfilled: isScheduleNotValid,
+    isScheduleNotValid,
     schedule: selectedSchedule,
+  };
+};
+
+const availabilitiesInit = () => {
+  return Array.from({ length: 8 * 6 }, (_) => true);
+};
+
+const parseParam = (param: string | null): number | null => {
+  return param === null ? null : parseInt(param);
+};
+
+const getInitialSchedule = (time: ScheduleTime) => {
+  const searchParams = new URLSearchParams(window.location.search);
+  if (searchParams.get('time') === time) {
+    return {
+      start: parseParam(searchParams.get('start')),
+      end: parseParam(searchParams.get('end')),
+    };
+  }
+  return {
+    start: null,
+    end: null,
   };
 };
 
