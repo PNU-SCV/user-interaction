@@ -21,9 +21,9 @@ export const RobotTaskActionForm = ({
 
   return (
     <Fragment>
-      <div>
-        {stateDate} {stateTime} {timeSlotStart} ~ {timeSlotEnd}
-      </div>
+      {/*<div>*/}
+      {/*  {stateDate} {stateTime} {timeSlotStart} ~ {timeSlotEnd}*/}
+      {/*</div>*/}
       <Outlet />
     </Fragment>
   );

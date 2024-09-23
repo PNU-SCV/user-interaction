@@ -1,4 +1,4 @@
-import { FormEvent, Fragment, MouseEvent, MutableRefObject, useRef } from 'react';
+import { FormEvent, MouseEvent, MutableRefObject, useRef } from 'react';
 import {
   ThreeDimensionalCard,
   ThreeDimensionalCards,
@@ -6,12 +6,16 @@ import {
 
 import styles from './index.module.css';
 import { useLocation } from 'react-router-dom';
-import { SVGBitmap } from '@components/molecules/SVGBitmap';
 import { useQuery } from '@tanstack/react-query';
-import { fetchRobotsByMap, placeName } from '@components/pages/Index';
+import { fetchRobotsByMap } from '@components/pages/Index';
 import { ScrollSnapContainer } from '@components/atoms/ScrollSnapContainer';
 import { ScrollSnapItem } from '@components/atoms/ScrollSnapItem';
 import axios from 'axios';
+import { DeliveryCommandMap } from '@components/organisms/DeliveryCommandMap';
+import scrollContainerStyle from '@components/atoms/ScrollSnapContainer/index.module.css';
+import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
+import { scrollToElement } from '@components/templates/RobotTaskTimeViewer';
+import { usePlace } from '@/context/PlaceContext';
 
 export const tempPlaceList: ThreeDimensionalCard[] = [
   {
@@ -61,35 +65,35 @@ const myPlace: ThreeDimensionalCard[] = [
 
 const tempItemList: ThreeDimensionalCard[] = [
   {
-    heading: '소모품',
-    address: '소독세트',
+    heading: '소독세트',
+    address: '소모품',
     desc: '',
   },
   {
-    heading: '소모품',
-    address: '링거액',
+    heading: '링거액',
+    address: '소모품',
     desc: '',
   },
   {
-    heading: '소모품',
-    address: '거즈',
+    heading: '거즈',
+    address: '소모품',
     desc: '',
   },
   {
-    heading: '소모품',
-    address: '진통제',
+    heading: '진통제',
+    address: '소모품',
     desc: '',
   },
 ];
 
-type Delivery = {
+export type DeliveryResp = {
   robotId: string;
   item: string;
   pick: string;
   dest: string;
 };
 
-const requestRobotDelivery = async ({ robotId, item, pick, dest }: Delivery) => {
+const requestRobotDelivery = async ({ robotId, item, pick, dest }: DeliveryResp) => {
   console.log(robotId, item, pick, dest);
   const response = await axios.post(`http://localhost:8000/delivery`, {
     robotId: robotId,
@@ -102,13 +106,14 @@ const requestRobotDelivery = async ({ robotId, item, pick, dest }: Delivery) => 
 };
 
 export const Delivery = () => {
+  const { place, setPlace } = usePlace();
   const originRef = useRef<HTMLInputElement | null>(null);
   const destRef = useRef<HTMLInputElement | null>(null);
   const itemRef = useRef<HTMLInputElement | null>(null);
   const location = useLocation();
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['robots', placeName],
-    queryFn: () => fetchRobotsByMap(placeName),
+    queryKey: ['robots', place],
+    queryFn: () => fetchRobotsByMap(place),
   });
 
   const onClickTemplate =
@@ -133,15 +138,23 @@ export const Delivery = () => {
       dest: destInput.value,
     });
 
+    const container: HTMLElement = document.querySelector(
+      `.${scrollContainerStyle['scroll-container']}`,
+    );
+    const scheduleTables: NodeListOf<HTMLElement> = document.querySelectorAll(
+      `.${scrollItemStyle['scroll-item']}`,
+    );
+
+    scrollToElement(container, scheduleTables[1]);
     console.log(data);
   };
 
-  // const onClickSetOrigin = (pos: string) => {
-  //   if (originRef.current && originRef.current?.value != undefined) {
-  //     const originInput = originRef.current as HTMLInputElement;
-  //     originInput.value = pos;
-  //   }
-  // };
+  const onClickSetOrigin = (pos: string) => {
+    if (originRef.current && originRef.current?.value != undefined) {
+      const originInput = originRef.current as HTMLInputElement;
+      originInput.value = pos;
+    }
+  };
 
   const onClickSetDest = (pos: string) => {
     if (destRef.current && destRef.current?.value != undefined) {
@@ -153,21 +166,19 @@ export const Delivery = () => {
   return (
     <div className={styles['delivery-form-container']}>
       <form className={styles['delivery-form']} onSubmit={onSubmit}>
-        <div>
-          <label>
-            물품 배송 장소:
-            <input ref={originRef} placeholder="직접 선택하기" />
-          </label>
-          <label>
-            물품 수령 장소:
-            <input ref={destRef} placeholder="직접 선택하기" />
-          </label>
-          <label>
-            배송 물품:
-            <input ref={itemRef} placeholder="직접 입력하기" />
-          </label>
-          <button>확인</button>
-        </div>
+        <label>
+          물품 배송 장소:
+          <input ref={originRef} placeholder="직접 선택하기" />
+        </label>
+        <label>
+          물품 수령 장소:
+          <input ref={destRef} placeholder="직접 선택하기" />
+        </label>
+        <label>
+          배송 물품:
+          <input ref={itemRef} placeholder="직접 입력하기" />
+        </label>
+        <button>확인</button>
       </form>
       <ScrollSnapContainer>
         <ScrollSnapItem>
@@ -182,27 +193,13 @@ export const Delivery = () => {
           />
         </ScrollSnapItem>
         <ScrollSnapItem>
-          {!isError && !isLoading
-            ? (() => {
-                const { rects, robots } = data;
-                const selectedRobot = robots.filter((robot) => robot.id === location.state.id);
-
-                if (originRef.current) {
-                  const originInput = originRef.current as HTMLInputElement;
-                  const point = selectedRobot[0].pos;
-                  originInput.value = `${point.x},${point.y}`;
-                }
-
-                return (
-                  <SVGBitmap
-                    rects={rects}
-                    robots={selectedRobot}
-                    bitmapMode={'COMMANDER'}
-                    onClickSetDest={onClickSetDest}
-                  />
-                );
-              })()
-            : null}
+          {!isError && !isLoading && data ? (
+            <DeliveryCommandMap
+              data={data}
+              onClickSetOrigin={onClickSetOrigin}
+              onClickSetDest={onClickSetDest}
+            />
+          ) : null}
         </ScrollSnapItem>
       </ScrollSnapContainer>
     </div>

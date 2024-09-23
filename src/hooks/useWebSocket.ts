@@ -3,10 +3,13 @@ import { useEffect, useRef } from 'react';
 interface WebSocketControl {
   ws: WebSocket;
   retryCnt: number;
-  isConnected: boolean;
 }
 
-export const useWebSocket = (onmessage) => {
+export const useWebSocket = (
+  onmessage: (event: MessageEvent) => void,
+  setConnected: () => void,
+  setDisconnected: () => void,
+) => {
   const wscRef = useRef<WebSocketControl | null>(null);
 
   useEffect(() => {
@@ -15,7 +18,6 @@ export const useWebSocket = (onmessage) => {
     const wsc: WebSocketControl = {
       ws: new WebSocket('ws://localhost:8000/real-time-state'),
       retryCnt: 0,
-      isConnected: false,
     };
 
     const setupWebSocket = (wsc, onmessage) => {
@@ -24,13 +26,13 @@ export const useWebSocket = (onmessage) => {
       ws.onopen = () => {
         wsc.retryCnt = 0;
         console.log('웹소켓 연결됨');
-        wsc.isConnected = true;
+        setConnected();
       };
 
       ws.onmessage = onmessage;
 
       ws.onclose = () => {
-        wsc.isConnected = false;
+        setDisconnected();
         if (!isUnmounting && wsc.retryCnt < 5) {
           setTimeout(() => {
             console.log('WebSocket 재연결 시도');
@@ -64,5 +66,5 @@ export const useWebSocket = (onmessage) => {
     }
   };
 
-  return { isConnected: wscRef.current?.isConnected, sendMsg };
+  return { sendMsg };
 };

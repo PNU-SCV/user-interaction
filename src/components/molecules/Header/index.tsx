@@ -11,7 +11,14 @@ export const Header = () => {
   const disableForwardButton = window.history.state?.idx >= window.history.length - 1;
 
   return (
-    <header style={{ backgroundColor: 'lightskyblue', display: 'flex' }}>
+    <header
+      style={{
+        backgroundColor: 'lightskyblue',
+        display: 'flex',
+        overflow: 'hidden',
+        height: '10vh',
+      }}
+    >
       <RoutingButton
         label="⬅️"
         id="history.-1"

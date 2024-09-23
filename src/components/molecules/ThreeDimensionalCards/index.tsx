@@ -31,9 +31,9 @@ export const ThreeDimensionalCards = ({ cardList, onClickTemplate }: IThreeDimen
               padding: '5px',
             }}
           >
-            <h5>{item.heading}</h5>
-            <div>{item.address}</div>
-            {item.desc}
+            <h5>{item.desc}</h5>
+            {item.heading}
+            {/*<div>{item.address}</div>*/}
           </div>
         </div>
       ))}

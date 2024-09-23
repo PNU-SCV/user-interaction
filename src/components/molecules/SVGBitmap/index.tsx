@@ -1,5 +1,5 @@
 import styles from './index.module.css';
-import { MouseEventHandler, useMemo } from 'react';
+import { Fragment, MouseEventHandler, useMemo, useRef } from 'react';
 import { IRobot } from '@components/pages/Robot';
 import { Rect } from '@/commons/types';
 import { RobotPositionMsg, useBitmapRobotManager } from '@/hooks/useBitmapRobotManager';
@@ -10,7 +10,7 @@ import { ROUTER_PATH } from '@/router';
 const colorValid = 'white';
 const colorInvalid = 'whitesmoke';
 // const colorInvalid = 'black';
-type BITMAP_MODE = 'VIEWER' | 'COMMANDER';
+export type BITMAP_MODE = 'VIEWER' | 'COMMANDER';
 
 export interface ISVGBitmap {
   rects: Rect[];
@@ -41,18 +41,25 @@ export const SVGBitmap = ({
    * 특이사항으로 미니맵에서 로봇의 위치는 웹소켓의 onmessage를 통해서만 업데이트됨
    */
   const { robotSVGs, createGoMsg, createStopMsg, selectRobotOnToggle, updateRobotPosition } =
-    useBitmapRobotManager(robots);
-  const onmessage = (event) => updateRobotPosition(parseWebSocketMsg(event));
-  const { isConnected, sendMsg } = useWebSocket(onmessage);
+    useBitmapRobotManager(robots, bitmapMode as BITMAP_MODE);
+  const isWebSocketConnectedRef = useRef<boolean>(false);
+  const setConnected = () => (isWebSocketConnectedRef.current = true);
+  const setDisconnected = () => (isWebSocketConnectedRef.current = false);
+  const onmessage = (event: MessageEvent) => updateRobotPosition(parseWebSocketMsg(event));
+  const { sendMsg } = useWebSocket(onmessage, setConnected, setDisconnected);
   const navigate = useNavigate();
 
   const sendSelectedRobotToGo = (destX: number, destY: number) => {
     if (onClickSetDest) {
       onClickSetDest(`${destX},${destY}`);
     }
+  };
 
-    // const isGo = window.confirm('확인 누르면 GO 취소 누르면 STOP');
-    // sendMsg(isGo ? createGoMsg(destX, destY) : createStopMsg());
+  const emergencyStop = () => {
+    const isConnected = isWebSocketConnectedRef.current;
+    if (isConnected) {
+      sendMsg(createStopMsg());
+    }
   };
 
   const onClickMap: MouseEventHandler<SVGSVGElement> = (e) => {
@@ -66,10 +73,6 @@ export const SVGBitmap = ({
     }
 
     if (element.getAttribute('fill') !== colorValid) {
-      // const id = element.getAttribute('id');
-      // if (id) {
-      //   selectRobotOnToggle(onClickSetOrigin as (pos: string) => void)(id);
-      // }
       return;
     }
 
@@ -84,18 +87,21 @@ export const SVGBitmap = ({
   }, [rects]);
 
   return (
-    <svg
-      width="100%"
-      viewBox="0 0 50 50"
-      preserveAspectRatio="xMidYMid meet"
-      xmlns="http://www.w3.org/2000/svg"
-      onClick={onClickMap}
-      style={{ height: '80%' }}
-    >
-      <rect width="50" height="50" fill={colorInvalid} />
-      {roomSVG}
-      {robotSVGs}
-    </svg>
+    <Fragment>
+      <svg
+        width="100%"
+        viewBox="0 0 50 50"
+        preserveAspectRatio="xMidYMid meet"
+        xmlns="http://www.w3.org/2000/svg"
+        onClick={onClickMap}
+        style={{ height: '90%' }}
+      >
+        <rect width="50" height="50" fill={colorInvalid} />
+        {roomSVG}
+        {robotSVGs}
+      </svg>
+      {bitmapMode === 'COMMANDER' ? <button onClick={emergencyStop}>정지</button> : null}
+    </Fragment>
   );
 };
 

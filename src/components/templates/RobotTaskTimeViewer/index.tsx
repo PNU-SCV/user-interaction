@@ -105,7 +105,7 @@ const getScrollPosition = (container: HTMLElement, element: HTMLElement): number
   return elementRect.top - containerRect.top + container.scrollTop;
 };
 
-const scrollToElement = (container: HTMLElement, selectedTable: HTMLElement) => {
+export const scrollToElement = (container: HTMLElement, selectedTable: HTMLElement) => {
   container.scrollTo({
     top: getScrollPosition(container, selectedTable),
     behavior: 'smooth',
