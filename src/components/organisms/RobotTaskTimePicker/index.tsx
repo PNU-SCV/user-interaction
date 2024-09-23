@@ -29,7 +29,7 @@ export const RobotTaskTimePicker = ({ time, date }: IScheduleReservation) => {
         replace: true,
       },
     );
-    navigate(path, { state: { ...schedule, date, time } });
+    navigate(path, { state: { ...schedule, date, time, id: robotId } });
   };
 
   return (

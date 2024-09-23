@@ -6,14 +6,14 @@ import React from 'react';
 import { Point } from '@/commons/types';
 import { RobotTaskActionForm } from '@components/organisms/RobotTaskActionForm';
 import { RobotTaskTimeViewer } from '@components/templates/RobotTaskTimeViewer';
+import { ScheduleDetail } from '@/hooks/useSelectScheduleTimeTable';
 
 export interface IRobot {
   id: string;
   label: string;
   pos: Point;
   path: string;
-  state: string;
-  idle: number;
+  schedules: ScheduleDetail[];
 }
 
 export const Robot = () => {
