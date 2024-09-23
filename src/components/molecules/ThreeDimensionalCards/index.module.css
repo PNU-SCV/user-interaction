@@ -12,7 +12,7 @@
 }
 
 .list .item {
-    transition: .5s;
+    transition: .5s ease-in;
     filter: brightness(0.9);
     cursor: pointer;
 }

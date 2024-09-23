@@ -1,6 +1,7 @@
 import { Point } from '@/commons/types';
 import { useReducer, useState } from 'react';
 import { IRobot } from '@components/pages/Robot';
+import { BITMAP_MODE } from '@components/molecules/SVGBitmap';
 
 interface RobotPositionState {
   [key: string]: Point;
@@ -22,26 +23,39 @@ const MOVE_COMMAND = {
   GO: 1,
 };
 
-export const useBitmapRobotManager = (robots: IRobot[]) => {
-  const [selectedRobotId, setSelectedRobotId] = useState<string>('');
+export const useBitmapRobotManager = (robots: IRobot[], bitmapMode: BITMAP_MODE) => {
+  const [selectedRobotId, setSelectedRobotId] = useState<string>(() =>
+    bitmapMode === 'VIEWER' ? '' : robots[0].id,
+  );
   const [robotPositions, dispatch] = useReducer(
     robotPositionReducer,
     robots,
     initialRobotPositions,
   );
 
-  const createGoMsg = (destX, destY) =>
-    JSON.stringify({
+  const createGoMsg = (destX, destY) => {
+    // axios.post('http://localhost:8000/go', {
+    //   robotId: selectedRobotId,
+    //   dest: `${destX},${destY}`,
+    // });
+
+    return JSON.stringify({
       command: MOVE_COMMAND.GO,
       target: selectedRobotId,
       dest: `${destX},${destY}`,
     });
+  };
 
-  const createStopMsg = () =>
-    JSON.stringify({
+  const createStopMsg = () => {
+    // axios.post('http://localhost:8000/stop', {
+    //   robotId: selectedRobotId,
+    // });
+
+    return JSON.stringify({
       command: MOVE_COMMAND.STOP,
       target: selectedRobotId,
     });
+  };
 
   const updateRobotPosition = (robotPosMsg: RobotPositionMsg) =>
     dispatch({
