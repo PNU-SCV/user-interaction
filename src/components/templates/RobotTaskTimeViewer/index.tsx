@@ -15,6 +15,11 @@ import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
 import { ROUTER_PATH } from '@/router';
 import { ScrollSnapWrapper } from '@components/atoms/ScrollSnapWrapper';
 import { ScrollSnapOverlay } from '@components/atoms/ScrollSnapOverlay';
+import { useLocation } from 'react-router-dom';
+import { RobotFigure } from '@components/molecules/RobotFigure';
+import { useQueryClient } from '@tanstack/react-query';
+import { usePlaceContext } from '@/context/PlaceContext';
+import { createQueryKeyWithPlace } from '@components/pages/Index';
 
 interface IScheduleTime extends ItemProps {
   time: ScheduleTime;
@@ -37,6 +42,10 @@ const iScheduleTimes: IScheduleTime[] = [
 
 export const RobotTaskTimeViewer = () => {
   const date: DateString = formatDateToMMDDYY(new Date());
+  const location = useLocation();
+  const queryClient = useQueryClient();
+  const { place } = usePlaceContext();
+  const queryData = queryClient.getQueryData(createQueryKeyWithPlace(place));
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -51,9 +60,27 @@ export const RobotTaskTimeViewer = () => {
   return (
     <ScrollSnapWrapper>
       <ScrollSnapOverlay>
-        <div>nunu</div>
+        <div
+          style={{
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          선택한 로봇 {location.search.slice(location.search.search('id=') + 3)}
+          {queryData
+            ? queryData.robots
+                ?.filter(
+                  (robot) => robot.id === location.search.slice(location.search.search('id=') + 3),
+                )
+                .map((robot) => (
+                  <RobotFigure key={robot.id} onClickTemplate={() => () => {}} {...robot} />
+                ))
+            : null}
+        </div>
       </ScrollSnapOverlay>
-
       {/*// TODO: 동작은 똑같은데 아래의 코드 가독성이 너무 안좋다. 그렇다고 IteratingMapper를 만들어 놓고 안쓰기엔 아까움*/}
       {/*// <ScrollSnapContainer>*/}
       {/*//   {scheduleTimes.map((time) => (*/}
