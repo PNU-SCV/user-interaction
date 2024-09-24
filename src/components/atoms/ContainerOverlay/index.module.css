@@ -1,0 +1,7 @@
+.container--overlay {
+    height: 10vh;
+    position: absolute;
+    z-index: 9999;
+    overflow: hidden;
+    width: 100%;
+}
