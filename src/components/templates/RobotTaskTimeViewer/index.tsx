@@ -13,6 +13,8 @@ import { useEffect } from 'react';
 import scrollContainerStyle from '@components/atoms/ScrollSnapContainer/index.module.css';
 import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
 import { ROUTER_PATH } from '@/router';
+import { ScrollSnapWrapper } from '@components/atoms/ScrollSnapWrapper';
+import { ScrollSnapOverlay } from '@components/atoms/ScrollSnapOverlay';
 
 interface IScheduleTime extends ItemProps {
   time: ScheduleTime;
@@ -47,28 +49,34 @@ export const RobotTaskTimeViewer = () => {
   });
 
   return (
-    // TODO: 동작은 똑같은데 아래의 코드 가독성이 너무 안좋다. 그렇다고 IteratingMapper를 만들어 놓고 안쓰기엔 아까움
-    // <ScrollSnapContainer>
-    //   {scheduleTimes.map((time) => (
-    //     <ScrollSnapItem key={`${date} ${time}`}>
-    //       <RobotTaskTimePicker time={time} date={date} />
-    //     </ScrollSnapItem>
-    //   ))}
-    // </ScrollSnapContainer>
-    <IteratingMapper<IScheduleTime>
-      container={ScrollSnapContainer}
-      items={iScheduleTimes}
-      otherItemProps={{
-        date: date,
-      }}
-      component={({ time, date }) => {
-        return (
-          <ScrollSnapItem key={`${date} ${time}`}>
-            <RobotTaskTimePicker time={time} date={date} />
-          </ScrollSnapItem>
-        );
-      }}
-    />
+    <ScrollSnapWrapper>
+      <ScrollSnapOverlay>
+        <div>nunu</div>
+      </ScrollSnapOverlay>
+
+      {/*// TODO: 동작은 똑같은데 아래의 코드 가독성이 너무 안좋다. 그렇다고 IteratingMapper를 만들어 놓고 안쓰기엔 아까움*/}
+      {/*// <ScrollSnapContainer>*/}
+      {/*//   {scheduleTimes.map((time) => (*/}
+      {/*//     <ScrollSnapItem key={`${date} ${time}`}>*/}
+      {/*//       <RobotTaskTimePicker time={time} date={date} />*/}
+      {/*//     </ScrollSnapItem>*/}
+      {/*//   ))}*/}
+      {/*// </ScrollSnapContainer>*/}
+      <IteratingMapper<IScheduleTime>
+        container={ScrollSnapContainer}
+        items={iScheduleTimes}
+        otherItemProps={{
+          date: date,
+        }}
+        component={({ time, date }) => {
+          return (
+            <ScrollSnapItem key={`${date} ${time}`}>
+              <RobotTaskTimePicker time={time} date={date} />
+            </ScrollSnapItem>
+          );
+        }}
+      />
+    </ScrollSnapWrapper>
   );
 };
 

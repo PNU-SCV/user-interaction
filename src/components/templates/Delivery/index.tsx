@@ -17,6 +17,7 @@ import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
 import { scrollToElement } from '@components/templates/RobotTaskTimeViewer';
 import { usePlaceContext } from '@/context/PlaceContext';
 import { ScrollSnapOverlay } from '@components/atoms/ScrollSnapOverlay';
+import { ScrollSnapWrapper } from '@components/atoms/ScrollSnapWrapper';
 
 export const tempPlaceList: ThreeDimensionalCard[] = [
   {
@@ -165,7 +166,7 @@ export const Delivery = () => {
   };
 
   return (
-    <div className={styles['delivery-form-container']}>
+    <ScrollSnapWrapper>
       <ScrollSnapOverlay>
         <form className={styles['delivery-form']} onSubmit={onSubmit}>
           <label>
@@ -183,7 +184,6 @@ export const Delivery = () => {
           <button>확인</button>
         </form>
       </ScrollSnapOverlay>
-
       <ScrollSnapContainer>
         <ScrollSnapItem>
           <div>빠른 물품 수령 장소 목록</div>
@@ -206,6 +206,6 @@ export const Delivery = () => {
           </ScrollSnapItem>
         ) : null}
       </ScrollSnapContainer>
-    </div>
+    </ScrollSnapWrapper>
   );
 };

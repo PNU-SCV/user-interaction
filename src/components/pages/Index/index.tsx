@@ -14,7 +14,9 @@ import { ScrollSnapContainer } from '@components/atoms/ScrollSnapContainer';
 import { ScrollSnapItem } from '@components/atoms/ScrollSnapItem';
 import { AsyncBoundary } from '@components/atoms/AsyncBoundary';
 import { Flex } from '@components/atoms/Flex';
-import { usePlace } from '@/context/PlaceContext';
+import { usePlaceContext } from '@/context/PlaceContext';
+import { ScrollSnapOverlay } from '@components/atoms/ScrollSnapOverlay';
+import { ScrollSnapWrapper } from '@components/atoms/ScrollSnapWrapper';
 
 export type MapStateResp = {
   rects: Rect[];
@@ -32,7 +34,7 @@ export const fetchRobotsByMap = async (map_name: string): Promise<MapStateResp> 
 };
 
 export const Index: React.FC = () => {
-  const { place, setPlace } = usePlace();
+  const { place, setPlace } = usePlaceContext();
   const queryClient = useQueryClient();
   const { data } = useSuspenseQuery({
     queryKey: ['robots', place],
@@ -49,7 +51,6 @@ export const Index: React.FC = () => {
   return (
     <MainContainer>
       <Header />
-      {/*<p>{placeName}의 가용 로봇들</p>*/}
       <AsyncBoundary
         ref={resetRef}
         pendingFallback={<div>로딩중</div>}
@@ -71,27 +72,40 @@ const PlaceViewer: React.FC = ({ placeData }: IPlaceViewer) => {
   const { rects, robots } = placeData;
 
   return (
-    <ScrollSnapContainer>
-      <ScrollSnapItem>
-        <p>주변 로봇들 자세히 보기</p>
-        <IteratingMapper<IRoutingButton>
-          items={robots.map((robot) => ({
-            ...robot,
-            path: ROUTER_PATH.ROBOT + `?id=${robot.id}`,
-          }))}
-          component={RobotFigure}
-          container={Flex}
-          otherItemProps={{ onClickTemplate }}
-          otherContainerProps={{
-            flexDirection: 'column',
-            alignItems: 'center',
+    <ScrollSnapWrapper>
+      <ScrollSnapOverlay>
+        <div
+          style={{
+            backdropFilter: 'blur(6px)',
+            backgroundColor: 'transparent',
+            border: '1px dashed antiquewhite',
           }}
-        />
-      </ScrollSnapItem>
-      <ScrollSnapItem>
-        <p>주변 로봇들 간편히 보기</p>
-        <SVGBitmap rects={rects} robots={robots} />
-      </ScrollSnapItem>
-    </ScrollSnapContainer>
+        >
+          hi
+        </div>
+      </ScrollSnapOverlay>
+      <ScrollSnapContainer>
+        <ScrollSnapItem>
+          <p>주변 로봇들 자세히 보기</p>
+          <IteratingMapper<IRoutingButton>
+            items={robots.map((robot) => ({
+              ...robot,
+              path: ROUTER_PATH.ROBOT + `?id=${robot.id}`,
+            }))}
+            component={RobotFigure}
+            container={Flex}
+            otherItemProps={{ onClickTemplate }}
+            otherContainerProps={{
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          />
+        </ScrollSnapItem>
+        <ScrollSnapItem>
+          <p>주변 로봇들 간편히 보기</p>
+          <SVGBitmap rects={rects} robots={robots} />
+        </ScrollSnapItem>
+      </ScrollSnapContainer>
+    </ScrollSnapWrapper>
   );
 };
