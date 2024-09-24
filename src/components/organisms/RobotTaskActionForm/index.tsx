@@ -1,8 +1,9 @@
 import { calcTimeSlotByTimeAndIndex, ScheduleTime } from '@components/molecules/ScheduleTimeTable';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
+import { useTimeContext } from '@/context/TimeContext';
 
-interface IRobotTaskActionForm {
+export interface IRobotTaskActionForm {
   start: number;
   end: number;
   date: string;
@@ -19,12 +20,19 @@ export const RobotTaskActionForm = ({
     calcTimeSlotByTimeAndIndex(stateTime, index),
   );
 
+  const { setSelectedTime } = useTimeContext();
+
+  setSelectedTime({
+    time: stateTime,
+    date: stateDate,
+    start: timeSlotStart,
+    end: timeSlotEnd,
+  });
+
   return (
-    <Fragment>
-      {/*<div>*/}
-      {/*  {stateDate} {stateTime} {timeSlotStart} ~ {timeSlotEnd}*/}
-      {/*</div>*/}
-      <Outlet />
-    </Fragment>
+    // <div>
+    //   {stateDate} {stateTime} {timeSlotStart} ~ {timeSlotEnd}
+    // </div>
+    <Outlet />
   );
 };
