@@ -8,12 +8,7 @@
     gap: 20px;
     align-items: center;
     flex-direction: column;
-    height: 10vh;
-    width: 100%;
     backdrop-filter: blur(6px);
     background-color: transparent;
-    position: absolute;
-    z-index: 9999;
-    overflow: hidden;
     border: 1px dashed antiquewhite;
 }

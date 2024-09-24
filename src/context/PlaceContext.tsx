@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 
-export const placeName = 'PLACE_TEST';
+const placeName = 'PLACE_TEST';
 
 interface IPlaceContext {
   place: string;
@@ -24,7 +24,7 @@ export const PlaceProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   );
 };
 
-export const usePlace = () => {
+export const usePlaceContext = () => {
   const context = useContext(PlaceContext);
   if (!context) {
     throw new Error('usePlace');

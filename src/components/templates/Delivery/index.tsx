@@ -15,7 +15,8 @@ import { DeliveryCommandMap } from '@components/organisms/DeliveryCommandMap';
 import scrollContainerStyle from '@components/atoms/ScrollSnapContainer/index.module.css';
 import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
 import { scrollToElement } from '@components/templates/RobotTaskTimeViewer';
-import { usePlace } from '@/context/PlaceContext';
+import { usePlaceContext } from '@/context/PlaceContext';
+import { ScrollSnapOverlay } from '@components/atoms/ScrollSnapOverlay';
 
 export const tempPlaceList: ThreeDimensionalCard[] = [
   {
@@ -106,7 +107,7 @@ const requestRobotDelivery = async ({ robotId, item, pick, dest }: DeliveryResp)
 };
 
 export const Delivery = () => {
-  const { place, setPlace } = usePlace();
+  const { place, setPlace } = usePlaceContext();
   const originRef = useRef<HTMLInputElement | null>(null);
   const destRef = useRef<HTMLInputElement | null>(null);
   const itemRef = useRef<HTMLInputElement | null>(null);
@@ -165,21 +166,24 @@ export const Delivery = () => {
 
   return (
     <div className={styles['delivery-form-container']}>
-      <form className={styles['delivery-form']} onSubmit={onSubmit}>
-        <label>
-          물품 배송 장소:
-          <input ref={originRef} placeholder="직접 선택하기" />
-        </label>
-        <label>
-          물품 수령 장소:
-          <input ref={destRef} placeholder="직접 선택하기" />
-        </label>
-        <label>
-          배송 물품:
-          <input ref={itemRef} placeholder="직접 입력하기" />
-        </label>
-        <button>확인</button>
-      </form>
+      <ScrollSnapOverlay>
+        <form className={styles['delivery-form']} onSubmit={onSubmit}>
+          <label>
+            물품 배송 장소:
+            <input ref={originRef} placeholder="직접 선택하기" />
+          </label>
+          <label>
+            물품 수령 장소:
+            <input ref={destRef} placeholder="직접 선택하기" />
+          </label>
+          <label>
+            배송 물품:
+            <input ref={itemRef} placeholder="직접 입력하기" />
+          </label>
+          <button>확인</button>
+        </form>
+      </ScrollSnapOverlay>
+
       <ScrollSnapContainer>
         <ScrollSnapItem>
           <div>빠른 물품 수령 장소 목록</div>
@@ -192,15 +196,15 @@ export const Delivery = () => {
             onClickTemplate={onClickTemplate(itemRef)}
           />
         </ScrollSnapItem>
-        <ScrollSnapItem>
-          {!isError && !isLoading && data ? (
+        {!isError && !isLoading && data ? (
+          <ScrollSnapItem>
             <DeliveryCommandMap
               data={data}
               onClickSetOrigin={onClickSetOrigin}
               onClickSetDest={onClickSetDest}
             />
-          ) : null}
-        </ScrollSnapItem>
+          </ScrollSnapItem>
+        ) : null}
       </ScrollSnapContainer>
     </div>
   );
