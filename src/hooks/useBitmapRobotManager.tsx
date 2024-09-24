@@ -1,5 +1,5 @@
 import { Point } from '@/commons/types';
-import { useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { IRobot } from '@components/pages/Robot';
 import { BITMAP_MODE } from '@components/molecules/SVGBitmap';
 
@@ -14,8 +14,8 @@ export type RobotPositionMsg = {
 };
 
 interface RobotPositionAction {
-  type: 'UPDATE_POSITION';
-  payload: RobotPositionMsg;
+  type: 'UPDATE_POSITION' | 'INITIALIZE';
+  payload: RobotPositionMsg | RobotPositionState;
 }
 
 const MOVE_COMMAND = {
@@ -27,18 +27,15 @@ export const useBitmapRobotManager = (robots: IRobot[], bitmapMode: BITMAP_MODE)
   const [selectedRobotId, setSelectedRobotId] = useState<string>(() =>
     bitmapMode === 'VIEWER' ? '' : robots[0].id,
   );
-  const [robotPositions, dispatch] = useReducer(
-    robotPositionReducer,
-    robots,
-    initialRobotPositions,
+  const [robotPositions, dispatch] = useReducer(robotPositionReducer, {}, () =>
+    initialRobotPositions(robots),
   );
 
-  const createGoMsg = (destX, destY) => {
-    // axios.post('http://localhost:8000/go', {
-    //   robotId: selectedRobotId,
-    //   dest: `${destX},${destY}`,
-    // });
+  useEffect(() => {
+    dispatch({ type: 'INITIALIZE', payload: initialRobotPositions(robots) });
+  }, [robots]);
 
+  const createGoMsg = (destX, destY) => {
     return JSON.stringify({
       command: MOVE_COMMAND.GO,
       target: selectedRobotId,
@@ -47,10 +44,6 @@ export const useBitmapRobotManager = (robots: IRobot[], bitmapMode: BITMAP_MODE)
   };
 
   const createStopMsg = () => {
-    // axios.post('http://localhost:8000/stop', {
-    //   robotId: selectedRobotId,
-    // });
-
     return JSON.stringify({
       command: MOVE_COMMAND.STOP,
       target: selectedRobotId,
@@ -72,7 +65,7 @@ export const useBitmapRobotManager = (robots: IRobot[], bitmapMode: BITMAP_MODE)
       key={robot.id}
       style={{
         transition: 'transform 0.5s', // Ensure the entire group transitions smoothly
-        transform: `translate(${robotPositions[robot.id].x}px, ${robotPositions[robot.id].y}px)`,
+        transform: `translate(${robotPositions[robot.id]?.x ?? -2}px, ${robotPositions[robot.id]?.y ?? -2}px)`,
       }}
     >
       <circle
@@ -107,6 +100,8 @@ const robotPositionReducer = (
   action: RobotPositionAction,
 ): RobotPositionState => {
   switch (action.type) {
+    case 'INITIALIZE':
+      return action.payload as RobotPositionState;
     case 'UPDATE_POSITION':
       return {
         ...state,
@@ -120,8 +115,9 @@ const robotPositionReducer = (
   }
 };
 
-const initialRobotPositions = (robots) =>
-  robots.reduce((acc, robot) => {
+const initialRobotPositions = (robots) => {
+  return robots.reduce((acc, robot) => {
     acc[robot.id] = robot.pos;
     return acc;
   }, {});
+};
