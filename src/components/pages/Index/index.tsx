@@ -1,6 +1,6 @@
 import { IRoutingButton } from '@components/atoms/RoutingButton';
 import { useNavigate } from 'react-router-dom';
-import React, { useCallback, useRef } from 'react';
+import React, { startTransition, useCallback, useRef } from 'react';
 import { ROUTER_PATH } from '@/router';
 import { Header } from '@components/molecules/Header';
 import { IteratingMapper } from '@components/atoms/IteratingMapper';
@@ -33,17 +33,19 @@ export const fetchRobotsByMap = async (map_name: string): Promise<MapStateResp> 
   return await response.json();
 };
 
+export const createQueryKeyWithPlace = (place: string): string[] => ['robot', place];
+
 export const Index: React.FC = () => {
   const { place, setPlace } = usePlaceContext();
   const queryClient = useQueryClient();
   const { data } = useSuspenseQuery({
-    queryKey: ['robots', place],
+    queryKey: createQueryKeyWithPlace(place),
     queryFn: () => fetchRobotsByMap(place),
   });
   const resetRef = useRef<{ reset: () => void } | null>(null);
 
   const handleReset = () => {
-    queryClient.invalidateQueries({ queryKey: ['robots', place] }).then(() => {
+    queryClient.invalidateQueries({ queryKey: createQueryKeyWithPlace(place) }).then(() => {
       resetRef.current?.reset();
     });
   };
@@ -56,7 +58,7 @@ export const Index: React.FC = () => {
         pendingFallback={<div>로딩중</div>}
         rejectedFallback={<button onClick={handleReset}>재시도</button>}
       >
-        <PlaceViewer placeData={data} />
+        <PlaceViewer placeData={data} reset={resetRef.current?.reset} />
       </AsyncBoundary>
     </MainContainer>
   );
@@ -64,12 +66,36 @@ export const Index: React.FC = () => {
 
 interface IPlaceViewer {
   placeData: MapStateResp;
+  reset?: () => void;
 }
 
-const PlaceViewer: React.FC = ({ placeData }: IPlaceViewer) => {
+const options = [
+  {
+    value: 'PLACE_TEST',
+    label: '세미나실',
+  },
+  {
+    value: '201',
+    label: '컴공관',
+  },
+];
+
+const PlaceViewer: React.FC = ({ placeData, reset }: IPlaceViewer) => {
   const navigate = useNavigate();
-  const onClickTemplate = useCallback((path) => () => navigate(path), [navigate]);
+  const onClickTemplate = useCallback(
+    (path) => () => startTransition(() => navigate(path)),
+    [navigate],
+  );
   const { rects, robots } = placeData;
+  const { place, setPlace } = usePlaceContext();
+  const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    startTransition(() => {
+      setPlace(event.target.value);
+      if (reset) {
+        reset();
+      }
+    });
+  };
 
   return (
     <ScrollSnapWrapper>
@@ -81,7 +107,20 @@ const PlaceViewer: React.FC = ({ placeData }: IPlaceViewer) => {
             border: '1px dashed antiquewhite',
           }}
         >
-          hi
+          <div
+            style={{
+              height: '10vh',
+            }}
+          >
+            <span>선택한 위치 </span>
+            <select value={place} onChange={onChange}>
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </ScrollSnapOverlay>
       <ScrollSnapContainer>
