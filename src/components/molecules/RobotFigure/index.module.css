@@ -23,6 +23,19 @@
     border: 2px solid black;
 }
 
+.work--rate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+}
+
+.work--rate>p {
+    font-family: Roboto, Arial;
+    font-weight: 500;
+}
+
 @media (max-width: 390px) {
     .figure--container {
         width: 50px;

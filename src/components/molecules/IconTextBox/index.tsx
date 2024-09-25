@@ -7,11 +7,12 @@ interface IIconTextBox {
   src: string;
   imgAlt: string;
   text: string;
+  imgSize?: number;
 }
 
-export const IconTextBox = ({ src, imgAlt, text }: IIconTextBox) => (
+export const IconTextBox = ({ src, imgAlt, text, imgSize = 50 }: IIconTextBox) => (
   <Flex justifyContent="center">
-    <img width="50px" src={src} alt={imgAlt} />
+    <img width={`${imgSize}px`} src={src} alt={imgAlt} />
     <RobotoComment comment={text} />
   </Flex>
 );

@@ -50,17 +50,8 @@ export const RobotFigure = ({ id, label, path, onClickTemplate, schedules }: IRo
       </div>
       <Flex>
         {schedulesGroupByTime.map((obj) => (
-          <div
-            key={`${id}-${obj.time}`}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: '5px',
-            }}
-          >
-            <p style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 500 }}>{obj.time}</p>
+          <div key={`${id}-${obj.time}`} className={styles['work--rate']}>
+            <p>{obj.time}</p>
             <AvailabilityIndicator percentage={obj.workingRate} />
           </div>
         ))}

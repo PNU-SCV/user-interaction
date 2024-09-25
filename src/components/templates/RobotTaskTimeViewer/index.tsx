@@ -83,6 +83,7 @@ export const RobotTaskTimeViewer = () => {
                 src={ScheduleNotFound}
                 imgAlt="robot surprised"
                 text="스케줄을 불러오지 못했어요"
+                imgSize={70}
               />
             )}
           </Flex>
