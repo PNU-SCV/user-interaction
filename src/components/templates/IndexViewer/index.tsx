@@ -41,7 +41,7 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
     queryFn: () => fetchRobotsByMap(place),
   });
   const navigate = useNavigate();
-  const onClickTemplate = useCallback((path) => () => () => navigate(path), [navigate]);
+  const onClickTemplate = useCallback((path) => () => navigate(path), [navigate]);
   const { rects, robots } = data;
   const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPlace(event.target.value);
