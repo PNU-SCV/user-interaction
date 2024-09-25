@@ -1,5 +1,5 @@
 import styles from './index.module.css';
-import { Fragment, MouseEventHandler, useMemo, useRef } from 'react';
+import { MouseEventHandler, useMemo, useRef } from 'react';
 import { IRobot } from '@components/pages/Robot';
 import { Rect } from '@/commons/types';
 import { RobotPositionMsg, useBitmapRobotManager } from '@/hooks/useBitmapRobotManager';
@@ -87,21 +87,20 @@ export const SVGBitmap = ({
   }, [rects]);
 
   return (
-    <Fragment>
+    <div>
       <svg
-        width="100%"
         viewBox="0 0 50 50"
         preserveAspectRatio="xMidYMid meet"
         xmlns="http://www.w3.org/2000/svg"
         onClick={onClickMap}
-        style={{ height: '90%' }}
+        style={{ height: '100%', maxHeight: '75vh' }}
       >
         <rect width="50" height="50" fill={colorInvalid} />
         {roomSVG}
         {robotSVGs}
       </svg>
       {bitmapMode === 'COMMANDER' ? <button onClick={emergencyStop}>정지</button> : null}
-    </Fragment>
+    </div>
   );
 };
 

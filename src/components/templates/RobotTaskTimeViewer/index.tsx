@@ -63,6 +63,10 @@ export const RobotTaskTimeViewer = () => {
         <div
           style={{
             backdropFilter: 'blur(6px)',
+            backgroundColor: 'transparent',
+            border: '2px solid #000',
+            boxSizing: 'border-box',
+            height: '10vh',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',

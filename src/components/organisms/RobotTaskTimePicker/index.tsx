@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { RoutingButtons } from '@components/molecules/RoutingButtons';
 import { Flex } from '@components/atoms/Flex';
 import { ROUTER_PATH } from '@/router';
+import { Spacing } from '@components/atoms/Spacing';
 
 export interface IScheduleReservation {
   time: ScheduleTime;
@@ -34,6 +35,7 @@ export const RobotTaskTimePicker = ({ time, date }: IScheduleReservation) => {
 
   return (
     <Fragment>
+      <Spacing />
       <ScheduleTimeTable
         onClickDelegated={onClickDelegated}
         getCellPropertiesByIndex={getCellPropertiesByIndex}

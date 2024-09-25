@@ -1,6 +1,8 @@
-import { RoutingButton } from '@components/atoms/RoutingButton';
 import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
+import ForwardIcon from '@images/forwardArrow.svg?react';
+import BackwardIcon from '@images/backwardArrow.svg?react';
+import { Flex } from '@components/atoms/Flex';
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -13,24 +15,58 @@ export const Header = () => {
   return (
     <header
       style={{
-        backgroundColor: 'lightskyblue',
+        // backgroundColor: 'lightskyblue',
         display: 'flex',
         overflow: 'hidden',
         height: '10vh',
+        alignItems: 'center',
       }}
     >
-      <RoutingButton
-        label="⬅️"
-        id="history.-1"
+      <button
+        style={{
+          padding: 0,
+          height: 'max-content',
+        }}
         disabled={disableBackButton}
         onClick={navigateBack}
-      />
-      <RoutingButton
-        label="➡️"
-        id="history.1"
+      >
+        <BackwardIcon
+          width={'50px'}
+          height={'50px'}
+          style={{
+            opacity: disableBackButton ? 0.5 : 1,
+            transition: 'opacity 0.2s ease',
+          }}
+        />
+      </button>
+      <button
+        style={{
+          padding: 0,
+          height: 'max-content',
+        }}
         disabled={disableForwardButton}
         onClick={navigateForward}
-      />
+      >
+        <ForwardIcon
+          width={'50px'}
+          height={'50px'}
+          style={{
+            opacity: disableForwardButton ? 0.5 : 1,
+            transition: 'opacity 0.2s ease',
+          }}
+        />
+      </button>
+      <Flex justifyContent={'center'}>
+        <p
+          style={{
+            fontSize: '32px',
+            fontFamily: 'Roboto',
+            fontWeight: 700,
+          }}
+        >
+          스마트 케어 5
+        </p>
+      </Flex>
     </header>
   );
 };

@@ -2,6 +2,8 @@ import robotPicture from '@images/robot.svg';
 import styles from './index.module.css';
 import { IRobot } from '@components/pages/Robot';
 import React from 'react';
+import { AvailabilityIndicator } from '@components/atoms/AvailabilityIndicator';
+import { Flex } from '@components/atoms/Flex';
 
 export interface IRobotFigure extends IRobot {
   onClickTemplate: (path: string) => () => void;
@@ -42,75 +44,27 @@ export const RobotFigure = ({ id, label, path, onClickTemplate, schedules }: IRo
 
   return (
     <div style={{ display: 'flex' }}>
-      <div
-        className={styles['figure--container']}
-        style={{
-          width: '50px',
-          height: '50px',
-        }}
-        onClick={onClickTemplate(path)}
-      >
-        <img
-          src={robotPicture}
-          alt="robot picture"
-          width={'50px'}
-          height={'50px'}
-          className={styles['figure--image']}
-        />
-        <span className={styles['figure--label']} style={{ fontSize: '10px' }}>
-          {label}
-        </span>
+      <div className={styles['figure--container']} onClick={onClickTemplate(path)}>
+        <img src={robotPicture} alt="robot picture" className={styles['figure--image']} />
+        <span className={styles['figure--label']}>{label}</span>
       </div>
-      <div
-        style={{
-          display: 'flex',
-        }}
-      >
+      <Flex>
         {schedulesGroupByTime.map((obj) => (
-          <div key={`${id}-${obj.time}`} style={{ display: 'flex', alignItems: 'center' }}>
-            <p>{obj.time}</p>
+          <div
+            key={`${id}-${obj.time}`}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: '5px',
+            }}
+          >
+            <p style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 500 }}>{obj.time}</p>
             <AvailabilityIndicator percentage={obj.workingRate} />
           </div>
         ))}
-      </div>
-    </div>
-  );
-};
-
-const AvailabilityIndicator: React.FC<{ percentage: number }> = ({ percentage }) => {
-  return (
-    <div
-      style={{
-        width: '30px',
-        height: '10px',
-        border: '2px solid #000',
-        borderRadius: '8px',
-        position: 'relative',
-        backgroundColor: '#eee',
-        margin: '0 2px',
-      }}
-    >
-      <div
-        style={{
-          height: '100%',
-          backgroundColor: '#76c7c0',
-          width: `${100 - percentage}%`,
-          borderRadius: '6px 0 0 6px',
-          transition: 'width 0.5s ease',
-        }}
-      ></div>
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          fontWeight: 'bold',
-          color: '#000',
-        }}
-      >
-        {100 - percentage}%
-      </div>
+      </Flex>
     </div>
   );
 };

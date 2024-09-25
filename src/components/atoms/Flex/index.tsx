@@ -1,4 +1,4 @@
-import { CSSProperties, ReactElement, useMemo } from 'react';
+import { CSSProperties, ReactElement, ReactNode, useMemo } from 'react';
 import styles from './index.module.css';
 
 export interface IFlex {
@@ -7,7 +7,7 @@ export interface IFlex {
   alignItems?: string;
   flexDirection?: string;
   flexWrap?: string;
-  children: ReactElement;
+  children: ReactNode;
 }
 
 export const Flex = ({
