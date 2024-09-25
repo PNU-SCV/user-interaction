@@ -18,6 +18,8 @@ import searching from '@images/searching.svg';
 import { SVGBitmap } from '@components/molecules/SVGBitmap';
 import { createQueryKeyWithPlace, fetchRobotsByMap } from '@components/pages/Index';
 import { RobotoComment } from '@components/atoms/RobotoComment';
+import { Select } from '@components/atoms/Select';
+import { IconTextBox } from '@components/molecules/IconTextBox';
 
 interface IPlaceViewer {
   reset?: () => void;
@@ -54,33 +56,15 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
     <ScrollSnapWrapper>
       <ScrollSnapOverlay>
         <GlassPanel>
-          <Flex flexDirection={'column'} alignItems={'center'}>
+          <Flex flexDirection="column" alignItems="center">
             <RobotoComment comment="선택한 위치" />
-            <select
-              value={place}
-              onChange={onChange}
-              style={{
-                border: '2px solid #000',
-                width: '200px',
-                height: '30px',
-                fontSize: '20px',
-              }}
-            >
-              {options.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            <Select options={options} onChange={onChange} defaultValue={place} />
           </Flex>
         </GlassPanel>
       </ScrollSnapOverlay>
       <ScrollSnapContainer>
         <ScrollSnapItem>
-          <Flex justifyContent={'center'}>
-            <img width={'50px'} src={checking} alt={'checking tablet'} />
-            <RobotoComment comment="주변 로봇들 자세히 보기" />
-          </Flex>
+          <IconTextBox src={checking} text="주변 로봇들 자세히 보기" imgAlt="checking tablet" />
           <Spacing />
           <IteratingMapper<IRoutingButton>
             items={robots.map((robot) => ({
@@ -97,10 +81,7 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
           />
         </ScrollSnapItem>
         <ScrollSnapItem>
-          <Flex justifyContent={'center'}>
-            <img width={'50px'} src={searching} alt="searching motion" />
-            <RobotoComment comment="주변 로봇 탐색" />
-          </Flex>
+          <IconTextBox src={searching} imgAlt="searching motion" text="주변 로봇 탐색" />
           <SVGBitmap rects={rects} robots={robots} />
         </ScrollSnapItem>
       </ScrollSnapContainer>
