@@ -44,6 +44,15 @@ export const RobotTaskTimePicker = ({ time, date }: IScheduleReservation) => {
         {time === 'Morning' ? <Morning width={svgSize} height={svgSize} /> : null}
         {time === 'Afternoon' ? <Afternoon width={svgSize} height={svgSize} /> : null}
         {time === 'Night' ? <Night width={svgSize} height={svgSize} /> : null}
+        <svg width="100%" height={svgSize} xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M0 35 Q 25 50, 43 15 Q 25 10, 30 35 Q 40 60, 20, 40 T 1024 35"
+            stroke="black"
+            strokeWidth="2"
+            strokeDasharray="10, 4"
+            fill="transparent"
+          />
+        </svg>
       </Flex>
       <ScheduleTimeTable
         onClickDelegated={onClickDelegated}

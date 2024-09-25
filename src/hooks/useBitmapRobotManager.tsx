@@ -73,11 +73,13 @@ export const useBitmapRobotManager = (robots: IRobot[], bitmapMode: BITMAP_MODE)
         cx="0.5"
         cy="0.5"
         r="0.5"
-        fill={selectedRobotId === robot.id ? 'red' : 'black'}
+        fill={bitmapMode === 'VIEWER' ? '#76c7c0' : selectedRobotId === robot.id ? 'red' : 'black'}
         style={{
           transition: 'fill 0.5s', // Smooth transition for fill color
           cursor: 'pointer',
         }}
+        stroke="#000"
+        strokeWidth="0.1"
       />
       <text
         x="1"
