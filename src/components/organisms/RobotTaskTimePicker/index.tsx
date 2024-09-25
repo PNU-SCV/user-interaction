@@ -10,6 +10,9 @@ import { RoutingButtons } from '@components/molecules/RoutingButtons';
 import { Flex } from '@components/atoms/Flex';
 import { ROUTER_PATH } from '@/router';
 import { Spacing } from '@components/atoms/Spacing';
+import Morning from '@images/morning.svg?react';
+import Afternoon from '@images/afternoon.svg?react';
+import Night from '@images/night.svg?react';
 
 export interface IScheduleReservation {
   time: ScheduleTime;
@@ -33,9 +36,15 @@ export const RobotTaskTimePicker = ({ time, date }: IScheduleReservation) => {
     navigate(path, { state: { ...schedule, date, time, id: robotId } });
   };
 
+  const svgSize = 70;
   return (
     <Fragment>
       <Spacing />
+      <Flex>
+        {time === 'Morning' ? <Morning width={svgSize} height={svgSize} /> : null}
+        {time === 'Afternoon' ? <Afternoon width={svgSize} height={svgSize} /> : null}
+        {time === 'Night' ? <Night width={svgSize} height={svgSize} /> : null}
+      </Flex>
       <ScheduleTimeTable
         onClickDelegated={onClickDelegated}
         getCellPropertiesByIndex={getCellPropertiesByIndex}
