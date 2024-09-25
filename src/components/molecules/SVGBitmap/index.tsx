@@ -93,7 +93,12 @@ export const SVGBitmap = ({
         preserveAspectRatio="xMidYMid meet"
         xmlns="http://www.w3.org/2000/svg"
         onClick={onClickMap}
-        style={{ height: '100%', maxHeight: '75vh' }}
+        style={{
+          height: '100%',
+          maxHeight: '74vh',
+          boxSizing: 'border-box',
+          border: '2px solid #000',
+        }}
       >
         <rect width="50" height="50" fill={colorInvalid} />
         {roomSVG}
