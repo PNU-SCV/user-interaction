@@ -45,6 +45,11 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
   const navigate = useNavigate();
   const onClickTemplate = useCallback((path) => () => navigate(path), [navigate]);
   const { rects, robots } = data;
+  const robotsWithPaths = robots.map((robot) => ({
+    ...robot,
+    path: ROUTER_PATH.ROBOT + `?id=${robot.id}`,
+  }));
+
   const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPlace(event.target.value);
     if (reset) {
@@ -58,6 +63,7 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
         <GlassPanel>
           <Flex flexDirection="column" alignItems="center">
             <RobotoComment comment="선택한 위치" />
+            <Spacing height={10} />
             <Select options={options} onChange={onChange} defaultValue={place} />
           </Flex>
         </GlassPanel>
@@ -67,10 +73,7 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
           <IconTextBox src={checking} text="주변 로봇들 자세히 보기" imgAlt="checking tablet" />
           <Spacing />
           <IteratingMapper<IRoutingButton>
-            items={robots.map((robot) => ({
-              ...robot,
-              path: ROUTER_PATH.ROBOT + `?id=${robot.id}`,
-            }))}
+            items={robotsWithPaths}
             component={RobotFigure}
             container={Flex}
             otherItemProps={{ onClickTemplate }}

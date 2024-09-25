@@ -20,6 +20,11 @@ import { RobotFigure } from '@components/molecules/RobotFigure';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePlaceContext } from '@/context/PlaceContext';
 import { createQueryKeyWithPlace } from '@components/pages/Index';
+import { GlassPanel } from '@components/atoms/GlassPanel';
+import { Flex } from '@components/atoms/Flex';
+import { RobotoComment } from '@components/atoms/RobotoComment';
+import ScheduleNotFound from '@images/scheduleNotFound.svg';
+import { IconTextBox } from '@components/molecules/IconTextBox';
 
 interface IScheduleTime extends ItemProps {
   time: ScheduleTime;
@@ -60,30 +65,28 @@ export const RobotTaskTimeViewer = () => {
   return (
     <ScrollSnapWrapper>
       <ScrollSnapOverlay>
-        <div
-          style={{
-            backdropFilter: 'blur(6px)',
-            backgroundColor: 'transparent',
-            border: '2px solid #000',
-            boxSizing: 'border-box',
-            height: '10vh',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          선택한 로봇 {location.search.slice(location.search.search('id=') + 3)}
-          {queryData
-            ? queryData.robots
+        <GlassPanel>
+          <Flex flexDirection="column" justifyContent="center" alignItems="center">
+            <RobotoComment
+              comment={`선택한 로봇 ${location.search.slice(location.search.search('id=') + 3)}`}
+            />
+            {queryData ? (
+              queryData.robots
                 ?.filter(
                   (robot) => robot.id === location.search.slice(location.search.search('id=') + 3),
                 )
                 .map((robot) => (
                   <RobotFigure key={robot.id} onClickTemplate={() => () => {}} {...robot} />
                 ))
-            : null}
-        </div>
+            ) : (
+              <IconTextBox
+                src={ScheduleNotFound}
+                imgAlt="robot surprised"
+                text="스케줄을 불러오지 못했어요"
+              />
+            )}
+          </Flex>
+        </GlassPanel>
       </ScrollSnapOverlay>
       {/*// TODO: 동작은 똑같은데 아래의 코드 가독성이 너무 안좋다. 그렇다고 IteratingMapper를 만들어 놓고 안쓰기엔 아까움*/}
       {/*// <ScrollSnapContainer>*/}
