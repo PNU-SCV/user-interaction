@@ -48,8 +48,8 @@ const iScheduleTimes: IScheduleTime[] = [
 export const RobotTaskTimeViewer = () => {
   const date: DateString = formatDateToMMDDYY(new Date());
   const location = useLocation();
-  const queryClient = useQueryClient();
   const { place } = usePlaceContext();
+  const queryClient = useQueryClient();
   const queryData = queryClient.getQueryData(createQueryKeyWithPlace(place));
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export const RobotTaskTimeViewer = () => {
         <GlassPanel>
           <Flex flexDirection="column" justifyContent="center" alignItems="center">
             <RobotoComment
-              comment={`선택한 로봇 ${location.search.slice(location.search.search('id=') + 3)}`}
+              comment={`선택한 로봇: ${location.search.slice(location.search.search('id=') + 3)}`}
             />
             {queryData ? (
               queryData.robots
@@ -82,7 +82,7 @@ export const RobotTaskTimeViewer = () => {
               <IconTextBox
                 src={ScheduleNotFound}
                 imgAlt="robot surprised"
-                text="스케줄을 불러오지 못했어요"
+                text="로봇의 상세 정보를 불러오지 못했어요"
                 imgSize={70}
               />
             )}

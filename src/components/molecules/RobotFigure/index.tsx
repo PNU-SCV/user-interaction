@@ -7,6 +7,7 @@ import { Flex } from '@components/atoms/Flex';
 
 export interface IRobotFigure extends IRobot {
   onClickTemplate: (path: string) => () => void;
+  showSchedule: boolean;
 }
 
 const TIMES = ['Morning', 'Afternoon', 'Night'];
@@ -14,7 +15,14 @@ const MORNING = 0;
 const AFTERNOON = 1;
 const NIGHT = 2;
 
-export const RobotFigure = ({ id, label, path, onClickTemplate, schedules }: IRobotFigure) => {
+export const RobotFigure = ({
+  id,
+  label,
+  path,
+  onClickTemplate,
+  schedules,
+  showSchedule = true,
+}: IRobotFigure) => {
   const schedulesByTime = [[], [], []];
 
   schedules.forEach((item) => {
@@ -48,14 +56,16 @@ export const RobotFigure = ({ id, label, path, onClickTemplate, schedules }: IRo
         <img src={robotPicture} alt="robot picture" className={styles['figure--image']} />
         <span className={styles['figure--label']}>{label}</span>
       </div>
-      <Flex>
-        {schedulesGroupByTime.map((obj) => (
-          <div key={`${id}-${obj.time}`} className={styles['work--rate']}>
-            <p>{obj.time}</p>
-            <AvailabilityIndicator percentage={obj.workingRate} />
-          </div>
-        ))}
-      </Flex>
+      {showSchedule ? (
+        <Flex>
+          {schedulesGroupByTime.map((obj) => (
+            <div key={`${id}-${obj.time}`} className={styles['work--rate']}>
+              <p>{obj.time}</p>
+              <AvailabilityIndicator percentage={obj.workingRate} />
+            </div>
+          ))}
+        </Flex>
+      ) : null}
     </div>
   );
 };

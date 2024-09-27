@@ -1,14 +1,28 @@
-.delivery-form-container {
-    width: 100%;
-    position: relative;
-}
 .delivery-form {
     display: grid;
+    /*display: flex;*/
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 10px;
     align-items: center;
     flex-direction: column;
-    backdrop-filter: blur(6px);
-    background-color: transparent;
-    border: 1px dashed antiquewhite;
+    font-family: Roboto, Arial;
+}
+
+.delivery-form label {
+    display: flex;
+    font-size: 20px;
+}
+
+.delivery-form label span {
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
+    text-decoration: underline;
+    text-decoration-thickness: 4px;
+}
+
+.delivery-form input {
+    width: 160px;
+    font-size: 20px;
+    /*border: 2px solid #76c7c0;*/
 }

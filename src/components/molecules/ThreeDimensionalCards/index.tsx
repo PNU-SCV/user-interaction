@@ -25,8 +25,7 @@ export const ThreeDimensionalCards = ({ cardList, onClickTemplate }: IThreeDimen
             style={{
               width: '100%',
               height: '100%',
-              backgroundColor: '#fefefe',
-              border: '1px solid black',
+              border: '2px solid black',
               textWrap: 'balance',
               padding: '5px',
             }}

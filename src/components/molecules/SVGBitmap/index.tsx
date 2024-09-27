@@ -6,6 +6,7 @@ import { RobotPositionMsg, useBitmapRobotManager } from '@/hooks/useBitmapRobotM
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useNavigate } from 'react-router-dom';
 import { ROUTER_PATH } from '@/router';
+import { createPortal } from 'react-dom';
 
 const colorValid = 'white';
 const colorInvalid = 'whitesmoke';
@@ -104,7 +105,17 @@ export const SVGBitmap = ({
         {roomSVG}
         {robotSVGs}
       </svg>
-      {bitmapMode === 'COMMANDER' ? <button onClick={emergencyStop}>정지</button> : null}
+      {bitmapMode === 'COMMANDER'
+        ? createPortal(
+            <button
+              style={{ position: 'absolute', transform: 'translateX(50%)' }}
+              onClick={emergencyStop}
+            >
+              정지
+            </button>,
+            document.body,
+          )
+        : null}
     </div>
   );
 };

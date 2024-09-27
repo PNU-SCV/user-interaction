@@ -1,4 +1,4 @@
-import { FormEvent, MouseEvent, MutableRefObject, useRef } from 'react';
+import React, { FormEvent, MouseEvent, MutableRefObject, useRef } from 'react';
 import {
   ThreeDimensionalCard,
   ThreeDimensionalCards,
@@ -6,8 +6,8 @@ import {
 
 import styles from './index.module.css';
 import { useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { fetchRobotsByMap } from '@components/pages/Index';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { createQueryKeyWithPlace, fetchRobotsByMap } from '@components/pages/Index';
 import { ScrollSnapContainer } from '@components/atoms/ScrollSnapContainer';
 import { ScrollSnapItem } from '@components/atoms/ScrollSnapItem';
 import axios from 'axios';
@@ -18,39 +18,19 @@ import { scrollToElement } from '@components/templates/RobotTaskTimeViewer';
 import { usePlaceContext } from '@/context/PlaceContext';
 import { ScrollSnapOverlay } from '@components/atoms/ScrollSnapOverlay';
 import { ScrollSnapWrapper } from '@components/atoms/ScrollSnapWrapper';
-
-export const tempPlaceList: ThreeDimensionalCard[] = [
-  {
-    heading: '과도',
-    address: '201-6518',
-    desc: '도서관',
-  },
-  {
-    heading: '강의실 A',
-    address: '201-6515',
-    desc: '모서리 강의실',
-  },
-  {
-    heading: '강의실 B',
-    address: '201-6516',
-    desc: '',
-  },
-  {
-    heading: '회의실',
-    address: '201-6514',
-    desc: '',
-  },
-  {
-    heading: '화장실A',
-    address: '201-5-TA',
-    desc: '도서관 화장실',
-  },
-  {
-    heading: '화장실B',
-    address: '201-5-TB',
-    desc: '회의실 화장실',
-  },
-];
+import { GlassPanel } from '@components/atoms/GlassPanel';
+import { Spacing } from '@components/atoms/Spacing';
+import { Flex } from '@components/atoms/Flex';
+import Pentagram from '@images/pentagram.svg?react';
+import { IconTextBox } from '@components/molecules/IconTextBox';
+import Lightbulb from '@images/lightbulb.svg?react';
+import { RobotoComment } from '@components/atoms/RobotoComment';
+import searchingSpecific from '@images/searchingSpecific.svg';
+import table from '@images/tablet.svg';
+import { calcTimeSlotByTimeAndIndex } from '@components/molecules/ScheduleTimeTable';
+import { RobotFigure } from '@components/molecules/RobotFigure';
+import ScheduleNotFound from '@images/scheduleNotFound.svg';
+import clock from '@images/clock.svg';
 
 const myPlace: ThreeDimensionalCard[] = [
   {
@@ -113,6 +93,8 @@ export const Delivery = () => {
   const destRef = useRef<HTMLInputElement | null>(null);
   const itemRef = useRef<HTMLInputElement | null>(null);
   const location = useLocation();
+  const queryClient = useQueryClient();
+  const queryData = queryClient.getQueryData(createQueryKeyWithPlace(place));
   const { data, isLoading, isError } = useQuery({
     queryKey: ['robots', place],
     queryFn: () => fetchRobotsByMap(place),
@@ -165,32 +147,127 @@ export const Delivery = () => {
     }
   };
 
+  const svgSize = 70;
+
+  const { date, time, start, end, id } = location.state;
+  const [scheduleStart, scheduleEnd] = [start, end].map((index) =>
+    calcTimeSlotByTimeAndIndex(date, index),
+  );
+
   return (
     <ScrollSnapWrapper>
       <ScrollSnapOverlay>
-        <form className={styles['delivery-form']} onSubmit={onSubmit}>
-          <label>
-            물품 배송 장소:
-            <input ref={originRef} placeholder="직접 선택하기" />
-          </label>
-          <label>
-            물품 수령 장소:
-            <input ref={destRef} placeholder="직접 선택하기" />
-          </label>
-          <label>
-            배송 물품:
-            <input ref={itemRef} placeholder="직접 입력하기" />
-          </label>
-          <button>확인</button>
-        </form>
+        <GlassPanel>
+          <Spacing height={10} />
+          <Flex justifyContent="center">
+            <Pentagram width={svgSize} height={svgSize} />
+            <form className={styles['delivery-form']} onSubmit={onSubmit}>
+              <label>
+                <span
+                  style={{
+                    textDecorationColor: '#76c7c0',
+                  }}
+                >
+                  물품 수령 장소
+                </span>
+                <input ref={originRef} placeholder="직접 선택하기" />
+              </label>
+              <label>
+                <span
+                  style={{
+                    textDecorationColor: 'lightskyblue',
+                  }}
+                >
+                  물품 배송 장소
+                </span>
+                <input ref={destRef} placeholder="직접 선택하기" />
+              </label>
+              <label>
+                <span
+                  style={{
+                    textDecorationColor: 'lightcoral',
+                  }}
+                >
+                  배송 물품
+                </span>
+                <input ref={itemRef} placeholder="직접 입력하기" />
+              </label>
+              <button>확인</button>
+            </form>
+          </Flex>
+        </GlassPanel>
       </ScrollSnapOverlay>
       <ScrollSnapContainer>
         <ScrollSnapItem>
-          <div>빠른 물품 수령 장소 목록</div>
+          <Spacing height={10} />
+          <IconTextBox imgSize={60} src={table} imgAlt="save information" text="선택된 옵션들" />
+          {/*<Spacing height={10} />*/}
+          <Flex flexDirection="column" alignItems="center">
+            {/*<p>선택한 로봇 {id}</p>*/}
+            {queryData ? (
+              queryData.robots
+                ?.filter((robot) => robot.id === id)
+                .map((robot) => (
+                  <RobotFigure
+                    key={robot.id}
+                    showSchedule={false}
+                    onClickTemplate={() => () => {}}
+                    {...robot}
+                  />
+                ))
+            ) : (
+              <IconTextBox
+                src={ScheduleNotFound}
+                imgAlt="robot surprised"
+                text={`로봇의 상세 정보를 불러오지 못했어요. (${id})`}
+              />
+            )}
+          </Flex>
+          <IconTextBox
+            src={clock}
+            imgAlt={'clock image'}
+            text={`${date} ${time} ${scheduleStart} ~ ${scheduleEnd}`}
+            imgSize={60}
+          />
+          <Spacing height={30} />
+          <Flex justifyContent="center">
+            <Lightbulb width={svgSize} height={svgSize} />
+            <RobotoComment comment="장소 클릭으로 채우기" />
+          </Flex>
+          <div
+            style={{
+              textDecoration: 'underline',
+              textDecorationColor: '#76c7c0',
+              textDecorationThickness: '4px',
+              fontSize: '22px',
+            }}
+          >
+            수령 장소
+          </div>
           <ThreeDimensionalCards cardList={myPlace} onClickTemplate={onClickTemplate(originRef)} />
-          <div>빠른 물품 배송 장소 목록</div>
+          <Spacing />
+          <div
+            style={{
+              textDecoration: 'underline',
+              textDecorationColor: 'lightskyblue',
+              textDecorationThickness: '4px',
+              fontSize: '22px',
+            }}
+          >
+            배송 장소
+          </div>
           <ThreeDimensionalCards cardList={myPlace} onClickTemplate={onClickTemplate(destRef)} />
-          <div>빠른 배송 물품 목록</div>
+          <Spacing />
+          <div
+            style={{
+              textDecoration: 'underline',
+              textDecorationColor: 'lightcoral',
+              textDecorationThickness: '4px',
+              fontSize: '22px',
+            }}
+          >
+            물품 목록
+          </div>
           <ThreeDimensionalCards
             cardList={tempItemList}
             onClickTemplate={onClickTemplate(itemRef)}
@@ -198,6 +275,11 @@ export const Delivery = () => {
         </ScrollSnapItem>
         {!isError && !isLoading && data ? (
           <ScrollSnapItem>
+            <IconTextBox
+              src={searchingSpecific}
+              imgAlt="searching image"
+              text="주변 환경 및 경로"
+            />
             <DeliveryCommandMap
               data={data}
               onClickSetOrigin={onClickSetOrigin}

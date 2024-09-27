@@ -1,6 +1,6 @@
 import { FormEvent, Fragment } from 'react';
 import styles from './index.module.css';
-import { tempPlaceList } from '@components/templates/Delivery';
+import { ThreeDimensionalCard } from '@components/molecules/ThreeDimensionalCards';
 
 type HealthCheckListItem = {
   label: string;
@@ -14,6 +14,39 @@ const tempCheckList: HealthCheckListItem[] = [
   { label: '호흡수', required: true },
   { label: '수면시간', required: false },
   { label: '특이사항 여부', required: false },
+];
+
+export const tempPlaceList: ThreeDimensionalCard[] = [
+  {
+    heading: '과도',
+    address: '201-6518',
+    desc: '도서관',
+  },
+  {
+    heading: '강의실 A',
+    address: '201-6515',
+    desc: '모서리 강의실',
+  },
+  {
+    heading: '강의실 B',
+    address: '201-6516',
+    desc: '',
+  },
+  {
+    heading: '회의실',
+    address: '201-6514',
+    desc: '',
+  },
+  {
+    heading: '화장실A',
+    address: '201-5-TA',
+    desc: '도서관 화장실',
+  },
+  {
+    heading: '화장실B',
+    address: '201-5-TB',
+    desc: '회의실 화장실',
+  },
 ];
 
 export const Checkup = () => {
