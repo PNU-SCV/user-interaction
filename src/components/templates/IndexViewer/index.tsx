@@ -43,7 +43,10 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
     queryFn: () => fetchRobotsByMap(place),
   });
   const navigate = useNavigate();
-  const onClickTemplate = useCallback((path) => () => navigate(path), [navigate]);
+  const onClickTemplate = useCallback(
+    (path, id) => () => navigate(path, { state: { id: id } }),
+    [navigate],
+  );
   const { rects, robots } = data;
   const robotsWithPaths = robots.map((robot) => ({
     ...robot,

@@ -9,7 +9,7 @@ import {
 import { IteratingMapper } from '@components/atoms/IteratingMapper';
 import { ScrollSnapItem } from '@components/atoms/ScrollSnapItem';
 import { RobotTaskTimePicker } from '@components/organisms/RobotTaskTimePicker';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import scrollContainerStyle from '@components/atoms/ScrollSnapContainer/index.module.css';
 import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
 import { ROUTER_PATH } from '@/router';
@@ -17,14 +17,16 @@ import { ScrollSnapWrapper } from '@components/atoms/ScrollSnapWrapper';
 import { ScrollSnapOverlay } from '@components/atoms/ScrollSnapOverlay';
 import { useLocation } from 'react-router-dom';
 import { RobotFigure } from '@components/molecules/RobotFigure';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePlaceContext } from '@/context/PlaceContext';
-import { createQueryKeyWithPlace } from '@components/pages/Index';
+import { createQueryKeyWithPlace, fetchRobotsByMap, MapStateResp } from '@components/pages/Index';
 import { GlassPanel } from '@components/atoms/GlassPanel';
 import { Flex } from '@components/atoms/Flex';
 import { RobotoComment } from '@components/atoms/RobotoComment';
 import ScheduleNotFound from '@images/scheduleNotFound.svg';
 import { IconTextBox } from '@components/molecules/IconTextBox';
+import searchingSpecific from '@images/searchingSpecific.svg';
+import { DeliveryCommandMap } from '@components/organisms/DeliveryCommandMap';
 
 interface IScheduleTime extends ItemProps {
   time: ScheduleTime;
@@ -45,12 +47,13 @@ const iScheduleTimes: IScheduleTime[] = [
   },
 ];
 
-export const RobotTaskTimeViewer = () => {
+interface IRobotTaskTimeViewer {
+  data: MapStateResp;
+}
+
+export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
   const date: DateString = formatDateToMMDDYY(new Date());
   const location = useLocation();
-  const { place } = usePlaceContext();
-  const queryClient = useQueryClient();
-  const queryData = queryClient.getQueryData(createQueryKeyWithPlace(place));
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -70,47 +73,47 @@ export const RobotTaskTimeViewer = () => {
             <RobotoComment
               comment={`선택한 로봇: ${location.search.slice(location.search.search('id=') + 3)}`}
             />
-            {queryData ? (
-              queryData.robots
-                ?.filter(
-                  (robot) => robot.id === location.search.slice(location.search.search('id=') + 3),
-                )
-                .map((robot) => (
-                  <RobotFigure key={robot.id} onClickTemplate={() => () => {}} {...robot} />
-                ))
-            ) : (
-              <IconTextBox
-                src={ScheduleNotFound}
-                imgAlt="robot surprised"
-                text="로봇의 상세 정보를 불러오지 못했어요"
-                imgSize={70}
-              />
-            )}
+            {data.robots
+              .filter(
+                (robot) => robot.id === location.search.slice(location.search.search('id=') + 3),
+              )
+              .map((robot) => (
+                <RobotFigure key={robot.id} onClickTemplate={() => () => {}} {...robot} />
+              ))}
           </Flex>
         </GlassPanel>
       </ScrollSnapOverlay>
       {/*// TODO: 동작은 똑같은데 아래의 코드 가독성이 너무 안좋다. 그렇다고 IteratingMapper를 만들어 놓고 안쓰기엔 아까움*/}
-      {/*// <ScrollSnapContainer>*/}
-      {/*//   {scheduleTimes.map((time) => (*/}
-      {/*//     <ScrollSnapItem key={`${date} ${time}`}>*/}
-      {/*//       <RobotTaskTimePicker time={time} date={date} />*/}
-      {/*//     </ScrollSnapItem>*/}
-      {/*//   ))}*/}
-      {/*// </ScrollSnapContainer>*/}
-      <IteratingMapper<IScheduleTime>
-        container={ScrollSnapContainer}
-        items={iScheduleTimes}
-        otherItemProps={{
-          date: date,
-        }}
-        component={({ time, date }) => {
-          return (
-            <ScrollSnapItem key={`${date} ${time}`}>
-              <RobotTaskTimePicker time={time} date={date} />
-            </ScrollSnapItem>
-          );
-        }}
-      />
+      <ScrollSnapContainer>
+        <ScrollSnapItem>
+          <div style={{ height: '30px' }}></div>
+          <IconTextBox
+            src={searchingSpecific}
+            imgAlt="searching image"
+            text="미니맵을 통해 목적지를 선택하고 로봇을 이동시켜요!"
+          />
+          <DeliveryCommandMap data={data} maxH={'60vh'} />
+        </ScrollSnapItem>
+        {scheduleTimes.map((time) => (
+          <ScrollSnapItem key={`${date} ${time}`}>
+            <RobotTaskTimePicker time={time} date={date} />
+          </ScrollSnapItem>
+        ))}
+      </ScrollSnapContainer>
+      {/*<IteratingMapper<IScheduleTime>*/}
+      {/*  container={ScrollSnapContainer}*/}
+      {/*  items={iScheduleTimes}*/}
+      {/*  otherItemProps={{*/}
+      {/*    date: date,*/}
+      {/*  }}*/}
+      {/*  component={({ time, date }) => {*/}
+      {/*    return (*/}
+      {/*      <ScrollSnapItem key={`${date} ${time}`}>*/}
+      {/*        <RobotTaskTimePicker time={time} date={date} />*/}
+      {/*      </ScrollSnapItem>*/}
+      {/*    );*/}
+      {/*  }}*/}
+      {/*/>*/}
     </ScrollSnapWrapper>
   );
 };

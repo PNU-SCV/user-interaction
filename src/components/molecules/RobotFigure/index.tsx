@@ -6,7 +6,7 @@ import { AvailabilityIndicator } from '@components/atoms/AvailabilityIndicator';
 import { Flex } from '@components/atoms/Flex';
 
 export interface IRobotFigure extends IRobot {
-  onClickTemplate: (path: string) => () => void;
+  onClickTemplate: (path: string, id: string) => () => void;
   showSchedule: boolean;
 }
 
@@ -52,7 +52,7 @@ export const RobotFigure = ({
 
   return (
     <div style={{ display: 'flex' }}>
-      <div className={styles['figure--container']} onClick={onClickTemplate(path)}>
+      <div className={styles['figure--container']} onClick={onClickTemplate(path, id)}>
         <img src={robotPicture} alt="robot picture" className={styles['figure--image']} />
         <span className={styles['figure--label']}>{label}</span>
       </div>

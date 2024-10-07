@@ -11,6 +11,7 @@ export type RobotPositionMsg = {
   id: string;
   newX: number;
   newY: number;
+  // status: number;
 };
 
 interface RobotPositionAction {
@@ -23,7 +24,11 @@ const MOVE_COMMAND = {
   GO: 1,
 };
 
-export const useBitmapRobotManager = (robots: IRobot[], bitmapMode: BITMAP_MODE) => {
+export const useBitmapRobotManager = (
+  robots: IRobot[],
+  bitmapMode: BITMAP_MODE,
+  maxCeil: number,
+) => {
   const [selectedRobotId, setSelectedRobotId] = useState<string>(() =>
     bitmapMode === 'VIEWER' ? '' : robots[0].id,
   );
@@ -35,11 +40,13 @@ export const useBitmapRobotManager = (robots: IRobot[], bitmapMode: BITMAP_MODE)
     dispatch({ type: 'INITIALIZE', payload: initialRobotPositions(robots) });
   }, [robots]);
 
-  const createGoMsg = (destX, destY) => {
+  // const createGoMsg = (destX, destY) => {
+  const createGoMsg = (selectedPoints) => {
     return JSON.stringify({
       command: MOVE_COMMAND.GO,
       target: selectedRobotId,
-      dest: `${destX},${destY}`,
+      // dest: `${destX},${destY}`,
+      dest: selectedPoints,
     });
   };
 
@@ -72,7 +79,8 @@ export const useBitmapRobotManager = (robots: IRobot[], bitmapMode: BITMAP_MODE)
         id={robot.id}
         cx="0.5"
         cy="0.5"
-        r="0.5"
+        // r="0.5"
+        r={maxCeil * 0.03}
         fill={bitmapMode === 'VIEWER' ? '#76c7c0' : selectedRobotId === robot.id ? 'red' : 'black'}
         style={{
           transition: 'fill 0.5s', // Smooth transition for fill color
@@ -82,11 +90,14 @@ export const useBitmapRobotManager = (robots: IRobot[], bitmapMode: BITMAP_MODE)
         strokeWidth="0.1"
       />
       <text
-        x="1"
-        y="0.75"
-        fontSize="1px"
+        // x="1"
+        x="-1.1"
+        // y="0.75"
+        y="0.1"
+        fontSize={maxCeil * 0.03}
         style={{
-          transition: 'fill 0.5s', // Optional: smooth transition for text color if needed
+          transition: 'fill 0.5s',
+          transform: 'rotate(180deg)',
         }}
       >
         {robot.label}

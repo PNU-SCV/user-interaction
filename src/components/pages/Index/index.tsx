@@ -14,7 +14,9 @@ export type MapStateResp = {
 };
 
 export const fetchRobotsByMap = async (map_name: string): Promise<MapStateResp> => {
-  const response = await fetch(`http://localhost:8000/robots/${map_name}`);
+  // const response = await fetch(`http://localhost:8000/robots/${map_name}`);
+  const response = await fetch(`http://192.168.0.5:8000/robots/${map_name}`);
+  // const response = await fetch(`http://127.0.0.1:8000/robots/${map_name}`);
 
   if (!response.ok) {
     throw new Error('네트워크 응답에 문제가 있습니다');
@@ -42,7 +44,11 @@ export const Index: React.FC = () => {
       <AsyncBoundary
         ref={resetRef}
         pendingFallback={<div>로딩중</div>}
-        rejectedFallback={<button onClick={handleReset}>재시도</button>}
+        rejectedFallback={
+          <button onTouchEnd={handleReset} onClick={handleReset}>
+            재시도
+          </button>
+        }
       >
         <IndexViewer reset={resetRef.current?.reset} />
       </AsyncBoundary>

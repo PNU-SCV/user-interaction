@@ -11,12 +11,13 @@ export const useWebSocket = (
   setDisconnected: () => void,
 ) => {
   const wscRef = useRef<WebSocketControl | null>(null);
+  const wsUrl = 'ws://192.168.0.5:8000/real-time-state';
 
   useEffect(() => {
     let isUnmounting = false;
 
     const wsc: WebSocketControl = {
-      ws: new WebSocket('ws://localhost:8000/real-time-state'),
+      ws: new WebSocket(wsUrl),
       retryCnt: 0,
     };
 
@@ -37,9 +38,9 @@ export const useWebSocket = (
           setTimeout(() => {
             console.log('WebSocket 재연결 시도');
             wsc.retryCnt += 1;
-            wsc.ws = new WebSocket('ws://localhost:8000/real-time-state');
+            wsc.ws = new WebSocket(wsUrl);
             setupWebSocket(wsc, onmessage);
-          }, 1000);
+          }, 3000);
         }
       };
 
