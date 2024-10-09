@@ -37,7 +37,7 @@ export const router = createBrowserRouter([
         element: <Robot />,
         children: [
           { path: ROUTER_PATH.PROMOTION, element: <div>promotion</div> },
-          { path: ROUTER_PATH.DELIVERY, element: <Delivery /> },
+          // { path: ROUTER_PATH.DELIVERY, element: <Delivery /> },
           { path: ROUTER_PATH.CHECKUP, element: <Checkup /> },
           { path: '*', element: <div>404 ??</div> },
         ],

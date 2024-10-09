@@ -11,7 +11,7 @@ export type RobotPositionMsg = {
   id: string;
   newX: number;
   newY: number;
-  // status: number;
+  status: number;
 };
 
 interface RobotPositionAction {
@@ -32,20 +32,16 @@ export const useBitmapRobotManager = (
   const [selectedRobotId, setSelectedRobotId] = useState<string>(() =>
     bitmapMode === 'VIEWER' ? '' : robots[0].id,
   );
-  const [robotPositions, dispatch] = useReducer(robotPositionReducer, {}, () =>
-    initialRobotPositions(robots),
+  const [robotPositions, dispatch] = useReducer(
+    robotPositionReducer,
+    robots,
+    initialRobotPositions,
   );
 
-  useEffect(() => {
-    dispatch({ type: 'INITIALIZE', payload: initialRobotPositions(robots) });
-  }, [robots]);
-
-  // const createGoMsg = (destX, destY) => {
   const createGoMsg = (selectedPoints) => {
     return JSON.stringify({
       command: MOVE_COMMAND.GO,
       target: selectedRobotId,
-      // dest: `${destX},${destY}`,
       dest: selectedPoints,
     });
   };
@@ -83,21 +79,19 @@ export const useBitmapRobotManager = (
         r={maxCeil * 0.03}
         fill={bitmapMode === 'VIEWER' ? '#76c7c0' : selectedRobotId === robot.id ? 'red' : 'black'}
         style={{
-          transition: 'fill 0.5s', // Smooth transition for fill color
+          transition: 'fill 0.5s',
           cursor: 'pointer',
         }}
         stroke="#000"
-        strokeWidth="0.1"
+        strokeWidth="0.06"
       />
       <text
-        // x="1"
-        x="-1.1"
-        // y="0.75"
-        y="0.1"
+        x="0"
+        y="1.1"
         fontSize={maxCeil * 0.03}
         style={{
           transition: 'fill 0.5s',
-          transform: 'rotate(180deg)',
+          // transform: 'rotate(180deg)',
         }}
       >
         {robot.label}
@@ -130,7 +124,7 @@ const robotPositionReducer = (
 
 const initialRobotPositions = (robots) => {
   return robots.reduce((acc, robot) => {
-    acc[robot.id] = robot.pos;
+    acc[robot.id] = { ...robot.pos, x: 8 - robot.pos.x };
     return acc;
   }, {});
 };

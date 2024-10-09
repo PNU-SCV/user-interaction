@@ -17,9 +17,7 @@ import { ScrollSnapWrapper } from '@components/atoms/ScrollSnapWrapper';
 import { ScrollSnapOverlay } from '@components/atoms/ScrollSnapOverlay';
 import { useLocation } from 'react-router-dom';
 import { RobotFigure } from '@components/molecules/RobotFigure';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { usePlaceContext } from '@/context/PlaceContext';
-import { createQueryKeyWithPlace, fetchRobotsByMap, MapStateResp } from '@components/pages/Index';
+import { MapStateResp } from '@components/pages/Index';
 import { GlassPanel } from '@components/atoms/GlassPanel';
 import { Flex } from '@components/atoms/Flex';
 import { RobotoComment } from '@components/atoms/RobotoComment';
@@ -86,7 +84,7 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
       {/*// TODO: 동작은 똑같은데 아래의 코드 가독성이 너무 안좋다. 그렇다고 IteratingMapper를 만들어 놓고 안쓰기엔 아까움*/}
       <ScrollSnapContainer>
         <ScrollSnapItem>
-          <div style={{ height: '30px' }}></div>
+          <div style={{ height: '20px' }}></div>
           <IconTextBox
             src={searchingSpecific}
             imgAlt="searching image"

@@ -1,12 +1,11 @@
 import styles from './index.module.css';
-import { Fragment, MouseEventHandler, useMemo, useRef, useState } from 'react';
+import { MouseEventHandler, useMemo, useRef, useState } from 'react';
 import { IRobot } from '@components/pages/Robot';
 import { Point, Rect } from '@/commons/types';
 import { RobotPositionMsg, useBitmapRobotManager } from '@/hooks/useBitmapRobotManager';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useNavigate } from 'react-router-dom';
 import { ROUTER_PATH } from '@/router';
-import { createPortal } from 'react-dom';
 
 const colorValid = 'white';
 const colorInvalid = '#D5D5D5';
@@ -27,8 +26,7 @@ const parseWebSocketMsg = (event): RobotPositionMsg => {
     .split(',')
     .map((segment, idx) => (idx !== 0 ? parseInt(segment) : segment));
   console.log('ws msg', msg);
-  // return { id, status, newX, newY };
-  return { id, newX, newY };
+  return { id, status, newX, newY };
 };
 
 export const SVGBitmap = ({
@@ -53,30 +51,23 @@ export const SVGBitmap = ({
   const setDisconnected = () => (isWebSocketConnectedRef.current = false);
   const [selectedPoints, setSelectedPoints] = useState<Point[]>([]);
   const onmessage = (event: MessageEvent) => {
-    console.log(event.data);
     const msg = parseWebSocketMsg(event);
     const { status, newX, newY } = msg;
 
-    if (status === 5) {
-      console.log('도착!', 8 - newX, newY);
-      setSelectedPoints((prev) => [...prev.slice(1, prev.length)]);
-    }
-
     updateRobotPosition({ ...msg, newX: 8 - newX });
+    setTimeout(() => {
+      if (status === 5 || status === 6) {
+        console.log('도착!', 8 - newX, newY);
+        setSelectedPoints((prev) => [...prev.slice(1, prev.length)]);
+        if (setOverlayState) {
+          setOverlayState(status === 5 ? '다음 장소로 이동해도 될까요?' : '');
+        }
+      }
+    }, 600);
   };
 
   const { sendMsg } = useWebSocket(onmessage, setConnected, setDisconnected);
   const navigate = useNavigate();
-
-  const emergencyStop = () => {
-    const isConnected = isWebSocketConnectedRef.current;
-    if (isConnected) {
-      sendMsg(createStopMsg());
-      if (setOverlayState) {
-        setOverlayState('stop');
-      }
-    }
-  };
 
   const onClickMap: MouseEventHandler<SVGSVGElement> = (e) => {
     const element = e.target as SVGElement;
@@ -107,13 +98,37 @@ export const SVGBitmap = ({
     const destY = rect.y.animVal.value;
     // 좌표 보낼때 x = 8-x
     console.log(8 - destX, destY);
-    setSelectedPoints((prev) => [...prev, { x: destX, y: destY }]);
-    // sendSelectedRobotToGo(destX, destY);
+    setSelectedPoints((prev) => {
+      if (prev.some((point) => point.x === destX && point.y === destY)) {
+        console.log('duplicate');
+        return prev;
+      }
+      return [...prev, { x: destX, y: destY }];
+    });
   };
 
   const roomSVG = useMemo(() => {
     return createRoomSVG(rects);
   }, [rects]);
+
+  const sendStop = () => {
+    const isConnected = isWebSocketConnectedRef.current;
+    if (isConnected) {
+      sendMsg(createStopMsg());
+      if (setOverlayState) {
+        setOverlayState('');
+      }
+    }
+  };
+
+  const returnToDesk = () => {
+    sendMsg(createGoMsg([{ x: 7, y: 5 }]));
+  };
+
+  const sendDestinations = () => {
+    const msg = createGoMsg(selectedPoints.map((point) => ({ ...point, x: 8 - point.x })));
+    sendMsg(msg);
+  };
 
   return (
     <div>
@@ -128,7 +143,7 @@ export const SVGBitmap = ({
           maxHeight: maxH,
           boxSizing: 'border-box',
           border: '2px solid #000',
-          transform: 'rotate(180deg)',
+          // transform: 'rotate(180deg)',
         }}
       >
         <rect
@@ -143,43 +158,25 @@ export const SVGBitmap = ({
         {robotSVGs}
         {createPointSVGs(selectedPoints, maxCeil)}
       </svg>
-      {bitmapMode === 'COMMANDER'
-        ? createPortal(
-            <Fragment>
-              <button
-                style={{ position: 'absolute', transform: 'translate(120px, 200px)' }}
-                onClick={emergencyStop}
-              >
-                정지하기
-              </button>
-              <button
-                style={{ position: 'absolute', transform: 'translate(120px, 260px)' }}
-                onClick={() => {
-                  sendMsg(createGoMsg([{ x: 7, y: 5 }]));
-                  // if (setOverlayState) {
-                  //   setOverlayState('return');
-                  // }
-                }}
-              >
-                데스크로 <br />
-                돌아가기
-              </button>
-              <button
-                style={{ position: 'absolute', transform: 'translate(120px, 330px)' }}
-                onClick={() => {
-                  const msg = createGoMsg(
-                    selectedPoints.map((point) => ({ ...point, x: 8 - point.x })),
-                  );
-                  console.log(msg);
-                  sendMsg(msg);
-                }}
-              >
-                로봇 이동시키기
-              </button>
-            </Fragment>,
-            document.body,
-          )
-        : null}
+      {bitmapMode === 'COMMANDER' ? (
+        <div
+          style={{
+            position: 'absolute',
+            backdropFilter: 'blur(6px)',
+            backgroundColor: 'transparent',
+            border: '2px solid #000',
+            width: '100%',
+            padding: '4px',
+            transform: 'translate(-32px, 15px)',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+          }}
+        >
+          <button onClick={sendStop}>정지하기</button>
+          <button onClick={sendDestinations}>로봇 이동시키기</button>
+          <button onClick={returnToDesk}>데스크로 돌아가기</button>
+        </div>
+      ) : null}
     </div>
   );
 };
@@ -223,24 +220,24 @@ const createPointSVGs = (selectedPoints, maxCeil) =>
         transform: `translate(${point.x ?? -2}px, ${point.y ?? -2}px)`,
         cursor: 'pointer',
       }}
+      color={'white'}
     >
       <circle
         id={`${point.x},${point.y}`}
         cx="0.5"
         cy="0.5"
         r={maxCeil * 0.03}
-        fill={'dodgerblue'}
-        // fill={'#D5D5D5'}
+        fill={'#76c7c0'}
         stroke="#D5D5D5"
         strokeWidth="0.05"
       />
       <text
-        x="-0.6"
-        y="0.1"
+        x="0.42"
+        y="0.6"
         fontSize={maxCeil * 0.03}
+        fill={'white'}
         style={{
           transition: 'fill 0.5s',
-          transform: 'rotate(180deg)',
         }}
       >
         {idx + 1}

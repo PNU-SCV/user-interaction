@@ -11,7 +11,8 @@ export const useWebSocket = (
   setDisconnected: () => void,
 ) => {
   const wscRef = useRef<WebSocketControl | null>(null);
-  const wsUrl = 'ws://192.168.0.5:8000/real-time-state';
+  // const wsUrl = 'ws://192.168.0.5:8000/real-time-state';
+  const wsUrl = 'ws://localhost:8000/real-time-state';
 
   useEffect(() => {
     let isUnmounting = false;

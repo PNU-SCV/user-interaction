@@ -14,8 +14,8 @@ export type MapStateResp = {
 };
 
 export const fetchRobotsByMap = async (map_name: string): Promise<MapStateResp> => {
-  // const response = await fetch(`http://localhost:8000/robots/${map_name}`);
-  const response = await fetch(`http://192.168.0.5:8000/robots/${map_name}`);
+  const response = await fetch(`http://localhost:8000/robots/${map_name}`);
+  // const response = await fetch(`http://192.168.0.5:8000/robots/${map_name}`);
   // const response = await fetch(`http://127.0.0.1:8000/robots/${map_name}`);
 
   if (!response.ok) {

@@ -1,97 +1,81 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { SVGBitmap } from '@components/molecules/SVGBitmap';
 import { useLocation } from 'react-router-dom';
 import { MapStateResp } from '@components/pages/Index';
-import { createPortal } from 'react-dom';
+
+import Modal from 'react-modal';
+import ReactModal from 'react-modal';
+import axios from 'axios';
 
 export interface IDeliveryCommandMap {
   data: MapStateResp;
-  onClickSetOrigin?: (pos: string) => void;
-  onClickSetDest?: (pos: string) => void;
   maxH?: string;
 }
 
-export const DeliveryCommandMap = ({
-  data,
-  onClickSetOrigin,
-  onClickSetDest,
-  maxH,
-}: IDeliveryCommandMap) => {
+const customModalStyles: ReactModal.Styles = {
+  overlay: {
+    backgroundColor: ' rgba(0, 0, 0, 0.4)',
+    width: '100%',
+    height: '100vh',
+    zIndex: '10',
+    position: 'fixed',
+    top: '0',
+    left: '0',
+  },
+  content: {
+    width: '800px',
+    height: '400px',
+    zIndex: '150',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '10px',
+    boxShadow: '2px 2px 2px rgba(0, 0, 0, 0.25)',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    overflow: 'auto',
+  },
+};
+
+export const DeliveryCommandMap = ({ data, maxH }: IDeliveryCommandMap) => {
   const location = useLocation();
   const { rects, robots } = data;
   const selectedRobot = robots.filter((robot) => robot.id === location.state.id);
-  const portalRef = useRef<HTMLDivElement | null>(null);
+  const [modalState, setModalState] = useState('');
 
-  useEffect(() => {
-    const point = selectedRobot[0].pos;
-    if (onClickSetOrigin) {
-      onClickSetOrigin(`${point.x},${point.y}`);
-    }
-  }, []);
-
-  const setOverlayState = (state: string) => {
-    if (portalRef.current) {
-      const overlay = portalRef.current as HTMLDivElement;
-
-      if (state === 'moving') {
-        overlay.style.backgroundColor = 'green';
-        overlay.style.zIndex = '99';
-        return;
-      }
-
-      if (state === 'wait') {
-        overlay.style.backgroundColor = 'whitesmoke';
-        overlay.style.zIndex = '99';
-        return;
-      }
-
-      if (state === 'stop') {
-        overlay.style.backgroundColor = 'orange';
-        overlay.style.zIndex = '99';
-        return;
-      }
-
-      if (state === 'return') {
-        overlay.style.backgroundColor = 'whitesmoke';
-        overlay.style.zIndex = '99';
-        return;
-      }
-
-      if (state === 'idle') {
-        overlay.style.zIndex = '-1';
-      }
-    }
+  const confirmToMoveNext = () => {
+    axios
+      .post('http://localhost:8000/next', {
+        robotId: selectedRobot[0].id,
+      })
+      .then((r) => {
+        if (r.data === 'ok') {
+          setModalState('');
+        }
+      });
   };
 
   return (
     <Fragment>
-      {createPortal(
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'transparent',
-            position: 'absolute',
-            zIndex: 9999,
-            backdropFilter: 'blur(6px)',
-          }}
-          ref={portalRef}
-          onClick={() => {
-            if (portalRef.current) {
-              const overlay = portalRef.current as HTMLDivElement;
-              overlay.style.zIndex = '-1';
-            }
-          }}
-        ></div>,
-        document.body,
-      )}
+      <Modal
+        isOpen={modalState !== ''}
+        style={customModalStyles}
+        shouldCloseOnOverlayClick={false}
+        contentLabel={modalState}
+        ariaHideApp={false}
+      >
+        <div>{modalState}</div>
+        <button type={'button'} onClick={confirmToMoveNext}>
+          확인
+        </button>
+      </Modal>
       <SVGBitmap
         rects={rects}
         robots={selectedRobot}
         bitmapMode="COMMANDER"
         maxH={maxH}
-        onClickSetDest={onClickSetDest}
-        setOverlayState={setOverlayState}
+        setOverlayState={(state: string) => setModalState(state)}
       />
     </Fragment>
   );
