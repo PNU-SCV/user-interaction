@@ -21,11 +21,11 @@ import { MapStateResp } from '@components/pages/Index';
 import { GlassPanel } from '@components/atoms/GlassPanel';
 import { Flex } from '@components/atoms/Flex';
 import { RobotoComment } from '@components/atoms/RobotoComment';
-import ScheduleNotFound from '@images/scheduleNotFound.svg';
 import { IconTextBox } from '@components/molecules/IconTextBox';
-import searchingSpecific from '@images/searchingSpecific.svg';
 import { DeliveryCommandMap } from '@components/organisms/DeliveryCommandMap';
 
+import checking from '@images/checking.svg';
+import searching from '@images/searching.svg';
 interface IScheduleTime extends ItemProps {
   time: ScheduleTime;
 }
@@ -63,6 +63,10 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
     }
   });
 
+  const selectedRobot = data.robots.filter(
+    (robot) => robot.id === location.search.slice(location.search.search('id=') + 3),
+  );
+
   return (
     <ScrollSnapWrapper>
       <ScrollSnapOverlay>
@@ -71,13 +75,14 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
             <RobotoComment
               comment={`선택한 로봇: ${location.search.slice(location.search.search('id=') + 3)}`}
             />
-            {data.robots
-              .filter(
-                (robot) => robot.id === location.search.slice(location.search.search('id=') + 3),
-              )
-              .map((robot) => (
-                <RobotFigure key={robot.id} onClickTemplate={() => () => {}} {...robot} />
-              ))}
+            {selectedRobot.map((robot) => (
+              <RobotFigure
+                key={robot.id}
+                onClickTemplate={() => () => {}}
+                {...robot}
+                // showSchedule={false}
+              />
+            ))}
           </Flex>
         </GlassPanel>
       </ScrollSnapOverlay>
@@ -86,11 +91,19 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
         <ScrollSnapItem>
           <div style={{ height: '20px' }}></div>
           <IconTextBox
-            src={searchingSpecific}
+            src={searching}
             imgAlt="searching image"
             text="미니맵을 통해 목적지를 선택하고 로봇을 이동시켜요!"
           />
           <DeliveryCommandMap data={data} maxH={'60vh'} />
+        </ScrollSnapItem>
+        <ScrollSnapItem>
+          <div style={{ height: '20px' }}></div>
+          <IconTextBox
+            src={checking}
+            imgAlt={'checking image'}
+            text={'이동 시킬 때 세부 옵션을 설정해요!'}
+          />
         </ScrollSnapItem>
         {scheduleTimes.map((time) => (
           <ScrollSnapItem key={`${date} ${time}`}>

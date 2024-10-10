@@ -73,6 +73,10 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
       </ScrollSnapOverlay>
       <ScrollSnapContainer>
         <ScrollSnapItem>
+          <IconTextBox src={searching} imgAlt="searching motion" text="주변 로봇 탐색" />
+          <SVGBitmap rects={rects} robots={robots} />
+        </ScrollSnapItem>
+        <ScrollSnapItem>
           <IconTextBox src={checking} text="주변 로봇들 자세히 보기" imgAlt="checking tablet" />
           <Spacing />
           <IteratingMapper<IRoutingButton>
@@ -85,10 +89,6 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
               alignItems: 'center',
             }}
           />
-        </ScrollSnapItem>
-        <ScrollSnapItem>
-          <IconTextBox src={searching} imgAlt="searching motion" text="주변 로봇 탐색" />
-          <SVGBitmap rects={rects} robots={robots} />
         </ScrollSnapItem>
       </ScrollSnapContainer>
     </ScrollSnapWrapper>

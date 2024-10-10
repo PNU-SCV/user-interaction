@@ -222,25 +222,61 @@ const createPointSVGs = (selectedPoints, maxCeil) =>
       }}
       color={'white'}
     >
-      <circle
-        id={`${point.x},${point.y}`}
-        cx="0.5"
-        cy="0.5"
-        r={maxCeil * 0.03}
-        fill={'#76c7c0'}
-        stroke="#D5D5D5"
-        strokeWidth="0.05"
-      />
+      {createFlagSVG()}
       <text
-        x="0.42"
-        y="0.6"
-        fontSize={maxCeil * 0.03}
-        fill={'white'}
-        style={{
-          transition: 'fill 0.5s',
-        }}
+        // x="0.65"
+        y="0.9"
+        x="0.55"
+        // y="0.45"
+        // y="0.74"
+        // fontSize={maxCeil * 0.03}
+        fontSize={maxCeil * 0.04}
+        fontWeight={900}
+        fill={'black'}
+        // stroke="white"
+        stroke="white"
+        strokeWidth="0.02"
       >
         {idx + 1}
       </text>
     </g>
   ));
+
+const createFlagSVG = () => (
+  <g transform={'scale(2.35)'}>
+    <circle cx="0.2" cy="0.35" r={0.05} stroke={'#D5D5D5'} strokeWidth={0.04} fill={'red'} />
+    <path
+      d="M0.200 0.129C0.235 0.078 0.264 0.130 0.295 0.134C0.324 0.138 0.344 0.121 0.370 0.111"
+      stroke="#000000"
+      strokeOpacity="0.9"
+      strokeWidth="0.03"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M0.205 0.224C0.275 0.169 0.277 0.282 0.358 0.216"
+      stroke="#000000"
+      strokeOpacity="0.9"
+      strokeWidth="0.03"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M0.371 0.112C0.369 0.144 0.371 0.176 0.371 0.208"
+      stroke="#000000"
+      strokeOpacity="0.9"
+      strokeWidth="0.03"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <line
+      x1="0.2"
+      y1="0.1"
+      x2="0.2"
+      y2="0.35"
+      stroke="#000000"
+      strokeWidth="0.03"
+      strokeLinecap="round"
+    />
+  </g>
+);

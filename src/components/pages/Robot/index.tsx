@@ -2,7 +2,7 @@ import { ROUTER_PATH } from '@/router';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Header } from '@components/molecules/Header';
 import { MainContainer } from '@components/atoms/MainContainer';
-import React, { Suspense } from 'react';
+import React from 'react';
 import { Point } from '@/commons/types';
 import { RobotTaskActionForm } from '@components/organisms/RobotTaskActionForm';
 import { RobotTaskTimeViewer } from '@components/templates/RobotTaskTimeViewer';
@@ -17,6 +17,7 @@ export interface IRobot {
   label: string;
   pos: Point;
   path: string;
+  state: string;
   schedules: ScheduleDetail[];
 }
 

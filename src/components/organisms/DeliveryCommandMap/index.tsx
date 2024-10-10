@@ -66,9 +66,7 @@ export const DeliveryCommandMap = ({ data, maxH }: IDeliveryCommandMap) => {
         ariaHideApp={false}
       >
         <div>{modalState}</div>
-        <button type={'button'} onClick={confirmToMoveNext}>
-          확인
-        </button>
+        <button onClick={confirmToMoveNext}>확인</button>
       </Modal>
       <SVGBitmap
         rects={rects}

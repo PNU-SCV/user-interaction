@@ -21,6 +21,7 @@ export const RobotFigure = ({
   path,
   onClickTemplate,
   schedules,
+  state,
   showSchedule = true,
 }: IRobotFigure) => {
   const schedulesByTime = [[], [], []];
@@ -56,16 +57,17 @@ export const RobotFigure = ({
         <img src={robotPicture} alt="robot picture" className={styles['figure--image']} />
         <span className={styles['figure--label']}>{label}</span>
       </div>
-      {showSchedule ? (
-        <Flex>
-          {schedulesGroupByTime.map((obj) => (
-            <div key={`${id}-${obj.time}`} className={styles['work--rate']}>
-              <p>{obj.time}</p>
-              <AvailabilityIndicator percentage={obj.workingRate} />
-            </div>
-          ))}
-        </Flex>
-      ) : null}
+      <Flex>
+        <span>현재 상태: {state === 'idle' ? '당장 사용 가능' : '운행중'}</span>
+        {showSchedule
+          ? schedulesGroupByTime.map((obj) => (
+              <div key={`${id}-${obj.time}`} className={styles['work--rate']}>
+                <p>{obj.time}</p>
+                <AvailabilityIndicator percentage={obj.workingRate} />
+              </div>
+            ))
+          : null}
+      </Flex>
     </div>
   );
 };

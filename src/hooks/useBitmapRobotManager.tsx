@@ -1,5 +1,5 @@
 import { Point } from '@/commons/types';
-import { useEffect, useReducer, useState } from 'react';
+import { Fragment, useReducer, useState } from 'react';
 import { IRobot } from '@components/pages/Robot';
 import { BITMAP_MODE } from '@components/molecules/SVGBitmap';
 
@@ -77,14 +77,25 @@ export const useBitmapRobotManager = (
         cy="0.5"
         // r="0.5"
         r={maxCeil * 0.03}
-        fill={bitmapMode === 'VIEWER' ? '#76c7c0' : selectedRobotId === robot.id ? 'red' : 'black'}
+        // fill={bitmapMode === 'VIEWER' ? '#76c7c0' : selectedRobotId === robot.id ? 'red' : 'black'}
+        fill={
+          bitmapMode === 'VIEWER'
+            ? robot.state === 'idle'
+              ? '#76c7c0'
+              : '#f0da8a'
+            : selectedRobotId === robot.id
+              ? 'red'
+              : 'black'
+        }
         style={{
           transition: 'fill 0.5s',
           cursor: 'pointer',
         }}
         stroke="#000"
-        strokeWidth="0.06"
-      />
+        strokeWidth="0.03"
+      >
+        {addPulseAnimation(selectedRobotId === robot.id)}
+      </circle>
       <text
         x="0"
         y="1.1"
@@ -100,6 +111,20 @@ export const useBitmapRobotManager = (
   ));
 
   return { robotSVGs, createGoMsg, createStopMsg, selectRobotOnToggle, updateRobotPosition };
+};
+
+const addPulseAnimation = (doRender: boolean) => {
+  return doRender ? (
+    <Fragment>
+      <animate attributeName="stroke-width" values="0;0.5;0" dur="1.5s" repeatCount="indefinite" />
+      <animate
+        attributeName="stroke-opacity"
+        values="0.2;0;0"
+        dur="1.5s"
+        repeatCount="indefinite"
+      />
+    </Fragment>
+  ) : null;
 };
 
 const robotPositionReducer = (
