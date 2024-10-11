@@ -80,7 +80,7 @@ export const DeliveryCommandMap = ({ data, maxH }: IDeliveryCommandMap) => {
             padding: '20px',
           }}
         >
-          <div styl>{modalState}</div>
+          <div>{modalState}</div>
           <button
             style={{
               fontSize: '20px',
