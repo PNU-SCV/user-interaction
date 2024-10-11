@@ -1,4 +1,4 @@
-import { Fragment, MutableRefObject, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { SVGBitmap } from '@components/molecules/SVGBitmap';
 import { useLocation } from 'react-router-dom';
 import { MapStateResp } from '@components/pages/Index';
@@ -23,8 +23,8 @@ const customModalStyles: ReactModal.Styles = {
     left: '0',
   },
   content: {
-    width: '800px',
-    height: '400px',
+    width: '85%',
+    height: '60%',
     zIndex: '150',
     position: 'absolute',
     top: '50%',
@@ -68,8 +68,28 @@ export const DeliveryCommandMap = ({ data, maxH }: IDeliveryCommandMap) => {
         ariaHideApp={false}
         preventScroll={true}
       >
-        <div>{modalState}</div>
-        <button onClick={confirmToMoveNext}>확인</button>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            fontSize: '40px',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '20px',
+          }}
+        >
+          <div styl>{modalState}</div>
+          <button
+            style={{
+              fontSize: '20px',
+            }}
+            onClick={confirmToMoveNext}
+          >
+            확인
+          </button>
+        </div>
       </Modal>
       <SVGBitmap
         rects={rects}

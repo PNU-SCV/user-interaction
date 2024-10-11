@@ -23,6 +23,8 @@ interface RobotPositionAction {
 const MOVE_COMMAND = {
   STOP: 0,
   GO: 1,
+  PAUSE: 2,
+  RESUME: 3,
 };
 
 export const useBitmapRobotManager = (
@@ -53,6 +55,20 @@ export const useBitmapRobotManager = (
   const createStopMsg = () => {
     return JSON.stringify({
       command: MOVE_COMMAND.STOP,
+      target: selectedRobotId,
+    });
+  };
+
+  const createPauseMsg = () => {
+    return JSON.stringify({
+      command: MOVE_COMMAND.PAUSE,
+      target: selectedRobotId,
+    });
+  };
+
+  const createResumeMsg = () => {
+    return JSON.stringify({
+      command: MOVE_COMMAND.RESUME,
       target: selectedRobotId,
     });
   };
@@ -114,7 +130,15 @@ export const useBitmapRobotManager = (
     </g>
   ));
 
-  return { robotSVGs, createGoMsg, createStopMsg, selectRobotOnToggle, updateRobotPosition };
+  return {
+    robotSVGs,
+    createGoMsg,
+    createStopMsg,
+    createPauseMsg,
+    createResumeMsg,
+    selectRobotOnToggle,
+    updateRobotPosition,
+  };
 };
 
 const addPulseAnimation = (doRender: boolean) => {

@@ -46,8 +46,15 @@ export const SVGBitmap = ({
    * 다만, 로봇 이동은 여기서 웹소켓으로 요청 (위치 선택, 이벤트 위임 때문에)
    * 특이사항으로 미니맵에서 로봇의 위치는 웹소켓의 onmessage를 통해서만 업데이트됨
    */
-  const { robotSVGs, createGoMsg, createStopMsg, selectRobotOnToggle, updateRobotPosition } =
-    useBitmapRobotManager(robots, bitmapMode as BITMAP_MODE, maxCeil);
+  const {
+    robotSVGs,
+    createGoMsg,
+    createStopMsg,
+    createPauseMsg,
+    createResumeMsg,
+    selectRobotOnToggle,
+    updateRobotPosition,
+  } = useBitmapRobotManager(robots, bitmapMode as BITMAP_MODE, maxCeil);
   const isWebSocketConnectedRef = useRef<boolean>(false);
   const setConnected = () => (isWebSocketConnectedRef.current = true);
   const setDisconnected = () => (isWebSocketConnectedRef.current = false);
@@ -81,6 +88,7 @@ export const SVGBitmap = ({
 
   const { sendMsg } = useWebSocket(onmessage, setConnected, setDisconnected);
   const navigate = useNavigate();
+  const [isPaused, setIsPaused] = useState(false);
 
   const onClickMap: MouseEventHandler<SVGSVGElement> = (e) => {
     const element = e.target as SVGElement;
@@ -150,6 +158,16 @@ export const SVGBitmap = ({
     setDisableInputs(true);
   };
 
+  const sendPause = () => {
+    sendMsg(createPauseMsg());
+    setIsPaused(true);
+  };
+
+  const sendResume = () => {
+    sendMsg(createResumeMsg());
+    setIsPaused(false);
+  };
+
   return (
     <div>
       <svg
@@ -180,9 +198,12 @@ export const SVGBitmap = ({
       </svg>
       {bitmapMode === 'COMMANDER' ? (
         <div className={styles['control--box']}>
-          <button onClick={sendStop}>정지하기</button>
           <button id="moveButton" onClick={sendDestinations}>
             로봇 이동시키기
+          </button>
+          <button onClick={sendStop}>이동 취소하기</button>
+          <button onClick={isPaused ? sendResume : sendPause}>
+            {isPaused ? '진행하기' : '정지하기'}
           </button>
           <button onClick={returnToDesk}>데스크로 돌아가기</button>
         </div>

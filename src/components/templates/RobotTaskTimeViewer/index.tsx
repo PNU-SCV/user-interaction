@@ -105,7 +105,8 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
               style={{
                 position: 'absolute',
                 left: 0,
-                transform: 'translateY(90px)',
+                // transform: 'translateY(90px)',
+                transform: 'translateY(calc(40vh - 310px))',
               }}
               width="100%"
               height={70}
@@ -129,13 +130,6 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
             text={'이동 시킬 때 세부 옵션을 설정해요!'}
           />
           <RequestOptionsForm />
-          <path
-            d="M0 35 Q 25 50, 43 15 Q 25 10, 30 35 Q 40 60, 20, 40 T 1024 35"
-            stroke="black"
-            strokeWidth="2"
-            strokeDasharray="10, 4"
-            fill="transparent"
-          />
         </ScrollSnapItem>
         {/*{scheduleTimes.map((time) => (*/}
         {/*  <ScrollSnapItem key={`${date} ${time}`}>*/}
