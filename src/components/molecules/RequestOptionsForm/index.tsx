@@ -6,6 +6,34 @@ import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
 import { scrollToElement } from '@components/templates/RobotTaskTimeViewer';
 import { useSelectedPoints } from '@/context/SelectedPointsContext';
 
+const objectOptions = [
+  { label: '물건', value: '' },
+  { label: '거즈', value: '거즈' },
+  { label: '물병', value: '물병' },
+  { label: '담요', value: '담요' },
+  { label: '살균세트', value: '살균세트' },
+];
+
+const amountOptions = [
+  { label: '개수', value: '' },
+  { label: '1개', value: '1개 ' },
+  { label: '2개', value: '2개 ' },
+  { label: '3개', value: '3개 ' },
+  { label: '4개', value: '4개 ' },
+  { label: '5개', value: '5개 ' },
+  { label: '6개', value: '6개 ' },
+  { label: '7개', value: '7개 ' },
+  { label: '8개', value: '8개 ' },
+  { label: '9개', value: '9개 ' },
+  { label: '10개', value: '10개 ' },
+];
+
+const appendOptions = [
+  { label: '행동', value: '' },
+  { label: '주세요', value: '주세요! ' },
+  { label: '수령하셨나요?', value: '수령하셨나요? ' },
+];
+
 export const RequestOptionsForm: React.FC = () => {
   const {
     waitTime,
@@ -17,7 +45,11 @@ export const RequestOptionsForm: React.FC = () => {
     setDestMsgs,
     setDisableInputs,
   } = useRequestOptions();
+  const [focusedInputIndex, setFocusedInputIndex] = useState(null);
   const { selectedPoints = [] } = useSelectedPoints();
+  const [inputValues, setInputValues] = useState(selectedPoints.map(() => ''));
+
+  const [selectValues, setSelectValues] = useState(selectedPoints.map(() => ''));
 
   const scrollToMap = () => {
     const container: HTMLElement = document.querySelector(
@@ -37,15 +69,62 @@ export const RequestOptionsForm: React.FC = () => {
     setTimeout(scrollToMap, 500);
   };
 
-  const setDestMsg = (i: number) => (e) =>
-    setDestMsgs((prev) => {
+  const setDestMsg =
+    (i: number) =>
+    (value = '') =>
+      setDestMsgs((prev) => {
+        const copy = [...prev];
+        copy[i] = value;
+        return copy;
+      });
+
+  const handleInputChange = (i, value) => {
+    setInputValues((prev) => {
       const copy = [...prev];
-      copy[i] = e.target.value;
+      copy[i] = value;
       return copy;
     });
+    setDestMsg(i)(value);
+  };
+
+  // const appendToInput = (i, value) => () => {
+  //   setInputValues((prev) => {
+  //     const copy = [...prev];
+  //     if (copy[i]) {
+  //       copy[i] += value;
+  //       return copy;
+  //     }
+  //     copy[i] = value;
+  //     return copy;
+  //   });
+  // };
+
+  const handleSelectChange = (i, value) => {
+    if (value !== '') {
+      setInputValues((prev) => {
+        const copy = [...prev];
+        if (copy[i]) {
+          copy[i] += value;
+          return copy;
+        }
+        copy[i] = value;
+        return copy;
+      });
+    }
+  };
+
+  const handleInputClick = (index, e) => {
+    e.stopPropagation();
+    setFocusedInputIndex(index);
+  };
+
+  const handleInputBlur = () => {
+    setFocusedInputIndex(null);
+  };
 
   return (
-    <form className={styles['request--options']}>
+    <form className={styles['request--options']} onClick={handleInputBlur}>
+      {/*<form className={styles['request--options']}>*/}
       <li>
         <label>
           <span>
@@ -79,16 +158,137 @@ export const RequestOptionsForm: React.FC = () => {
           목적지간 <b>도착 메세지</b> 정하기
         </div>
       </li>
-      <div className={styles['msg--container']}>
+      {/*<div className={styles['msg--container']}>*/}
+      {/*  {selectedPoints.map((point, idx) => (*/}
+      {/*    <div key={`${point.x},${point.y}`} className={styles['input-select-container']}>*/}
+      {/*      <div className={styles['input-container']}>*/}
+      {/*        <span>{idx + 1 === selectedPoints.length ? '최종' : `${idx + 1}번.`} 도착 지점</span>*/}
+      {/*        <input*/}
+      {/*          value={inputValues[idx] || ''}*/}
+      {/*          onChange={(e) => handleInputChange(idx, e.target.value)}*/}
+      {/*          onClick={(e) => handleInputClick(idx, e)}*/}
+      {/*          className={styles['input-style']}*/}
+      {/*          placeholder={'도착시 표시할 메세지'}*/}
+      {/*          disabled={disableInputs}*/}
+      {/*        />*/}
+      {/*      </div>*/}
+      {/*      <div className={styles['select-container']}>*/}
+      {/*        <select*/}
+      {/*          className={styles['select-style']}*/}
+      {/*          onClick={(e) => e.stopPropagation()}*/}
+      {/*          onChange={(e) => {*/}
+      {/*            handleSelectChange(idx, e.target.value);*/}
+      {/*            e.target.value = '';*/}
+      {/*          }}*/}
+      {/*        >*/}
+      {/*          <option value="">물건 선택</option>*/}
+      {/*          {objectOptions.map((option) => (*/}
+      {/*            <option key={option.value} value={option.value}>*/}
+      {/*              {option.label}*/}
+      {/*            </option>*/}
+      {/*          ))}*/}
+      {/*        </select>*/}
+      {/*        <select*/}
+      {/*          className={styles['select-style']}*/}
+      {/*          onClick={(e) => e.stopPropagation()}*/}
+      {/*          onChange={(e) => {*/}
+      {/*            handleSelectChange(idx, e.target.value);*/}
+      {/*            e.target.value = '';*/}
+      {/*          }}*/}
+      {/*        >*/}
+      {/*          <option value="">수량 선택</option>*/}
+      {/*          {amountOptions.map((option) => (*/}
+      {/*            <option key={option.value} value={option.value}>*/}
+      {/*              {option.label}*/}
+      {/*            </option>*/}
+      {/*          ))}*/}
+      {/*        </select>*/}
+      {/*        <select*/}
+      {/*          className={styles['select-style']}*/}
+      {/*          onClick={(e) => e.stopPropagation()}*/}
+      {/*          onChange={(e) => {*/}
+      {/*            handleSelectChange(idx, e.target.value);*/}
+      {/*            e.target.value = '';*/}
+      {/*          }}*/}
+      {/*        >*/}
+      {/*          <option value="">문구 선택</option>*/}
+      {/*          {appendOptions.map((option) => (*/}
+      {/*            <option key={option.value} value={option.value}>*/}
+      {/*              {option.label}*/}
+      {/*            </option>*/}
+      {/*          ))}*/}
+      {/*        </select>*/}
+      {/*      </div>*/}
+      {/*    </div>*/}
+      {/*  ))}*/}
+      {/*  {selectedPoints.length === 0 ? (*/}
+      {/*    <div className={styles['msg--container--empty']}>목적지를 선택해 주세요</div>*/}
+      {/*  ) : null}*/}
+      {/*</div>*/}
+      <div className={styles['msg--container']} onScroll={handleInputBlur}>
         {selectedPoints.map((point, idx) => (
           <div key={`${point.x},${point.y}`}>
             <span>{idx + 1 === selectedPoints.length ? '최종' : `${idx + 1}번.`} 도착 지점</span>
             <input
-              onChange={setDestMsg(idx)}
+              value={inputValues[idx] || ''}
+              onChange={(e) => handleInputChange(idx, e.target.value)}
+              onClick={(e) => handleInputClick(idx, e)}
               className={styles['input-style']}
               placeholder={'도착시 표시할 메세지'}
               disabled={disableInputs}
             />
+            {focusedInputIndex === idx && (
+              <div className={styles['select-container']}>
+                <select
+                  className={styles['select-style']}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  onChange={(e) => {
+                    handleSelectChange(idx, e.target.value);
+                    e.target.value = '';
+                  }}
+                >
+                  {objectOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  className={styles['select-style']}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  onChange={(e) => {
+                    handleSelectChange(idx, e.target.value);
+                    e.target.value = '';
+                  }}
+                >
+                  {amountOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  className={styles['select-style']}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  onChange={(e) => {
+                    handleSelectChange(idx, e.target.value);
+                    e.target.value = '';
+                  }}
+                >
+                  {appendOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         ))}
         {selectedPoints.length === 0 ? (
@@ -101,3 +301,16 @@ export const RequestOptionsForm: React.FC = () => {
     </form>
   );
 };
+
+// <div className={styles['overlay-buttons']}>
+//   {overlayButtons.map((button) => (
+//     <button
+//       type="button"
+//       key={button.label}
+//       onClick={appendToInput(idx, button.value)}
+//       className={styles['overlay-button']}
+//     >
+//       {button.label}
+//     </button>
+//   ))}
+// </div>
