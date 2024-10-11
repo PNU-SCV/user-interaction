@@ -21,4 +21,5 @@
     transform: translate(-32px, 50px);
     display: flex;
     justify-content: space-evenly;
+    z-index: 100;
 }

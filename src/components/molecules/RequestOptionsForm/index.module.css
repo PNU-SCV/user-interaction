@@ -28,8 +28,6 @@
 .request--options>.submit--button {
     position: absolute;
     transform: translate(450px, -80px);
-    /*transform: translate(200px, 0);*/
-    /*border: 2px solid lightskyblue;*/
     border:none;
     animation: thickborder 1.5s ease-in-out infinite;
     width: max-content;
@@ -48,8 +46,7 @@
 }
 
 .request--options>li::marker {
-    color: lightskyblue;
-    /*color: #76c7c0;*/
+    color: #76c7c0;
     font-size: 2rem;
     margin: 0 10px 0 0;
     line-height: 2rem;
@@ -68,6 +65,8 @@
 .input-style {
     padding: 10px;
     /*border: 2px solid #ccc;*/
+    width: 500px;
+    /*max-width: 600px;*/
     border: 2px solid #76c7c0;
     border-radius: 5px;
     font-size: 20px;

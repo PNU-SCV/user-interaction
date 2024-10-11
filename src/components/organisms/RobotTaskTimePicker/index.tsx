@@ -60,7 +60,7 @@ export const RobotTaskTimePicker = ({ time, date }: IScheduleReservation) => {
         time={time}
         date={date}
       />
-      <RoutingButtons onClickTemplate={navigateTo} container={Flex} disabled={isScheduleNotValid} />
+      {/*<RoutingButtons onClickTemplate={navigateTo} container={Flex} disabled={isScheduleNotValid} />*/}
     </Fragment>
   );
 };

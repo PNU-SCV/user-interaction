@@ -2,6 +2,6 @@
     scroll-snap-align: start;
     flex: 0 0 100%;
     padding: 10vh 2rem 0 2rem;
-    overflow: hidden;
+    /*overflow: hidden;*/
     box-sizing: border-box;
 }

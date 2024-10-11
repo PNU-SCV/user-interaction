@@ -9,7 +9,7 @@ import {
 import { IteratingMapper } from '@components/atoms/IteratingMapper';
 import { ScrollSnapItem } from '@components/atoms/ScrollSnapItem';
 import { RobotTaskTimePicker } from '@components/organisms/RobotTaskTimePicker';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import scrollContainerStyle from '@components/atoms/ScrollSnapContainer/index.module.css';
 import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
 import { ROUTER_PATH } from '@/router';
@@ -27,6 +27,7 @@ import { DeliveryCommandMap } from '@components/organisms/DeliveryCommandMap';
 import checking from '@images/checking.svg';
 import searching from '@images/searching.svg';
 import { RequestOptionsForm } from '@components/molecules/RequestOptionsForm';
+import { Spacing } from '@components/atoms/Spacing';
 interface IScheduleTime extends ItemProps {
   time: ScheduleTime;
 }
@@ -96,9 +97,28 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
               height: '40px',
               fontSize: '20px',
               lineHeight: '40px',
+              position: 'relative',
             }}
           >
             ↓아래에서 이동하기 추가 옵션을 설정할 수 있어요
+            <svg
+              style={{
+                position: 'absolute',
+                left: 0,
+                transform: 'translateY(90px)',
+              }}
+              width="100%"
+              height={70}
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0 35 Q 25 50, 43 15 Q 25 10, 30 35 Q 40 60, 20, 40 T 1024 35"
+                stroke="black"
+                strokeWidth="2"
+                strokeDasharray="10, 4"
+                fill="transparent"
+              />
+            </svg>
           </div>
         </ScrollSnapItem>
         <ScrollSnapItem>
@@ -109,12 +129,19 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
             text={'이동 시킬 때 세부 옵션을 설정해요!'}
           />
           <RequestOptionsForm />
+          <path
+            d="M0 35 Q 25 50, 43 15 Q 25 10, 30 35 Q 40 60, 20, 40 T 1024 35"
+            stroke="black"
+            strokeWidth="2"
+            strokeDasharray="10, 4"
+            fill="transparent"
+          />
         </ScrollSnapItem>
-        {scheduleTimes.map((time) => (
-          <ScrollSnapItem key={`${date} ${time}`}>
-            <RobotTaskTimePicker time={time} date={date} />
-          </ScrollSnapItem>
-        ))}
+        {/*{scheduleTimes.map((time) => (*/}
+        {/*  <ScrollSnapItem key={`${date} ${time}`}>*/}
+        {/*    <RobotTaskTimePicker time={time} date={date} />*/}
+        {/*  </ScrollSnapItem>*/}
+        {/*))}*/}
       </ScrollSnapContainer>
       {/*<IteratingMapper<IScheduleTime>*/}
       {/*  container={ScrollSnapContainer}*/}
