@@ -1,0 +1,218 @@
+.request--options {
+    margin-top: 20px;
+    font-family: Roboto, Arial;
+    font-size: 22px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding-left: 100px;
+}
+
+.request--options input:disabled {
+    background-color: #ccc;
+}
+
+@keyframes thickborder {
+    0% {
+        outline: 2px solid lightskyblue;
+    }
+    50% {
+        outline: 5px solid lightskyblue;
+    }
+    100% {
+        outline: 2px solid lightskyblue;
+    }
+}
+
+.request--options>.submit--button {
+    position: absolute;
+    transform: translate(450px, -80px);
+    /*transform: translate(200px, 0);*/
+    /*border: 2px solid lightskyblue;*/
+    border:none;
+    animation: thickborder 1.5s ease-in-out infinite;
+    width: max-content;
+    box-sizing: border-box;
+}
+
+.request--options b {
+    font-size: 23px;
+    /*font-weight: 600;*/
+    text-decoration: underline dashed #757575 1px;
+}
+
+.request--options>li {
+    list-style-type: disc;
+    margin-bottom: 15px;
+}
+
+.request--options>li::marker {
+    color: lightskyblue;
+    /*color: #76c7c0;*/
+    font-size: 2rem;
+    margin: 0 10px 0 0;
+    line-height: 2rem;
+}
+
+.request--options>label {
+    margin-bottom: 15px;
+    display: block;
+}
+
+
+.request--options>li>label>input {
+    margin: 0 5px;
+}
+
+.input-style {
+    padding: 10px;
+    /*border: 2px solid #ccc;*/
+    border: 2px solid #76c7c0;
+    border-radius: 5px;
+    font-size: 20px;
+    color: #555;
+    outline: none;
+}
+
+.input-style[type="number"] {
+    width: 70px;
+}
+
+.input-style:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.checkbox-wrapper-19 {
+    box-sizing: border-box;
+    --background-color: #fff;
+    --checkbox-height: 30px;
+    display: inline-flex;
+}
+
+.checkbox-wrapper-19 > span {
+    display: inline-block;
+    margin-right: 5px;
+    line-height: 30px;
+
+}
+
+@keyframes dothabottomcheck-19 {
+    0% {
+        height: 0;
+    }
+    100% {
+        height: calc(var(--checkbox-height) / 2);
+    }
+}
+
+@keyframes dothatopcheck-19 {
+    0% {
+        height: 0;
+    }
+    50% {
+        height: 0;
+    }
+    100% {
+        height: calc(var(--checkbox-height) * 1.2);
+    }
+}
+
+.checkbox-wrapper-19 input[type="checkbox"] {
+    display: none;
+}
+
+.checkbox-wrapper-19 .check-box {
+    height: var(--checkbox-height);
+    width: var(--checkbox-height);
+    background-color: transparent;
+    /*border: calc(var(--checkbox-height) * 0.1) solid #ccc;*/
+    border: calc(var(--checkbox-height) * 0.1) solid #76c7c0;
+    border-radius: 5px;
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    transition: border-color ease 0.2s;
+    cursor: pointer;
+}
+
+.checkbox-wrapper-19 .check-box::before,
+.checkbox-wrapper-19 .check-box::after {
+    box-sizing: border-box;
+    position: absolute;
+    height: 0;
+    width: calc(var(--checkbox-height) * 0.2);
+    /*background-color: #34b93d;*/
+    background-color: #76c7c0;
+    display: inline-block;
+    transform-origin: left top;
+    border-radius: 5px;
+    content: " ";
+    transition: opacity ease 0.5s;
+}
+
+.checkbox-wrapper-19 .check-box::before {
+    top: calc(var(--checkbox-height) * 0.72);
+    left: calc(var(--checkbox-height) * 0.41);
+    box-shadow: 0 0 0 calc(var(--checkbox-height) * 0.05) var(--background-color);
+    transform: rotate(-135deg);
+}
+
+.checkbox-wrapper-19 .check-box::after {
+    top: calc(var(--checkbox-height) * 0.37);
+    left: calc(var(--checkbox-height) * 0.05);
+    transform: rotate(-45deg);
+}
+
+.checkbox-wrapper-19 input[type="checkbox"]:checked + .check-box {
+    /*border-color: #34b93d;*/
+    border-color: #76c7c0;
+}
+
+.checkbox-wrapper-19 input[type="checkbox"]:checked + .check-box::after {
+    height: calc(var(--checkbox-height) / 2);
+    animation: dothabottomcheck-19 0.2s ease forwards;
+}
+
+.checkbox-wrapper-19 input[type="checkbox"]:checked + .check-box::before {
+    height: calc(var(--checkbox-height) * 1.2);
+    animation: dothatopcheck-19 0.4s ease forwards;
+}
+
+.msg--heading {
+    display: inline-block;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.msg--heading::after {
+    position: absolute;
+    white-space: nowrap;
+    content: "메세지를 지정하지 않으면, \"다음 장소로 이동해도 될까요?\"라는 메세지가 나와요!";
+    display: block;
+    margin-top: 8px;
+    left: -4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: dimgray;
+}
+
+.msg--container {
+    margin: 10px 0 15px 0;
+    padding-left: 40px;
+    max-height: 420px;
+    /*height: 420px;*/
+    overflow: auto;
+    /*background-color: red;*/
+}
+
+.msg--container>div {
+    margin-bottom: 10px;
+}
+
+.msg--container>div>span {
+    display: inline-block;
+    margin-right: 10px;
+}

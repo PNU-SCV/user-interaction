@@ -10,3 +10,15 @@
 .pointing:hover {
     fill: #b7e4fb;
 }
+
+.control--box {
+    position: absolute;
+    backdrop-filter: blur(6px);
+    background-color: transparent;
+    border: 2px solid #000;
+    width: 100%;
+    padding: 4px;
+    transform: translate(-32px, 50px);
+    display: flex;
+    justify-content: space-evenly;
+}

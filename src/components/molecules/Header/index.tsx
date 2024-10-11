@@ -39,6 +39,11 @@ export const Header = () => {
           }}
         />
       </button>
+      <div
+        style={{
+          width: '10px',
+        }}
+      />
       <button
         style={{
           padding: 0,

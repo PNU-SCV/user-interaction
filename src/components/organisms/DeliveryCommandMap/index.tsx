@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, MutableRefObject, useState } from 'react';
 import { SVGBitmap } from '@components/molecules/SVGBitmap';
 import { useLocation } from 'react-router-dom';
 import { MapStateResp } from '@components/pages/Index';
@@ -56,6 +56,8 @@ export const DeliveryCommandMap = ({ data, maxH }: IDeliveryCommandMap) => {
       });
   };
 
+  const setOverlayState = (state: string) => setModalState((prev) => (prev !== state ? state : ''));
+
   return (
     <Fragment>
       <Modal
@@ -64,6 +66,7 @@ export const DeliveryCommandMap = ({ data, maxH }: IDeliveryCommandMap) => {
         shouldCloseOnOverlayClick={false}
         contentLabel={modalState}
         ariaHideApp={false}
+        preventScroll={true}
       >
         <div>{modalState}</div>
         <button onClick={confirmToMoveNext}>확인</button>
@@ -73,7 +76,7 @@ export const DeliveryCommandMap = ({ data, maxH }: IDeliveryCommandMap) => {
         robots={selectedRobot}
         bitmapMode="COMMANDER"
         maxH={maxH}
-        setOverlayState={(state: string) => setModalState(state)}
+        setOverlayState={setOverlayState}
       />
     </Fragment>
   );

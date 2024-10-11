@@ -1,11 +1,13 @@
 import styles from './index.module.css';
 import { MouseEventHandler, useMemo, useRef, useState } from 'react';
 import { IRobot } from '@components/pages/Robot';
-import { Point, Rect } from '@/commons/types';
+import { Rect } from '@/commons/types';
 import { RobotPositionMsg, useBitmapRobotManager } from '@/hooks/useBitmapRobotManager';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useNavigate } from 'react-router-dom';
 import { ROUTER_PATH } from '@/router';
+import { useRequestOptions } from '@/context/RequestOptionsContext';
+import { useSelectedPoints } from '@/context/SelectedPointsContext';
 
 const colorValid = 'white';
 const colorInvalid = '#D5D5D5';
@@ -22,11 +24,11 @@ export interface ISVGBitmap {
 
 const parseWebSocketMsg = (event): RobotPositionMsg => {
   const msg = event.data;
-  const [id, status, newX, newY] = msg
+  const [id, destMsg, status, newX, newY] = msg
     .split(',')
-    .map((segment, idx) => (idx !== 0 ? parseInt(segment) : segment));
+    .map((segment, idx) => (idx > 1 ? parseInt(segment) : segment));
   console.log('ws msg', msg);
-  return { id, status, newX, newY };
+  return { id, destMsg, status, newX, newY };
 };
 
 export const SVGBitmap = ({
@@ -49,10 +51,11 @@ export const SVGBitmap = ({
   const isWebSocketConnectedRef = useRef<boolean>(false);
   const setConnected = () => (isWebSocketConnectedRef.current = true);
   const setDisconnected = () => (isWebSocketConnectedRef.current = false);
-  const [selectedPoints, setSelectedPoints] = useState<Point[]>([]);
+  const { selectedPoints, setSelectedPoints } = useSelectedPoints();
+  const { waitTime, cancelIfUnconfirmed, destMsgs, setDisableInputs } = useRequestOptions();
   const onmessage = (event: MessageEvent) => {
     const msg = parseWebSocketMsg(event);
-    const { status, newX, newY } = msg;
+    const { status, destMsg, newX, newY } = msg;
 
     updateRobotPosition({ ...msg, newX: 8 - newX });
     setTimeout(() => {
@@ -60,7 +63,17 @@ export const SVGBitmap = ({
         console.log('도착!', 8 - newX, newY);
         setSelectedPoints((prev) => [...prev.slice(1, prev.length)]);
         if (setOverlayState) {
-          setOverlayState(status === 5 ? '다음 장소로 이동해도 될까요?' : '');
+          if (status === 5) {
+            setOverlayState(destMsg !== 'ASD' ? destMsg : '다음 장소로 이동해도 될까요?');
+            return;
+          }
+          if (status === 6) {
+            setOverlayState(destMsg !== 'ASD' ? destMsg : '최종 목적지에 도착했습니다!');
+            setTimeout(() => {
+              setOverlayState('');
+              setDisableInputs(false);
+            }, 5000);
+          }
         }
       }
     }, 600);
@@ -100,8 +113,7 @@ export const SVGBitmap = ({
     console.log(8 - destX, destY);
     setSelectedPoints((prev) => {
       if (prev.some((point) => point.x === destX && point.y === destY)) {
-        console.log('duplicate');
-        return prev;
+        return [...prev].filter((point) => point.x !== destX && point.y !== destY);
       }
       return [...prev, { x: destX, y: destY }];
     });
@@ -118,16 +130,24 @@ export const SVGBitmap = ({
       if (setOverlayState) {
         setOverlayState('');
       }
+      setDisableInputs(false);
     }
   };
 
   const returnToDesk = () => {
-    sendMsg(createGoMsg([{ x: 7, y: 5 }]));
+    sendMsg(createGoMsg([{ x: 7, y: 5 }], 0, cancelIfUnconfirmed, []));
+    setDisableInputs(false);
   };
 
   const sendDestinations = () => {
-    const msg = createGoMsg(selectedPoints.map((point) => ({ ...point, x: 8 - point.x })));
+    const msg = createGoMsg(
+      selectedPoints.map((point) => ({ ...point, x: 8 - point.x })),
+      waitTime,
+      cancelIfUnconfirmed,
+      destMsgs,
+    );
     sendMsg(msg);
+    setDisableInputs(true);
   };
 
   return (
@@ -159,21 +179,11 @@ export const SVGBitmap = ({
         {createPointSVGs(selectedPoints, maxCeil)}
       </svg>
       {bitmapMode === 'COMMANDER' ? (
-        <div
-          style={{
-            position: 'absolute',
-            backdropFilter: 'blur(6px)',
-            backgroundColor: 'transparent',
-            border: '2px solid #000',
-            width: '100%',
-            padding: '4px',
-            transform: 'translate(-32px, 15px)',
-            display: 'flex',
-            justifyContent: 'space-evenly',
-          }}
-        >
+        <div className={styles['control--box']}>
           <button onClick={sendStop}>정지하기</button>
-          <button onClick={sendDestinations}>로봇 이동시키기</button>
+          <button id="moveButton" onClick={sendDestinations}>
+            로봇 이동시키기
+          </button>
           <button onClick={returnToDesk}>데스크로 돌아가기</button>
         </div>
       ) : null}
@@ -212,7 +222,7 @@ const findMaxRoundedToTen = (rects: Rect[]) => {
 };
 
 const createPointSVGs = (selectedPoints, maxCeil) =>
-  selectedPoints.map((point, idx) => (
+  (selectedPoints ?? []).map((point, idx) => (
     <g
       key={`${point.x}${idx}`}
       style={{

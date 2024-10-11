@@ -26,20 +26,20 @@ export const RobotFigure = ({
 }: IRobotFigure) => {
   const schedulesByTime = [[], [], []];
 
-  schedules.forEach((item) => {
-    const time = item.time;
-    if (time === TIMES[MORNING]) {
-      schedulesByTime[MORNING].push(item);
-      return;
-    }
-    if (time === TIMES[AFTERNOON]) {
-      schedulesByTime[AFTERNOON].push(item);
-      return;
-    }
-    if (time === TIMES[NIGHT]) {
-      schedulesByTime[NIGHT].push(item);
-    }
-  });
+  // schedules.forEach((item) => {
+  //   const time = item.time;
+  //   if (time === TIMES[MORNING]) {
+  //     schedulesByTime[MORNING].push(item);
+  //     return;
+  //   }
+  //   if (time === TIMES[AFTERNOON]) {
+  //     schedulesByTime[AFTERNOON].push(item);
+  //     return;
+  //   }
+  //   if (time === TIMES[NIGHT]) {
+  //     schedulesByTime[NIGHT].push(item);
+  //   }
+  // });
 
   const schedulesGroupByTime = schedulesByTime.map((schedules, idx) =>
     schedules.reduce(
@@ -58,15 +58,17 @@ export const RobotFigure = ({
         <span className={styles['figure--label']}>{label}</span>
       </div>
       <Flex>
-        <span>현재 상태: {state === 'idle' ? '당장 사용 가능' : '운행중'}</span>
-        {showSchedule
-          ? schedulesGroupByTime.map((obj) => (
-              <div key={`${id}-${obj.time}`} className={styles['work--rate']}>
-                <p>{obj.time}</p>
-                <AvailabilityIndicator percentage={obj.workingRate} />
-              </div>
-            ))
-          : null}
+        {/*<div className={styles['robot--state']}>*/}
+        {/*  현재 상태: {state === 'idle' ? '\n즉시 사용 가능' : '\n운행중'}*/}
+        {/*</div>*/}
+        {/*{showSchedule*/}
+        {/*  ? schedulesGroupByTime.map((obj) => (*/}
+        {/*      <div key={`${id}-${obj.time}`} className={styles['work--rate']}>*/}
+        {/*        <p>{obj.time}</p>*/}
+        {/*        <AvailabilityIndicator percentage={obj.workingRate} />*/}
+        {/*      </div>*/}
+        {/*    ))*/}
+        {/*  : null}*/}
       </Flex>
     </div>
   );

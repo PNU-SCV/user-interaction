@@ -122,6 +122,8 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+    /*background-color: #D5D5D5;*/
+    border: 2px solid black;
   }
 }
 
