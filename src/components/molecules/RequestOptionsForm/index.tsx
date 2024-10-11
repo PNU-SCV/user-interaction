@@ -83,7 +83,6 @@ export const RequestOptionsForm: React.FC = () => {
         {selectedPoints.map((point, idx) => (
           <div key={`${point.x},${point.y}`}>
             <span>{idx + 1 === selectedPoints.length ? '최종' : `${idx + 1}번.`} 도착 지점</span>
-
             <input
               onChange={setDestMsg(idx)}
               className={styles['input-style']}
@@ -92,6 +91,9 @@ export const RequestOptionsForm: React.FC = () => {
             />
           </div>
         ))}
+        {selectedPoints.length === 0 ? (
+          <div className={styles['msg--container--empty']}>목적지를 선택해 주세요</div>
+        ) : null}
       </div>
       <button className={styles['submit--button']} type={'button'} onClick={onClickSave}>
         저장후 이동시키기
