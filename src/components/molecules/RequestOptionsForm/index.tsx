@@ -134,7 +134,7 @@ export const RequestOptionsForm: React.FC = () => {
       <li>
         <label>
           <span>
-            중간 목적지 <b>대기 시간</b>
+            목적지 별 <b>대기 시간</b>
           </span>
           <input
             type="number"
@@ -148,7 +148,7 @@ export const RequestOptionsForm: React.FC = () => {
       <li>
         <div className={styles['checkbox-wrapper-19']}>
           <span>
-            중간 목적지 대기중 확인 못받을 시 이동 <b>취소하기</b>
+            목적지에서 대기중 확인 못받을 시 이동 <b>취소하기</b>
           </span>
           <input
             id="cbtest-19"

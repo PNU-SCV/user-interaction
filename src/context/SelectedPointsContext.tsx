@@ -3,7 +3,7 @@ import { Point } from '@/commons/types';
 
 interface SelectedPointsContextType {
   selectedPoints: Point[];
-  setSelectedPoints: (points: (prev) => any[]) => void;
+  setSelectedPoints: (value: ((prevState: Point[]) => Point[]) | Point[]) => void;
 }
 
 const SelectedPointsContext = createContext<SelectedPointsContextType | undefined>(undefined);

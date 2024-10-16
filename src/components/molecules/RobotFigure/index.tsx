@@ -22,9 +22,6 @@ export const RobotFigure = ({
   showSchedule = true,
 }: IRobotFigure) => {
   const schedulesByTime = [[], [], []];
-
-  console.log(schedules);
-
   // schedules.forEach((item) => {
   //   const time = item.time;
   //   if (time === TIMES[MORNING]) {
@@ -39,6 +36,8 @@ export const RobotFigure = ({
   //     schedulesByTime[NIGHT].push(item);
   //   }
   // });
+
+  console.log('qq', schedules);
 
   const schedulesGroupByTime = schedulesByTime.map((schedules, idx) =>
     schedules.reduce(
@@ -56,9 +55,13 @@ export const RobotFigure = ({
         <img src={robotPicture} alt="robot picture" className={styles['figure--image']} />
         <span className={styles['figure--label']}>{label}</span>
       </div>
-      {/*<Flex>*/}
-      <div style={{ marginTop: '10px', fontSize: '20px' }}>
-        예상 대기 시간: {schedules.length * 15}분
+      <div>
+        <div style={{ marginTop: '10px', fontSize: '20px' }}>
+          대기 중인 작업 개수: {schedules.length === 0 ? 0 : schedules.length - 1}개
+        </div>
+        <div style={{ marginTop: '10px', fontSize: '20px' }}>
+          예상 대기 시간: {schedules.length * 15}분
+        </div>
       </div>
       {/*<div className={styles['robot--state']}>*/}
       {/*  현재 상태: {state === 'idle' ? '\n즉시 사용 가능' : '\n운행중'}*/}

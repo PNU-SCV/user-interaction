@@ -74,7 +74,16 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
       <ScrollSnapContainer>
         <ScrollSnapItem>
           <IconTextBox src={searching} imgAlt="searching motion" text="주변 로봇 탐색" />
-          <SVGBitmap rects={rects} robots={robots} />
+          <SVGBitmap rects={rects} robots={robots} maxH={'55vh'} />
+          <div
+            style={{
+              height: '40px',
+              fontSize: '20px',
+              lineHeight: '40px',
+            }}
+          >
+            미니맵에서 원하는 로봇을 선택해보세요!
+          </div>
         </ScrollSnapItem>
         <ScrollSnapItem>
           <IconTextBox src={checking} text="주변 로봇들 자세히 보기" imgAlt="checking tablet" />

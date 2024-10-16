@@ -6,13 +6,12 @@ interface WebSocketControl {
 }
 
 export const useWebSocket = (
+  wsUrl: string,
   onmessage: (event: MessageEvent) => void,
   setConnected: () => void,
   setDisconnected: () => void,
 ) => {
   const wscRef = useRef<WebSocketControl | null>(null);
-  // const wsUrl = 'ws://192.168.0.5:8000/real-time-state';
-  const wsUrl = 'ws://localhost:8000/real-time-state';
 
   useEffect(() => {
     let isUnmounting = false;
@@ -27,7 +26,7 @@ export const useWebSocket = (
 
       ws.onopen = () => {
         wsc.retryCnt = 0;
-        console.log('웹소켓 연결됨');
+        console.log(wsUrl, '웹소켓 연결됨');
         setConnected();
       };
 

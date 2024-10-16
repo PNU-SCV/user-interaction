@@ -9,10 +9,10 @@ import {
 import { IteratingMapper } from '@components/atoms/IteratingMapper';
 import { ScrollSnapItem } from '@components/atoms/ScrollSnapItem';
 import { RobotTaskTimePicker } from '@components/organisms/RobotTaskTimePicker';
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 import scrollContainerStyle from '@components/atoms/ScrollSnapContainer/index.module.css';
 import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
-import { ROUTER_PATH } from '@/router';
+import { baseUrl, ROUTER_PATH } from '@/router';
 import { ScrollSnapWrapper } from '@components/atoms/ScrollSnapWrapper';
 import { ScrollSnapOverlay } from '@components/atoms/ScrollSnapOverlay';
 import { useLocation } from 'react-router-dom';
@@ -28,6 +28,8 @@ import checking from '@images/checking.svg';
 import searching from '@images/searching.svg';
 import { RequestOptionsForm } from '@components/molecules/RequestOptionsForm';
 import { Spacing } from '@components/atoms/Spacing';
+import { useWebSocket } from '@/hooks/useWebSocket';
+import { toast, ToastContainer } from 'react-toastify';
 interface IScheduleTime extends ItemProps {
   time: ScheduleTime;
 }
@@ -55,15 +57,15 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
   const date: DateString = formatDateToMMDDYY(new Date());
   const location = useLocation();
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const time = searchParams.get('time');
-    if (hasUserAlreadySelectedTime(time)) {
-      const { container, selectedTable } = getElementsByScheduleTime(time);
-
-      scrollToElement(container, selectedTable);
-    }
-  });
+  // useEffect(() => {
+  //   const searchParams = new URLSearchParams(window.location.search);
+  //   const time = searchParams.get('time');
+  //   if (hasUserAlreadySelectedTime(time)) {
+  //     const { container, selectedTable } = getElementsByScheduleTime(time);
+  //
+  //     scrollToElement(container, selectedTable);
+  //   }
+  // });
 
   const selectedRobot = data.robots.filter(
     (robot) => robot.id === location.search.slice(location.search.search('id=') + 3),
@@ -83,6 +85,7 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
           </Flex>
         </GlassPanel>
       </ScrollSnapOverlay>
+      <div style={{ zIndex: 999999, position: 'fixed' }}></div>
       <ScrollSnapContainer>
         <ScrollSnapItem>
           <div style={{ height: '20px' }} />
@@ -91,7 +94,7 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
             imgAlt="searching image"
             text="미니맵을 통해 목적지를 선택하고 로봇을 이동시켜요!"
           />
-          <DeliveryCommandMap data={data} maxH={'60vh'} />
+          <DeliveryCommandMap data={data} maxH={'50vh'} />
           <div
             style={{
               height: '40px',
@@ -101,25 +104,25 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
             }}
           >
             ↓아래에서 이동하기 추가 옵션을 설정할 수 있어요
-            <svg
-              style={{
-                position: 'absolute',
-                left: 0,
-                // transform: 'translateY(90px)',
-                transform: 'translateY(calc(40vh - 310px))',
-              }}
-              width="100%"
-              height={70}
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M0 35 Q 25 50, 43 15 Q 25 10, 30 35 Q 40 60, 20, 40 T 1024 35"
-                stroke="black"
-                strokeWidth="2"
-                strokeDasharray="10, 4"
-                fill="transparent"
-              />
-            </svg>
+            {/*<svg*/}
+            {/*  style={{*/}
+            {/*    position: 'absolute',*/}
+            {/*    left: 0,*/}
+            {/*    // transform: 'translateY(90px)',*/}
+            {/*    transform: 'translateY(calc(40vh - 310px))',*/}
+            {/*  }}*/}
+            {/*  width="100%"*/}
+            {/*  height={70}*/}
+            {/*  xmlns="http://www.w3.org/2000/svg"*/}
+            {/*>*/}
+            {/*  <path*/}
+            {/*    d="M0 35 Q 25 50, 43 15 Q 25 10, 30 35 Q 40 60, 20, 40 T 1024 35"*/}
+            {/*    stroke="black"*/}
+            {/*    strokeWidth="2"*/}
+            {/*    strokeDasharray="10, 4"*/}
+            {/*    fill="transparent"*/}
+            {/*  />*/}
+            {/*</svg>*/}
           </div>
         </ScrollSnapItem>
         <ScrollSnapItem>

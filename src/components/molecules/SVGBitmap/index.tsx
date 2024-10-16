@@ -1,13 +1,16 @@
 import styles from './index.module.css';
-import { MouseEventHandler, useMemo, useRef, useState } from 'react';
+import { MouseEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 import { IRobot } from '@components/pages/Robot';
 import { Rect } from '@/commons/types';
 import { RobotPositionMsg, useBitmapRobotManager } from '@/hooks/useBitmapRobotManager';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useNavigate } from 'react-router-dom';
-import { ROUTER_PATH } from '@/router';
+import { baseUrl, ROUTER_PATH } from '@/router';
 import { useRequestOptions } from '@/context/RequestOptionsContext';
 import { useSelectedPoints } from '@/context/SelectedPointsContext';
+import { useDestPoints } from '@/context/DestPointsContext';
+import { useUniqueId } from '@/context/UUIDContext';
+import { ModalState } from '@components/organisms/DeliveryCommandMap';
 
 const colorValid = 'white';
 const colorInvalid = '#D5D5D5';
@@ -19,16 +22,20 @@ export interface ISVGBitmap {
   robots: IRobot[];
   bitmapMode?: BITMAP_MODE;
   maxH?: string;
-  setOverlayState?: (overlayState: string) => void;
+  setOverlayState?: (value: ((prevState: ModalState) => ModalState) | ModalState) => void;
 }
-
 const parseWebSocketMsg = (event): RobotPositionMsg => {
   const msg = event.data;
-  const [id, destMsg, status, newX, newY] = msg
+  const [id, destMsg, status, newX, newY, waitTime] = msg
     .split(',')
     .map((segment, idx) => (idx > 1 ? parseInt(segment) : segment));
   console.log('ws msg', msg);
-  return { id, destMsg, status, newX, newY };
+  return { id, destMsg, status, newX, newY, waitTime };
+};
+
+const isTablet = () => {
+  const userAgent = navigator.userAgent.toLowerCase();
+  return /tablet|ipad|playbook|silk/.test(userAgent);
 };
 
 export const SVGBitmap = ({
@@ -59,36 +66,67 @@ export const SVGBitmap = ({
   const setConnected = () => (isWebSocketConnectedRef.current = true);
   const setDisconnected = () => (isWebSocketConnectedRef.current = false);
   const { selectedPoints, setSelectedPoints } = useSelectedPoints();
+
   const { waitTime, cancelIfUnconfirmed, destMsgs, setDisableInputs } = useRequestOptions();
+  const { destPoints, setDestPoints } = useDestPoints();
   const onmessage = (event: MessageEvent) => {
     const msg = parseWebSocketMsg(event);
-    const { status, destMsg, newX, newY } = msg;
-
+    const { status, destMsg, newX, newY, id, waitTime } = msg;
+    if (status === 7 && id === robots[0].id) {
+      if (setOverlayState) {
+        setOverlayState((prev) => ({ ...prev, open: false }));
+      }
+      return;
+    }
     updateRobotPosition({ ...msg, newX: 8 - newX });
-    setTimeout(() => {
-      if (status === 5 || status === 6) {
+    if (status === 5 || status === 6) {
+      setTimeout(() => {
         console.log('도착!', 8 - newX, newY);
-        setSelectedPoints((prev) => [...prev.slice(1, prev.length)]);
+        setDestPoints((prev) => [...prev.slice(1, prev.length)]);
         if (setOverlayState) {
           if (status === 5) {
-            setOverlayState(destMsg !== 'ASD' ? destMsg : '다음 장소로 이동해도 될까요?');
+            setOverlayState({
+              msg: destMsg !== 'ASD' ? destMsg : '다음 장소로 이동해도 될까요?',
+              waitTime: waitTime,
+              open: true,
+            });
             return;
           }
           if (status === 6) {
-            setOverlayState(destMsg !== 'ASD' ? destMsg : '최종 목적지에 도착했습니다!');
-            setTimeout(() => {
-              setOverlayState('');
-              setDisableInputs(false);
-            }, 5000);
+            setOverlayState({
+              msg: destMsg !== 'ASD' ? destMsg : '최종 목적지에 도착했습니다!',
+              waitTime: waitTime,
+              open: true,
+            });
+            setDisableInputs(false);
           }
         }
-      }
-    }, 600);
+      }, 600);
+    }
   };
 
-  const { sendMsg } = useWebSocket(onmessage, setConnected, setDisconnected);
+  const { sendMsg } = useWebSocket(
+    `ws://${baseUrl}:8000/real-time-state`,
+    onmessage,
+    setConnected,
+    setDisconnected,
+  );
+
   const navigate = useNavigate();
   const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (bitmapMode !== 'VIEWER' && selectedPoints.length === 0) {
+      const selectedRobot = robots[0];
+      if (selectedRobot.schedules.length > 0) {
+        const currentDest = selectedRobot.schedules[0].dest.map((point) => ({
+          x: 8 - point.x,
+          y: point.y,
+        }));
+        setDestPoints(currentDest);
+      }
+    }
+  }, []);
 
   const onClickMap: MouseEventHandler<SVGSVGElement> = (e) => {
     const element = e.target as SVGElement;
@@ -136,17 +174,24 @@ export const SVGBitmap = ({
     if (isConnected) {
       sendMsg(createStopMsg());
       if (setOverlayState) {
-        setOverlayState('');
+        // setOverlayState('');
+        setOverlayState((prev) => ({ ...prev, open: false }));
       }
       setDisableInputs(false);
     }
   };
 
   const returnToDesk = () => {
-    sendMsg(createGoMsg([{ x: 7, y: 5 }], 0, cancelIfUnconfirmed, []));
+    sendMsg(createGoMsg([{ x: 7, y: 5 }], 10, cancelIfUnconfirmed, []));
     setDisableInputs(false);
+
+    if (setOverlayState) {
+      // setOverlayState('');
+      setOverlayState((prev) => ({ ...prev, open: false }));
+    }
   };
 
+  const uuid = useUniqueId();
   const sendDestinations = () => {
     const msg = createGoMsg(
       selectedPoints.map((point) => ({ ...point, x: 8 - point.x })),
@@ -156,6 +201,7 @@ export const SVGBitmap = ({
     );
     sendMsg(msg);
     setDisableInputs(true);
+    setSelectedPoints([]);
   };
 
   const sendPause = () => {
@@ -195,6 +241,7 @@ export const SVGBitmap = ({
         {roomSVG}
         {robotSVGs}
         {createPointSVGs(selectedPoints, maxCeil)}
+        {createDestSVGs(destPoints, maxCeil)}
       </svg>
       {bitmapMode === 'COMMANDER' ? (
         <div className={styles['control--box']}>
@@ -243,6 +290,32 @@ const findMaxRoundedToTen = (rects: Rect[]) => {
 };
 
 const createPointSVGs = (selectedPoints, maxCeil) =>
+  (selectedPoints ?? []).map((point, idx) => (
+    <g
+      key={`${point.x}${idx}`}
+      style={{
+        transition: 'transform 0.5s',
+        transform: `translate(${point.x ?? -2}px, ${point.y ?? -2}px)`,
+        cursor: 'pointer',
+      }}
+      color={'white'}
+    >
+      <circle cx={0.5} cy={0.5} r={0.25} stroke={'#D5D5D5'} strokeWidth={0.04} fill={'#76c7c0'} />
+      <text
+        y="0.65"
+        x="0.4"
+        fontSize={maxCeil * 0.04}
+        fontWeight={900}
+        fill={'black'}
+        stroke="white"
+        strokeWidth="0.02"
+      >
+        {idx + 1}
+      </text>
+    </g>
+  ));
+
+const createDestSVGs = (selectedPoints, maxCeil) =>
   (selectedPoints ?? []).map((point, idx) => (
     <g
       key={`${point.x}${idx}`}

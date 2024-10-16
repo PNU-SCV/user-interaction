@@ -62,6 +62,7 @@ table {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
+  --toastify-color-progress-light: #76c7c0;
 }
 
 * {
@@ -133,3 +134,6 @@ button:focus-visible {
   text-align: center;
 }
 
+.Toastify__toast-body {
+  color: black;
+}

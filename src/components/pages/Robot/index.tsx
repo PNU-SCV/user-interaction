@@ -18,7 +18,14 @@ export interface IRobot {
   pos: Point;
   path: string;
   state: string;
-  schedules: ScheduleDetail[];
+  schedules: {
+    cancel: boolean;
+    command: number;
+    dest: Point[];
+    msg: string[];
+    target: string;
+    waitTime: number;
+  }[];
 }
 
 export const Robot = () => {

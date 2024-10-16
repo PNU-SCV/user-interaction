@@ -7,6 +7,9 @@ import { Rect } from '@/commons/types';
 import { AsyncBoundary } from '@components/atoms/AsyncBoundary';
 import { usePlaceContext } from '@/context/PlaceContext';
 import { IndexViewer } from '@components/templates/IndexViewer';
+import { baseUrl } from '@/router';
+import { Simulate } from 'react-dom/test-utils';
+import reset = Simulate.reset;
 
 export type MapStateResp = {
   rects: Rect[];
@@ -14,9 +17,7 @@ export type MapStateResp = {
 };
 
 export const fetchRobotsByMap = async (map_name: string): Promise<MapStateResp> => {
-  const response = await fetch(`http://localhost:8000/robots/${map_name}`);
-  // const response = await fetch(`http://192.168.0.5:8000/robots/${map_name}`);
-  // const response = await fetch(`http://127.0.0.1:8000/robots/${map_name}`);
+  const response = await fetch(`http://${baseUrl}:8000/robots/${map_name}`);
 
   if (!response.ok) {
     throw new Error('네트워크 응답에 문제가 있습니다');
@@ -33,9 +34,10 @@ export const Index: React.FC = () => {
   const resetRef = useRef<{ reset: () => void } | null>(null);
 
   const handleReset = () => {
-    queryClient.invalidateQueries({ queryKey: createQueryKeyWithPlace(place) }).then(() => {
-      resetRef.current?.reset();
-    });
+    // queryClient.invalidateQueries({ queryKey: createQueryKeyWithPlace(place) }).then(() => {
+    //   resetRef.current?.reset();
+    // });
+    resetRef.current?.reset();
   };
 
   return (

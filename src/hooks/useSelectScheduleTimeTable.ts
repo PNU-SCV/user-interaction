@@ -12,7 +12,6 @@ export type CellAvailabilityResult = {
   className: string;
   who: string | undefined;
 };
-
 export type ScheduleDetail = {
   who: string;
   time: ScheduleTime;

@@ -1,0 +1,19 @@
+
+@keyframes thickborder {
+    0% {
+        outline: 2px solid red;
+    }
+    50% {
+        outline: 5px solid red;
+    }
+    100% {
+        outline: 2px solid red;
+    }
+}
+
+.next--confirm--button {
+    border: none;
+    position: absolute;
+    transform: translateY(-50px);
+    animation: thickborder 1.5s ease-in-out infinite;
+}

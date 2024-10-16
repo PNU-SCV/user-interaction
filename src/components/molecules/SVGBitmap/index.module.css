@@ -7,9 +7,12 @@
     border: 1px solid black;
     width: 100%;
 }
-.pointing:hover {
-    fill: #b7e4fb;
-}
+
+/*@media(min-width: 1024px){*/
+    .pointing:hover {
+        fill: #b7e4fb;
+    }
+/*}*/
 
 .control--box {
     position: absolute;

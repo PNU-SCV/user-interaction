@@ -1,9 +1,12 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { Robot } from '@components/pages/Robot';
 import React from 'react';
-import { Index } from '@components/pages/Index';
+import { fetchRobotsByMap, Index } from '@components/pages/Index';
 import { Delivery } from '@components/templates/Delivery';
 import { Checkup } from '@components/templates/Checkup';
+
+export const baseUrl = 'localhost';
+// export const baseUrl = '192.168.0.5';
 
 export const ROUTER_PATH = Object.freeze({
   ROOT: '/',
@@ -28,7 +31,11 @@ const PrivateRoute = (): React.ReactElement => {
 };
 
 export const router = createBrowserRouter([
-  { index: true, path: ROUTER_PATH.ROOT, element: <Index /> },
+  {
+    index: true,
+    path: ROUTER_PATH.ROOT,
+    element: <Index />,
+  },
   {
     element: <PrivateRoute />,
     children: [

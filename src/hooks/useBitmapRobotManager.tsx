@@ -13,6 +13,7 @@ export type RobotPositionMsg = {
   newY: number;
   status: number;
   destMsg: string;
+  waitTime: number;
 };
 
 interface RobotPositionAction {
@@ -41,7 +42,7 @@ export const useBitmapRobotManager = (
     initialRobotPositions,
   );
 
-  const createGoMsg = (selectedPoints, waitTime, cancelIfUnconfirmed, destMsgs) => {
+  const createGoMsg = (selectedPoints, waitTime = 10, cancelIfUnconfirmed, destMsgs) => {
     return JSON.stringify({
       command: MOVE_COMMAND.GO,
       target: selectedRobotId,
