@@ -3,8 +3,9 @@ import styles from './index.module.css';
 import { useRequestOptions } from '@/context/RequestOptionsContext';
 import scrollContainerStyle from '@components/atoms/ScrollSnapContainer/index.module.css';
 import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
-import { scrollToElement } from '@components/templates/RobotTaskTimeViewer';
 import { useSelectedPoints } from '@/context/SelectedPointsContext';
+import { scrollToElement } from '@/commons/utils';
+import { Select } from '@components/atoms/Select';
 
 const selectOptions = {
   object: [
@@ -28,7 +29,7 @@ const selectOptions = {
     { label: '10개', value: '10개 ' },
   ],
   append: [
-    { label: '행동', value: '' }, // '행동'을 '옵션 선택'으로 변경
+    { label: '행동', value: '' },
     { label: '주세요!', value: '주세요! ' },
     { label: '수령하셨나요?', value: '수령하셨나요? ' },
   ],
@@ -39,20 +40,28 @@ const SelectAppend: React.FC<{
   idx: number;
   handleSelectChange: (idx: number, value: string) => void;
 }> = ({ options, idx, handleSelectChange }) => (
-  <select
-    className={styles['select-style']}
-    onClick={(e) => e.stopPropagation()}
+  <Select
+    options={options}
     onChange={(e) => {
       handleSelectChange(idx, e.target.value);
       e.target.value = '';
     }}
-  >
-    {options.map((option) => (
-      <option key={option.value} value={option.value}>
-        {option.label}
-      </option>
-    ))}
-  </select>
+    onClick={(e) => e.stopPropagation()}
+  />
+  // <select
+  //   className={styles['select-style']}
+  //   onClick={(e) => e.stopPropagation()}
+  //   onChange={(e) => {
+  //     handleSelectChange(idx, e.target.value);
+  //     e.target.value = '';
+  //   }}
+  // >
+  //   {options.map((option) => (
+  //     <option key={option.value} value={option.value}>
+  //       {option.label}
+  //     </option>
+  //   ))}
+  // </select>
 );
 
 export const RequestOptionsForm: React.FC = () => {
@@ -103,7 +112,8 @@ export const RequestOptionsForm: React.FC = () => {
       copy[i] = value;
       return copy;
     });
-    setDestMsg(i)(value);
+    const findMyInput = setDestMsg(i);
+    findMyInput(value);
   };
 
   const handleSelectChange = (i, value) => {

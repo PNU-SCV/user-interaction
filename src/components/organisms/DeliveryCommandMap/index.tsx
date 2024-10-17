@@ -1,16 +1,17 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { SVGBitmap } from '@components/molecules/SVGBitmap';
 import { useLocation } from 'react-router-dom';
-import { MapStateResp } from '@components/pages/Index';
 
 import axios from 'axios';
-import { baseUrl } from '@/router';
 import { toast } from 'react-toastify';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useDestPoints } from '@/context/DestPointsContext';
-import { Point } from '@/commons/types';
+import { MapStateResp, Point } from '@/commons/types';
 import { CountdownModal } from '@components/molecules/CountdownModal';
 import styles from './index.module.css';
+import { baseUrl } from '@/commons/constants';
+import { useConnectionCnt } from '@/context/ConnectionCntContext';
+import { useSelectedPoints } from '@/context/SelectedPointsContext';
 
 export interface IDeliveryCommandMap {
   data: MapStateResp;
@@ -35,6 +36,8 @@ export const DeliveryCommandMap = ({ data, maxH }: IDeliveryCommandMap) => {
   const selectedRobot = robots.filter((robot) => robot.id === location.state.id);
   const [modalState, setModalState] = useState<ModalState>(() => defaultModal);
   const { setDestPoints } = useDestPoints();
+  const { setActiveConnections } = useConnectionCnt();
+  const { selectedPoints } = useSelectedPoints();
 
   const confirmToMoveNext = () => {
     axios
@@ -52,6 +55,14 @@ export const DeliveryCommandMap = ({ data, maxH }: IDeliveryCommandMap) => {
   const setDisconnected = () => (isWebSocketConnectedRef.current = false);
   const onmessage = (e) => {
     const msg = e.data;
+    if (msg.includes('$')) {
+      const [givenId, cnt] = msg.split('$');
+      if (location.state.id === givenId) {
+        setActiveConnections(cnt);
+      }
+      return;
+    }
+
     if (msg.includes(';')) {
       const [announcement, destStr] = msg.split(';');
       const dest: Point[] = JSON.parse(destStr).map((point) => ({ x: 8 - point.x, y: point.y }));
@@ -101,7 +112,7 @@ export const DeliveryCommandMap = ({ data, maxH }: IDeliveryCommandMap) => {
           alignItems: 'center',
         }}
       >
-        {modalState.open ? (
+        {modalState.open && selectedPoints.length === 0 ? (
           <CountdownModal
             modalState={modalState}
             decreaseWaitTime={decreaseWaitTime}
@@ -109,6 +120,7 @@ export const DeliveryCommandMap = ({ data, maxH }: IDeliveryCommandMap) => {
             confirmToMoveNext={confirmToMoveNext}
           />
         ) : null}
+        {/*{modalState.msg !== '' || modalState.msg !==  ? (*/}
         {modalState.msg !== '' ? (
           <button className={styles['next--confirm--button']} onClick={openModal}>
             대기중인 도착 확인창 열기

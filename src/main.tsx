@@ -11,26 +11,29 @@ import { SelectedPointsProvider } from '@/context/SelectedPointsContext';
 import 'react-toastify/dist/ReactToastify.css';
 import '@/main.css';
 import { DestPointsProvider } from '@/context/DestPointsContext';
-import { UniqueIdProvider } from '@/context/UUIDContext';
+import { RobotTasksProvider } from '@/context/RobotTasksContext';
+import { ConnectionCountProvider } from '@/context/ConnectionCntContext';
 
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <UniqueIdProvider>
-      <QueryClientProvider client={queryClient}>
-        <PlaceProvider>
-          <TimeProvider>
-            <RequestOptionsProvider>
-              <SelectedPointsProvider>
-                <DestPointsProvider>
+  // <React.StrictMode>
+  <QueryClientProvider client={queryClient}>
+    <PlaceProvider>
+      <TimeProvider>
+        <RequestOptionsProvider>
+          <SelectedPointsProvider>
+            <DestPointsProvider>
+              <ConnectionCountProvider>
+                <RobotTasksProvider>
                   <RouterProvider router={router} />
-                </DestPointsProvider>
-              </SelectedPointsProvider>
-            </RequestOptionsProvider>
-          </TimeProvider>
-        </PlaceProvider>
-      </QueryClientProvider>
-    </UniqueIdProvider>
-  </React.StrictMode>,
+                </RobotTasksProvider>
+              </ConnectionCountProvider>
+            </DestPointsProvider>
+          </SelectedPointsProvider>
+        </RequestOptionsProvider>
+      </TimeProvider>
+    </PlaceProvider>
+  </QueryClientProvider>,
+  // </React.StrictMode>,
 );

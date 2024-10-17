@@ -14,7 +14,6 @@ import axios from 'axios';
 import { DeliveryCommandMap } from '@components/organisms/DeliveryCommandMap';
 import scrollContainerStyle from '@components/atoms/ScrollSnapContainer/index.module.css';
 import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
-import { scrollToElement } from '@components/templates/RobotTaskTimeViewer';
 import { usePlaceContext } from '@/context/PlaceContext';
 import { ScrollSnapOverlay } from '@components/atoms/ScrollSnapOverlay';
 import { ScrollSnapWrapper } from '@components/atoms/ScrollSnapWrapper';
@@ -31,6 +30,7 @@ import { calcTimeSlotByTimeAndIndex } from '@components/molecules/ScheduleTimeTa
 import { RobotFigure } from '@components/molecules/RobotFigure';
 import ScheduleNotFound from '@images/scheduleNotFound.svg';
 import clock from '@images/clock.svg';
+import { scrollToElement } from '@/commons/utils';
 
 const myPlace: ThreeDimensionalCard[] = [
   {

@@ -1,20 +1,12 @@
 import React, { useRef } from 'react';
 import { Header } from '@components/molecules/Header';
 import { MainContainer } from '@components/atoms/MainContainer';
-import { IRobot } from '@components/pages/Robot';
 import { useQueryClient } from '@tanstack/react-query';
-import { Rect } from '@/commons/types';
+import { MapStateResp } from '@/commons/types';
 import { AsyncBoundary } from '@components/atoms/AsyncBoundary';
 import { usePlaceContext } from '@/context/PlaceContext';
 import { IndexViewer } from '@components/templates/IndexViewer';
-import { baseUrl } from '@/router';
-import { Simulate } from 'react-dom/test-utils';
-import reset = Simulate.reset;
-
-export type MapStateResp = {
-  rects: Rect[];
-  robots: IRobot[];
-};
+import { baseUrl } from '@/commons/constants';
 
 export const fetchRobotsByMap = async (map_name: string): Promise<MapStateResp> => {
   const response = await fetch(`http://${baseUrl}:8000/robots/${map_name}`);

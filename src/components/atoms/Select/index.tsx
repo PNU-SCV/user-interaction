@@ -4,7 +4,8 @@ import styles from './index.module.css';
 interface ISelect {
   options: SelectOption[];
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  defaultValue: string;
+  defaultValue?: string;
+  onClick?: (event: React.MouseEvent) => void;
 }
 
 type SelectOption = {
@@ -12,8 +13,13 @@ type SelectOption = {
   label: string;
 };
 
-export const Select = ({ options, onChange, defaultValue }: ISelect) => (
-  <select value={defaultValue} onChange={onChange} className={styles.select}>
+export const Select = ({
+  options,
+  onChange,
+  defaultValue = undefined,
+  onClick = () => {},
+}: ISelect) => (
+  <select value={defaultValue} onChange={onChange} className={styles.select} onClick={onClick}>
     {options.map((option) => (
       <option key={option.value} value={option.value}>
         {option.label}

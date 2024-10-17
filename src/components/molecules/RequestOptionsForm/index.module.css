@@ -27,8 +27,8 @@
 
 .request--options>.submit--button {
     position: absolute;
-    transform: translate(450px, -80px);
-    /*transform: translate(400px, -80px);*/
+    /*transform: translate(450px, -80px);*/
+    transform: translate(405px, -80px);
     border:none;
     animation: thickborder 1.5s ease-in-out infinite;
     width: max-content;
@@ -277,10 +277,11 @@
 .select-container {
     position: absolute;
     padding: 0 2px;
-    background-color: #D5D5D5;
+    /*background-color: #D5D5D5;*/
     border-radius: 2px;
-    animation: thickborder 1.5s ease-in-out infinite;
-    transform: translate(140px, -80px);
+    width: max-content;
+    /*animation: thickborder 1.5s ease-in-out infinite;*/
+    /*transform: translate(140px, -80px);*/
 }
 
 .select-style {

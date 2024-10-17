@@ -25,7 +25,7 @@ export const CountdownModal = ({ modalState, decreaseWaitTime, closeModal, confi
         decreaseWaitTime();
       }, 1000);
 
-      if (modalState.waitTime === 0) {
+      if (modalState.waitTime === 0 && modalState.open === true) {
         clearInterval(timer);
         confirmNextAndCloseAll();
       }

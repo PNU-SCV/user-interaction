@@ -1,23 +1,12 @@
 import { ScrollSnapContainer } from '@components/atoms/ScrollSnapContainer';
 import { ItemProps } from '@components/atoms/IteratingMapper/type';
-import {
-  DateString,
-  isScheduleTime,
-  ScheduleTime,
-  scheduleTimes,
-} from '@components/molecules/ScheduleTimeTable';
-import { IteratingMapper } from '@components/atoms/IteratingMapper';
+import { DateString, ScheduleTime } from '@components/molecules/ScheduleTimeTable';
 import { ScrollSnapItem } from '@components/atoms/ScrollSnapItem';
-import { RobotTaskTimePicker } from '@components/organisms/RobotTaskTimePicker';
-import React, { Fragment, useEffect, useRef } from 'react';
-import scrollContainerStyle from '@components/atoms/ScrollSnapContainer/index.module.css';
-import scrollItemStyle from '@components/atoms/ScrollSnapItem/index.module.css';
-import { baseUrl, ROUTER_PATH } from '@/router';
+import React from 'react';
 import { ScrollSnapWrapper } from '@components/atoms/ScrollSnapWrapper';
 import { ScrollSnapOverlay } from '@components/atoms/ScrollSnapOverlay';
 import { useLocation } from 'react-router-dom';
 import { RobotFigure } from '@components/molecules/RobotFigure';
-import { MapStateResp } from '@components/pages/Index';
 import { GlassPanel } from '@components/atoms/GlassPanel';
 import { Flex } from '@components/atoms/Flex';
 import { RobotoComment } from '@components/atoms/RobotoComment';
@@ -27,9 +16,10 @@ import { DeliveryCommandMap } from '@components/organisms/DeliveryCommandMap';
 import checking from '@images/checking.svg';
 import searching from '@images/searching.svg';
 import { RequestOptionsForm } from '@components/molecules/RequestOptionsForm';
-import { Spacing } from '@components/atoms/Spacing';
-import { useWebSocket } from '@/hooks/useWebSocket';
-import { toast, ToastContainer } from 'react-toastify';
+import { MapStateResp } from '@/commons/types';
+import { useConnectionCnt } from '@/context/ConnectionCntContext';
+import { formatDateToMMDDYY } from '@/commons/utils';
+
 interface IScheduleTime extends ItemProps {
   time: ScheduleTime;
 }
@@ -73,12 +63,21 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
 
   const selectedRobotId = location.search.slice(location.search.search('id=') + 3);
 
+  const { activeConnections } = useConnectionCnt();
   return (
     <ScrollSnapWrapper>
       <ScrollSnapOverlay>
         <GlassPanel>
+          <div
+            style={{
+              position: 'absolute',
+              transform: 'translate(90%, calc(-100% - 4px))',
+              fontSize: '15px',
+            }}
+          >
+            현재 {activeConnections - 1}명이 같은 위치에서 조회하는중!
+          </div>
           <Flex flexDirection="column" justifyContent="center" alignItems="center">
-            <RobotoComment comment={`선택한 로봇: ${selectedRobotId}`} />
             {selectedRobot.map((robot) => (
               <RobotFigure key={robot.id} onClickTemplate={() => () => {}} {...robot} />
             ))}
@@ -156,44 +155,4 @@ export const RobotTaskTimeViewer = ({ data }: IRobotTaskTimeViewer) => {
       {/*/>*/}
     </ScrollSnapWrapper>
   );
-};
-
-const formatDateToMMDDYY = (date: Date): DateString => {
-  const year = date.getFullYear().toString().slice(2);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-
-  return `${month}/${day}/${year}` as DateString;
-};
-
-const hasUserAlreadySelectedTime = (time: string | null): time is ScheduleTime => {
-  const defaultRobotPath = '/' + ROUTER_PATH.ROBOT;
-
-  return time !== null && isScheduleTime(time) && location.pathname === defaultRobotPath;
-};
-
-const getElementsByScheduleTime = (time: ScheduleTime) => {
-  const container: HTMLElement = document.querySelector(
-    `.${scrollContainerStyle['scroll-container']}`,
-  );
-  const scheduleTables: NodeListOf<HTMLElement> = document.querySelectorAll(
-    `.${scrollItemStyle['scroll-item']}`,
-  );
-  const selectedTable: HTMLElement = scheduleTables[scheduleTimes.indexOf(time)];
-
-  return { container, selectedTable };
-};
-
-const getScrollPosition = (container: HTMLElement, element: HTMLElement): number => {
-  const containerRect = container.getBoundingClientRect();
-  const elementRect = element.getBoundingClientRect();
-
-  return elementRect.top - containerRect.top + container.scrollTop;
-};
-
-export const scrollToElement = (container: HTMLElement, selectedTable: HTMLElement) => {
-  container.scrollTo({
-    top: getScrollPosition(container, selectedTable),
-    behavior: 'smooth',
-  });
 };

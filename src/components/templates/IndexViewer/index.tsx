@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { usePlaceContext } from '@/context/PlaceContext';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +20,7 @@ import { createQueryKeyWithPlace, fetchRobotsByMap } from '@components/pages/Ind
 import { RobotoComment } from '@components/atoms/RobotoComment';
 import { Select } from '@components/atoms/Select';
 import { IconTextBox } from '@components/molecules/IconTextBox';
+import { useConnectionCnt } from '@/context/ConnectionCntContext';
 
 interface IPlaceViewer {
   reset?: () => void;
@@ -43,6 +44,7 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
     queryFn: () => fetchRobotsByMap(place),
   });
   const navigate = useNavigate();
+  const { activeConnections } = useConnectionCnt();
   const onClickTemplate = useCallback(
     (path, id) => () => navigate(path, { state: { id: id } }),
     [navigate],
@@ -64,8 +66,17 @@ export const IndexViewer: React.FC = ({ reset }: IPlaceViewer) => {
     <ScrollSnapWrapper>
       <ScrollSnapOverlay>
         <GlassPanel>
+          <div
+            style={{
+              position: 'absolute',
+              transform: 'translate(90%, calc(-100% - 4px))',
+              fontSize: '15px',
+            }}
+          >
+            현재 {activeConnections - 1}명이 같은 위치에서 조회하는중!
+          </div>
           <Flex flexDirection="column" alignItems="center">
-            <RobotoComment comment="선택한 위치" />
+            <RobotoComment comment={`선택한 위치`} />
             <Spacing height={10} />
             <Select options={options} onChange={onChange} defaultValue={place} />
           </Flex>

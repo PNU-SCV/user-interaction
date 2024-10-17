@@ -5,12 +5,13 @@ import { Rect } from '@/commons/types';
 import { RobotPositionMsg, useBitmapRobotManager } from '@/hooks/useBitmapRobotManager';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useNavigate } from 'react-router-dom';
-import { baseUrl, ROUTER_PATH } from '@/router';
+import { ROUTER_PATH } from '@/router';
 import { useRequestOptions } from '@/context/RequestOptionsContext';
 import { useSelectedPoints } from '@/context/SelectedPointsContext';
 import { useDestPoints } from '@/context/DestPointsContext';
 import { useUniqueId } from '@/context/UUIDContext';
 import { ModalState } from '@components/organisms/DeliveryCommandMap';
+import { baseUrl } from '@/commons/constants';
 
 const colorValid = 'white';
 const colorInvalid = '#D5D5D5';
@@ -67,14 +68,15 @@ export const SVGBitmap = ({
   const setDisconnected = () => (isWebSocketConnectedRef.current = false);
   const { selectedPoints, setSelectedPoints } = useSelectedPoints();
 
-  const { waitTime, cancelIfUnconfirmed, destMsgs, setDisableInputs } = useRequestOptions();
+  const { waitTime, cancelIfUnconfirmed, destMsgs, setDestMsgs, setDisableInputs } =
+    useRequestOptions();
   const { destPoints, setDestPoints } = useDestPoints();
   const onmessage = (event: MessageEvent) => {
     const msg = parseWebSocketMsg(event);
     const { status, destMsg, newX, newY, id, waitTime } = msg;
     if (status === 7 && id === robots[0].id) {
       if (setOverlayState) {
-        setOverlayState((prev) => ({ ...prev, open: false }));
+        setOverlayState({ msg: '', waitTime: -1, open: false });
       }
       return;
     }
@@ -186,12 +188,10 @@ export const SVGBitmap = ({
     setDisableInputs(false);
 
     if (setOverlayState) {
-      // setOverlayState('');
       setOverlayState((prev) => ({ ...prev, open: false }));
     }
   };
 
-  const uuid = useUniqueId();
   const sendDestinations = () => {
     const msg = createGoMsg(
       selectedPoints.map((point) => ({ ...point, x: 8 - point.x })),
@@ -199,6 +199,7 @@ export const SVGBitmap = ({
       cancelIfUnconfirmed,
       destMsgs,
     );
+
     sendMsg(msg);
     setDisableInputs(true);
     setSelectedPoints([]);
@@ -240,8 +241,8 @@ export const SVGBitmap = ({
         />
         {roomSVG}
         {robotSVGs}
-        {createPointSVGs(selectedPoints, maxCeil)}
-        {createDestSVGs(destPoints, maxCeil)}
+        {bitmapMode === 'COMMANDER' ? createPointSVGs(selectedPoints, maxCeil) : null}
+        {bitmapMode === 'COMMANDER' ? createDestSVGs(destPoints, maxCeil) : null}
       </svg>
       {bitmapMode === 'COMMANDER' ? (
         <div className={styles['control--box']}>
