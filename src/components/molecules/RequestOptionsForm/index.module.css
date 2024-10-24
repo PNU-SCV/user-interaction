@@ -35,6 +35,18 @@
     box-sizing: border-box;
 }
 
+@media(min-width: 1024px) {
+    .request--options>.submit--button {
+        transform: translate(460px, -80px);
+    }
+}
+
+@media(min-width: 1400px) {
+    .request--options>.submit--button {
+        transform: translate(600px, -80px);
+    }
+}
+
 .request--options b {
     font-size: 23px;
     /*font-weight: 600;*/
@@ -275,13 +287,13 @@
 }
 
 .select-container {
-    position: absolute;
+    position: sticky;
     padding: 0 2px;
     /*background-color: #D5D5D5;*/
     border-radius: 2px;
-    width: max-content;
-    /*animation: thickborder 1.5s ease-in-out infinite;*/
-    /*transform: translate(140px, -80px);*/
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 .select-style {

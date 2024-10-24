@@ -48,20 +48,6 @@ const SelectAppend: React.FC<{
     }}
     onClick={(e) => e.stopPropagation()}
   />
-  // <select
-  //   className={styles['select-style']}
-  //   onClick={(e) => e.stopPropagation()}
-  //   onChange={(e) => {
-  //     handleSelectChange(idx, e.target.value);
-  //     e.target.value = '';
-  //   }}
-  // >
-  //   {options.map((option) => (
-  //     <option key={option.value} value={option.value}>
-  //       {option.label}
-  //     </option>
-  //   ))}
-  // </select>
 );
 
 export const RequestOptionsForm: React.FC = () => {
@@ -77,7 +63,6 @@ export const RequestOptionsForm: React.FC = () => {
   } = useRequestOptions();
   const [focusedInputIndex, setFocusedInputIndex] = useState(null);
   const { selectedPoints = [] } = useSelectedPoints();
-  const [inputValues, setInputValues] = useState(selectedPoints.map(() => ''));
 
   const scrollToMap = () => {
     const container: HTMLElement = document.querySelector(
@@ -102,24 +87,6 @@ export const RequestOptionsForm: React.FC = () => {
     (value = '') =>
       setDestMsgs((prev) => {
         const copy = [...prev];
-        copy[i] = value;
-        return copy;
-      });
-
-  const handleInputChange = (i, value) => {
-    setInputValues((prev) => {
-      const copy = [...prev];
-      copy[i] = value;
-      return copy;
-    });
-    const findMyInput = setDestMsg(i);
-    findMyInput(value);
-  };
-
-  const handleSelectChange = (i, value) => {
-    if (value !== '') {
-      setInputValues((prev) => {
-        const copy = [...prev];
         if (copy[i]) {
           copy[i] += value;
           return copy;
@@ -127,6 +94,15 @@ export const RequestOptionsForm: React.FC = () => {
         copy[i] = value;
         return copy;
       });
+
+  const handleInputChange = (i, value) => {
+    const findMyInput = setDestMsg(i);
+    findMyInput(value);
+  };
+
+  const handleSelectChange = (i, value) => {
+    if (value !== '') {
+      handleInputChange(i, value);
     }
   };
 
@@ -179,7 +155,7 @@ export const RequestOptionsForm: React.FC = () => {
           <div key={`${point.x},${point.y}`}>
             <span>{idx + 1 === selectedPoints.length ? '최종' : `${idx + 1}번.`} 도착 지점</span>
             <input
-              value={inputValues[idx] || ''}
+              value={destMsgs[idx] || ''}
               onChange={(e) => handleInputChange(idx, e.target.value)}
               onClick={(e) => handleInputClick(idx, e)}
               className={styles['input-style']}

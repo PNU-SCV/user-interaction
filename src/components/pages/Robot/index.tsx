@@ -6,7 +6,6 @@ import React from 'react';
 import { Point } from '@/commons/types';
 import { RobotTaskActionForm } from '@components/organisms/RobotTaskActionForm';
 import { RobotTaskTimeViewer } from '@components/templates/RobotTaskTimeViewer';
-import { ScheduleDetail } from '@/hooks/useSelectScheduleTimeTable';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createQueryKeyWithPlace, fetchRobotsByMap } from '@components/pages/Index';
 import { usePlaceContext } from '@/context/PlaceContext';

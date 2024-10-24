@@ -13,12 +13,7 @@ type SelectOption = {
   label: string;
 };
 
-export const Select = ({
-  options,
-  onChange,
-  defaultValue = undefined,
-  onClick = () => {},
-}: ISelect) => (
+export const Select = ({ options, onChange, defaultValue = '', onClick = () => {} }: ISelect) => (
   <select value={defaultValue} onChange={onChange} className={styles.select} onClick={onClick}>
     {options.map((option) => (
       <option key={option.value} value={option.value}>
